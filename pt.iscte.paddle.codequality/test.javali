@@ -1,12 +1,15 @@
 int[] naturals(int n) {
 	int[] v = new int[n];
 	int i = 0;
+	
+	if(true){
 	while(i <= n) {
 		if(i==0){}
 		if(true){i=2;}
 		if(false){i=2;}
 		v[i] = i + 1;
 		i = i + 1;
+	}
 	}
 	return v;
 }
