@@ -2,9 +2,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import pt.iscte.paddle.codequality.cases.EmptyCondition;
-import pt.iscte.paddle.codequality.cases.EmptyExcepetion;
 import pt.iscte.paddle.codequality.cases.EmptyLoop;
-import pt.iscte.paddle.codequality.cases.Loop;
 import pt.iscte.paddle.interpreter.ExecutionError;
 import pt.iscte.paddle.javali.translator.Translator;
 import pt.iscte.paddle.model.IBlock.IVisitor;

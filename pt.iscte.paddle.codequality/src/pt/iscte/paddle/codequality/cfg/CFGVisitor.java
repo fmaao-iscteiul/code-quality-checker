@@ -16,75 +16,85 @@ import pt.iscte.paddle.model.cfg.IControlFlowGraph;
 import pt.iscte.paddle.model.cfg.INode;
 import pt.iscte.paddle.model.cfg.IStatementNode;
 
-public class CFGVisitor implements IVisitor{
-	
+public class CFGVisitor implements IVisitor {
+
 	private IControlFlowGraph CFG;
-	private boolean isFirst = true;
-	
-	Deque<INode> node_stack;
+	//	private boolean isFirst = true;
+	private INode lastNode = null; 
+	private IBranchNode lastBranchNode = null; 
+	private Deque<IBranchNode> node_stack;
 
 	public CFGVisitor(IControlFlowGraph CFG) {
 		this.CFG = CFG;
-		this.node_stack = new ArrayDeque<INode>();
+		this.node_stack = new ArrayDeque<>();
 	}
-	
+
 	@Override
 	public boolean visit(IVariableAssignment assignment) {
-		INode lastNode = this.CFG.getNodes().getLast();
+		//		INode lastNode = this.CFG.getNodes().getLast();
 		IStatementNode statement = this.CFG.newStatement(assignment);
-		if(assignment.getParent().getDepth() == 1 && this.isFirst) {
+		if(lastNode == null)
 			this.CFG.getEntryNode().setNext(statement);
-			this.isFirst = false;
+		else if(lastNode instanceof IBranchNode) 
+			((IBranchNode) lastNode).setBranch(statement);
+		else 
+			lastNode.setNext(statement);
+		
+		if(lastBranchNode != null) {
+			lastBranchNode.setNext(statement);
+			lastBranchNode = null;
 		}
-		else lastNode.setNext(statement);
-		return IVisitor.super.visit(assignment);
+		
+		lastNode = statement;
+		return true;
 	}
-	
+
 	@Override
 	public boolean visit(ISelection selection) {
-		INode lastNode = this.CFG.getNodes().getLast();
+		//		INode lastNode = this.CFG.getNodes().getLast();
 		IBranchNode if_branch = this.CFG.newBranch(selection.getGuard());
 		/* Checks if the previous node is a statement or a branch, and acts accordingly. */
 		if(lastNode instanceof IBranchNode) ((IBranchNode) lastNode).setBranch(if_branch);
 		else lastNode.setNext(if_branch);
 		this.node_stack.push(if_branch);
-		return IVisitor.super.visit(selection);
+		lastNode = if_branch;
+		return true;
 	}
-	
+
 	@Override
 	public void endVisit(ISelection selection) {
-		INode lastQueueNode = this.CFG.getNodes().getLast();
-		INode lastStackNode = this.node_stack.pop();
-//		lastQueueNode.setNext(lastStackNode);
-		if(selection.hasAlternativeBlock()) visit(selection.getAlternativeBlock());
-		IVisitor.super.endVisit(selection);
+		//		INode lastQueueNode = this.CFG.getNodes().getLast();
+		lastBranchNode = this.node_stack.pop();
+//		lastNode.setNext(lastStackNode);
+//		if(selection.hasAlternativeBlock()) visit(selection.getAlternativeBlock());
 	}
-	
+
 	@Override
 	public boolean visit(ILoop loop) {
-		INode lastNode = this.CFG.getNodes().getLast();
+		//		INode lastNode = this.CFG.getNodes().getLast();
 		IBranchNode new_loop_branch = this.CFG.newBranch(loop.getGuard());
 		/* Checks if the previous node is a statement or a branch, and acts accordingly. */
 		if(lastNode instanceof IBranchNode) ((IBranchNode) lastNode).setBranch(new_loop_branch);
 		else lastNode.setNext(new_loop_branch);
 		this.node_stack.push(new_loop_branch);
-		return IVisitor.super.visit(loop);
+		lastNode = new_loop_branch;
+		return true;
 	}
-	
+
 	@Override
 	public void endVisit(ILoop loop) {
-		INode lastQueueNode = this.CFG.getNodes().getLast();
+		//		INode lastQueueNode = this.CFG.getNodes().getLast();
 		INode lastStackNode = this.node_stack.pop();
-		lastQueueNode.setNext(lastStackNode);
-		IVisitor.super.endVisit(loop);
+		lastNode.setNext(lastStackNode);
 	}
 
 	@Override
 	public boolean visit(IReturn returnStatement) {
-		INode lastNode = this.CFG.getNodes().getLast().getNext();
+		//		INode lastNode = this.CFG.getNodes().getLast().getNext();
 		IStatementNode ret = this.CFG.newStatement(returnStatement);
 		lastNode.setNext(ret);
 		ret.setNext(this.CFG.getExitNode());
-		return IVisitor.super.visit(returnStatement);
+		lastNode = ret;
+		return true;
 	}
 }
