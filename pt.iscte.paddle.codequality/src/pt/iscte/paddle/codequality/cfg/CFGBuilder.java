@@ -78,18 +78,6 @@ public class CFGBuilder implements IControlFLowGraphBuilder{
 
 	public static void main(String[] args) {
 
-//		Translator translator = new Translator(new File("test.javali").getAbsolutePath());
-//		IModule modelo = translator.createProgram();
-//		IProcedure procedure = modelo.getProcedures().iterator().next(); // first procedure
-//
-//		CFGBuilder cfgBuilder = new CFGBuilder(procedure);
-//		cfgBuilder.loadCFG();
-//		cfgBuilder.loadVisitors();
-//
-//		cfgBuilder.build();
-//		
-//		cfgBuilder.displayCFG();
-
 		IModule module = IModule.create();
 		IProcedure max = module.addProcedure(INT);
 		IVariable array = max.addParameter(INT.array());
@@ -119,9 +107,7 @@ public class CFGBuilder implements IControlFLowGraphBuilder{
 		CFGBuilder cfgBuilder = new CFGBuilder(procedure1);
 		cfgBuilder.loadCFG();
 		cfgBuilder.loadVisitors();
- 
 		cfgBuilder.build();
-		
 		cfgBuilder.displayCFG();
 
 		IControlFlowGraph cfg = IControlFlowGraph.create(max);

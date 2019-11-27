@@ -10,6 +10,7 @@ import java.util.List;
 
 import pt.iscte.paddle.model.IBlock.IVisitor;
 import pt.iscte.paddle.model.IBlockElement;
+import pt.iscte.paddle.model.IExpression;
 import pt.iscte.paddle.model.cfg.IBranchNode;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
 import pt.iscte.paddle.model.cfg.INode;
@@ -41,7 +42,11 @@ public class CFGVisitor implements IVisitor{
 	
 	@Override
 	public boolean visit(ISelection selection) {
+		INode lastNode = this.CFG.getNodes().getLast();
 		IBranchNode if_branch = this.CFG.newBranch(selection.getGuard());
+		/* Checks if the previous node is a statement or a branch, and acts accordingly. */
+		if(lastNode instanceof IBranchNode) ((IBranchNode) lastNode).setBranch(if_branch);
+		else lastNode.setNext(if_branch);
 		this.node_stack.push(if_branch);
 		return IVisitor.super.visit(selection);
 	}
@@ -50,15 +55,19 @@ public class CFGVisitor implements IVisitor{
 	public void endVisit(ISelection selection) {
 		INode lastQueueNode = this.CFG.getNodes().getLast();
 		INode lastStackNode = this.node_stack.pop();
-		lastQueueNode.setNext(lastStackNode);
+//		lastQueueNode.setNext(lastStackNode);
 		if(selection.hasAlternativeBlock()) visit(selection.getAlternativeBlock());
 		IVisitor.super.endVisit(selection);
 	}
 	
 	@Override
 	public boolean visit(ILoop loop) {
-		IBranchNode loop_branch = this.CFG.newBranch(loop.getGuard());
-		this.node_stack.push(loop_branch);
+		INode lastNode = this.CFG.getNodes().getLast();
+		IBranchNode new_loop_branch = this.CFG.newBranch(loop.getGuard());
+		/* Checks if the previous node is a statement or a branch, and acts accordingly. */
+		if(lastNode instanceof IBranchNode) ((IBranchNode) lastNode).setBranch(new_loop_branch);
+		else lastNode.setNext(new_loop_branch);
+		this.node_stack.push(new_loop_branch);
 		return IVisitor.super.visit(loop);
 	}
 	
@@ -72,7 +81,7 @@ public class CFGVisitor implements IVisitor{
 
 	@Override
 	public boolean visit(IReturn returnStatement) {
-		INode lastNode = this.CFG.getNodes().getLast();
+		INode lastNode = this.CFG.getNodes().getLast().getNext();
 		IStatementNode ret = this.CFG.newStatement(returnStatement);
 		lastNode.setNext(ret);
 		ret.setNext(this.CFG.getExitNode());
