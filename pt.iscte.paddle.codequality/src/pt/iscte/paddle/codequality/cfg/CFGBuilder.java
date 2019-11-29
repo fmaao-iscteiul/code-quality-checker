@@ -99,16 +99,18 @@ public class CFGBuilder implements IControlFLowGraphBuilder{
 		i.setId("i");
 //		System.out.println(max);
 		
-		File codeToCheck = new File("test.javali");
+		File codeToCheck = new File("test2.javali");
 		Translator translator = new Translator(codeToCheck.getAbsolutePath());
 		IModule module1 = translator.createProgram();
 		IProcedure procedure1 = module1.getProcedures().iterator().next(); // first procedure
 		
-		CFGBuilder cfgBuilder = new CFGBuilder(procedure1);
-		cfgBuilder.loadCFG();
-		cfgBuilder.loadVisitors();
-		cfgBuilder.build();
-		cfgBuilder.displayCFG();
+		
+		
+//		CFGBuilder cfgBuilder = new CFGBuilder(procedure1);
+//		cfgBuilder.loadCFG();
+//		cfgBuilder.loadVisitors();
+//		cfgBuilder.build();
+//		cfgBuilder.displayCFG();
 
 		IControlFlowGraph cfg = IControlFlowGraph.create(max);
 

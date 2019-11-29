@@ -1,0 +1,8 @@
+int[] teste(){
+	int[] array_inteiros = {1,2,3,4,5};
+	for(int i = 0; i<array_inteiros.length; i++){
+		if(array_inteiros[i] > 0) array_inteiros[i] = array_inteiros[i]-1;
+		else array_inteiros[i] = array_inteiros[i]+1;
+	}
+	return array_inteiros;
+}
