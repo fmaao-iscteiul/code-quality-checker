@@ -1,5 +1,4 @@
 int maiorInteiro(int[] array_inteiros){
-	int[] array_inteiros = {1,7,6,9,10,11,23,32,43,54,67,58,99,2,3,4,5};
 	int i = 0;
 	int maior_inteiro = 0;
 	while(i < array_inteiros.length){

@@ -11,6 +11,8 @@ import java.util.List;
 import pt.iscte.paddle.model.IBlock.IVisitor;
 import pt.iscte.paddle.model.IBlock;
 import pt.iscte.paddle.model.IBlockElement;
+import pt.iscte.paddle.model.IBreak;
+import pt.iscte.paddle.model.IContinue;
 import pt.iscte.paddle.model.IExpression;
 import pt.iscte.paddle.model.cfg.IBranchNode;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
@@ -22,7 +24,8 @@ public class CFGVisitor implements IVisitor {
 	private IControlFlowGraph CFG;
 	//	private boolean isFirst = true;
 	private INode lastNode = null; 
-	private IBranchNode lastBranchNode = null; 
+	private IBranchNode lastBranchNode = null;
+	private IBranchNode lastLoopNode = null;
 	private Deque<IBranchNode> node_stack;
 
 	public CFGVisitor(IControlFlowGraph CFG) {
@@ -37,7 +40,7 @@ public class CFGVisitor implements IVisitor {
 			this.CFG.getEntryNode().setNext(statement);
 		else if(lastNode instanceof IBranchNode) 
 			((IBranchNode) lastNode).setBranch(statement);
-		else 
+		else if(lastNode.getNext() == null)
 			lastNode.setNext(statement);
 
 		if(lastBranchNode != null) {
@@ -77,6 +80,7 @@ public class CFGVisitor implements IVisitor {
 		this.node_stack.push(new_loop_branch);
 		lastBranchNode = new_loop_branch;
 		lastNode = new_loop_branch;
+		lastLoopNode = new_loop_branch;
 		return true;
 	}
 
@@ -95,6 +99,20 @@ public class CFGVisitor implements IVisitor {
 		ret.setNext(this.CFG.getExitNode());
 		lastNode = ret;
 		return true;
+	}
+	
+	@Override
+	public void visit(IContinue continueStatement) {
+		IStatementNode continue_statement = CFG.newStatement(continueStatement);
+		if(lastNode instanceof IBranchNode) ((IBranchNode) lastNode).setBranch(continue_statement);
+		else lastNode.setNext(continue_statement);
+		lastNode = continue_statement;
+		continue_statement.setNext(lastLoopNode);
+		lastLoopNode = null;
+	}
+	
+	@Override
+	public void visit(IBreak breakStatement) {
 	}
 
 	@Override
