@@ -29,41 +29,37 @@ public class CFGBuilder implements IControlFLowGraphBuilder{
 	private IProcedure procedure;
 	private IControlFlowGraph CFG;
 
-	/**
-	 * This visitors will search the code for the correspondent structures and feed the CFG accordingly.
-	 */
-	private ArrayList<IVisitor> visitors;
-
+	private CFGVisitor visitor;
 
 	public CFGBuilder(IProcedure procedure){
 		this.procedure = procedure;
-		this.visitors = new ArrayList<IVisitor>();
+		
+		load();
+		loadVisitor();
+		build();
 	}
 
 	@Override
-	public void loadCFG(){
+	public void load(){
 		this.CFG = IControlFlowGraph.create(procedure);
 	}
 
 	@Override
-	public void loadVisitors() {
-		this.visitors.add(new CFGVisitor(this.CFG));
+	public void loadVisitor() {
+		this.visitor = new CFGVisitor(this.CFG);
 	}
 
 	@Override
 	public void build() {
-		for (IVisitor visitor : this.visitors) {
-			this.procedure.accept(visitor);
-		}
+		this.procedure.accept(visitor);
 	}
 
 	@Override
 	public void getErrorPath() {
-		// TODO Auto-generated method stub
 	}
-	
+
 	@Override
-	public void displayCFG() {
+	public void display() {
 		this.CFG.getNodes().forEach(n -> System.out.println(n));
 	}
 

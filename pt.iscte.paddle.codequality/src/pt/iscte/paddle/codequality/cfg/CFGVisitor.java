@@ -35,20 +35,20 @@ public class CFGVisitor implements IVisitor {
 	
 	@Override
 	public boolean visit(IVariableAssignment assignment) {
-		IStatementNode statement = this.CFG.newStatement(assignment);
+		IStatementNode assign_statement = this.CFG.newStatement(assignment);
 		if(lastNode == null)
-			this.CFG.getEntryNode().setNext(statement);
+			this.CFG.getEntryNode().setNext(assign_statement);
 		else if(lastNode instanceof IBranchNode) 
-			((IBranchNode) lastNode).setBranch(statement);
+			((IBranchNode) lastNode).setBranch(assign_statement);
 		else if(lastNode.getNext() == null)
-			lastNode.setNext(statement);
+			lastNode.setNext(assign_statement);
 
 		if(lastBranchNode != null) {
-			lastBranchNode.setNext(statement);
-			lastBranchNode = null;
+			lastBranchNode.setNext(assign_statement);
+			setLastBranchNode(null);
 		}
 
-		lastNode = statement;
+		setLastNode(assign_statement);
 		return true;
 	}
 
@@ -60,14 +60,14 @@ public class CFGVisitor implements IVisitor {
 		else lastNode.setNext(if_branch);
 		/* Pushes the new node into the INode Collection. */
 		this.node_stack.push(if_branch);
-		lastNode = if_branch;
-		lastBranchNode = if_branch;
+		setLastNode(if_branch);
+		setLastBranchNode(if_branch);
 		return true;
 	}
 
 	@Override
 	public void endVisit(ISelection selection) {
-		lastBranchNode = this.node_stack.pop();
+		setLastBranchNode(this.node_stack.pop());
 		//		if(selection.hasAlternativeBlock()) visit(selection.getAlternativeBlock());
 	}
 
@@ -78,16 +78,15 @@ public class CFGVisitor implements IVisitor {
 		if(lastNode instanceof IBranchNode) ((IBranchNode) lastNode).setBranch(new_loop_branch);
 		else lastNode.setNext(new_loop_branch);
 		this.node_stack.push(new_loop_branch);
-		lastBranchNode = new_loop_branch;
-		lastNode = new_loop_branch;
-		lastLoopNode = new_loop_branch;
+		setLastBranchNode(new_loop_branch);
+		setLastNode(new_loop_branch);
+		setLastLoopNode(new_loop_branch);
 		return true;
 	}
 
 	@Override
 	public void endVisit(ILoop loop) {
-		INode lastStackNode = this.node_stack.pop();
-		lastNode.setNext(lastStackNode);
+		lastNode.setNext(this.node_stack.pop());
 	}
 
 	@Override
@@ -97,7 +96,7 @@ public class CFGVisitor implements IVisitor {
 		if(lastLiteralNode != null) lastNode.getNext().setNext(ret);
 		else lastNode.setNext(ret);
 		ret.setNext(this.CFG.getExitNode());
-		lastNode = ret;
+		setLastNode(ret);
 		return true;
 	}
 	
@@ -106,9 +105,9 @@ public class CFGVisitor implements IVisitor {
 		IStatementNode continue_statement = CFG.newStatement(continueStatement);
 		if(lastNode instanceof IBranchNode) ((IBranchNode) lastNode).setBranch(continue_statement);
 		else lastNode.setNext(continue_statement);
-		lastNode = continue_statement;
 		continue_statement.setNext(lastLoopNode);
-		lastLoopNode = null;
+		setLastNode(continue_statement);
+		setLastLoopNode(null);
 	}
 	
 	@Override
@@ -117,7 +116,16 @@ public class CFGVisitor implements IVisitor {
 
 	@Override
 	public void endVisit(IBlock block) {
-		System.out.println("ola");
 		IVisitor.super.endVisit(block);
+	}
+	
+	private void setLastBranchNode(IBranchNode lastBranchNode) {
+		this.lastBranchNode = lastBranchNode;
+	}
+	private void setLastLoopNode(IBranchNode lastLoopNode) {
+		this.lastLoopNode = lastLoopNode;
+	}
+	private void setLastNode(INode lastNode) {
+		this.lastNode = lastNode;
 	}
 }

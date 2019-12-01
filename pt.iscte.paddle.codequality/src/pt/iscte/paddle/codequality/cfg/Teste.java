@@ -30,11 +30,8 @@ public class Teste {
 		IProcedure procedure = module1.getProcedures().iterator().next(); // first procedure
 		
 		CFGBuilder cfgBuilder = new CFGBuilder(procedure);
-		cfgBuilder.loadCFG();
-		cfgBuilder.loadVisitors();
-		cfgBuilder.build();
-		cfgBuilder.displayCFG();
 		
+		cfgBuilder.display();
 	}
 
 }
