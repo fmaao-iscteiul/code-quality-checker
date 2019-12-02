@@ -6,6 +6,10 @@ int maiorInteiro(int[] array_inteiros){
 		valor_atual = array_inteiros[i];
 		i = i + 1;
 		if(valor_atual < maior_inteiro){
+			int j = 0;
+			while(j < 2){
+				j = j + 1;
+			}
 			continue;
 		}
 		else {
