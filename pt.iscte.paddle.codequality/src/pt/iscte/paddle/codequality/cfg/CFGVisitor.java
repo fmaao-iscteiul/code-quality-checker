@@ -47,7 +47,6 @@ public class CFGVisitor implements IVisitor {
 			lastNode.setNext(assign_statement);
 		// Handling the branch false case.
 		
-//		System.out.println(assignment + " " + lastBranchNode);
 		if(lastBranchNode != null) {
 			lastBranchNode.setNext(assign_statement);
 			setLastBranchNode(null);
@@ -74,13 +73,9 @@ public class CFGVisitor implements IVisitor {
 	@Override
 	public void endVisit(ISelection selection) {
 		setLastBranchNode(this.selection_stack.pop());
+		lastBranchNode.setNext(lastNode);
 	}
-	
-	@Override
-	public void endVisit(IBlock block) {
-		System.out.println(block);
-		IVisitor.super.endVisit(block);
-	}
+
 
 	@Override
 	public boolean visit(ILoop loop) {
