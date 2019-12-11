@@ -20,10 +20,11 @@ int max(int[] array) {
 						m = m - 15; 
 					}
 					else {	 
-						m = m - 5; 
+						//m = m - 5; 
 					}
+					//m = 0;
 				}
-				// m = m + 100;
+				m = m + 100;
 			}
 			m = array[i];
 			while(m < 20){

@@ -27,18 +27,29 @@ public class CFGVisitor implements IVisitor {
 	private IBranchNode lastSelectionNode = null;
 	private IBranchNode lastLoopNode = null;
 
-	private Deque<IBranchNode> selectionNodeStack;
+	private Deque<SelectionNode> selectionNodeStack;
 	private Deque<IBranchNode> loopNodeStack;
 	
-	private List<INode> selectionOrphans;
+//	private List<INode> selectionOrphans;
 	// tentar com pilha dos ultimos nos.
 
+	
+	private static class SelectionNode {
+		final IBranchNode node;
+		final List<INode> orphans;
+
+		SelectionNode(IBranchNode if_branch) {
+			node = if_branch;
+			orphans = new ArrayList<>();
+		}
+	}
+	
 	public CFGVisitor(IControlFlowGraph CFG) {
 		this.CFG = CFG;
 
 		this.selectionNodeStack = new ArrayDeque<>();
 		this.loopNodeStack = new ArrayDeque<>();
-		this.selectionOrphans = new ArrayList<INode>();
+//		this.selectionOrphans = new ArrayList<INode>();
 	}
 
 	@Override
@@ -70,11 +81,13 @@ public class CFGVisitor implements IVisitor {
 		this.setLastNode(if_branch);
 	
 		/* Pushes the new node into the INode Collection. */
-		this.selectionNodeStack.push(if_branch);
+		this.selectionNodeStack.push(new SelectionNode(if_branch));
 				
 		return true;
 	}
 
+	
+	
 	// Se houver loop acima, definir o next do last node para esse loop, sem por a o lastLoopNode a null
 	@Override
 	public void endVisit(ISelection selection) {
@@ -83,16 +96,33 @@ public class CFGVisitor implements IVisitor {
 		System.out.println("last loop: " + lastLoopNode);
 		System.out.println("last node: " + lastNode);
 		if(this.selectionNodeStack.size() > 0) {
-			IBranchNode selectionBranch = this.selectionNodeStack.pop();
-			
-			this.setlastSelectionNode(selectionBranch);
+			SelectionNode selectionNode = this.selectionNodeStack.pop();
+			this.setlastSelectionNode(selectionNode.node);
 //			if(lastNode != null && lastNode.getNext() == null) selectionBranch.setNext(lastNode);
 			
 			System.out.println("last connection: " + lastNode);
 		}
-		if(selection.hasAlternativeBlock()) visit(selection.getAlternativeBlock());
 	}
 
+	@Override
+	public boolean visitAlternative(ISelection selection) {
+		// TODO Auto-generated method stub
+		return IVisitor.super.visitAlternative(selection);
+	}
+	
+	@Override
+	public void endVisitBranch(ISelection selection) {
+		// TODO lembrar caso vazio
+		
+		selectionNodeStack.peek().orphans.add(lastNode);
+	}
+	
+	@Override
+	public void endVisitAlternative(ISelection selection) {
+		if(!selection.getAlternativeBlock().isEmpty())
+			selectionNodeStack.peek().orphans.add(lastNode);
+	}
+	
 
 	@Override
 	public boolean visit(ILoop loop) {
@@ -154,23 +184,21 @@ public class CFGVisitor implements IVisitor {
 	public void visit(IBreak breakStatement) {
 	}
 
-	@Override
-	public boolean visit(IBlock block) {
-		System.out.println("---------------------BLOCO DO ELSE---------------------");
-		System.out.println("lastSelectionNode: " +lastSelectionNode);
-		System.out.println("lastNode: " + lastNode);
-		
-		if(lastSelectionNode != null) {
-			lastSelectionNode.setNext(lastNode);
-			setlastSelectionNode(null);
-		}
-		return IVisitor.super.visit(block);
-	}
-	@Override
-	public void endVisit(IBlock block) {
-		IVisitor.super.endVisit(block);
-	}
-
+//	@Override
+//	public boolean visit(IBlock block) {
+//		System.out.println("---------------------BLOCO DO ELSE---------------------");
+//		System.out.println("lastSelectionNode: " +lastSelectionNode);
+//		System.out.println("lastNode: " + lastNode);
+//		
+//		if(lastSelectionNode != null) {
+//			lastSelectionNode.setNext(lastNode);
+//			setlastSelectionNode(null);
+//		}
+//		return IVisitor.super.visit(block);
+//	}
+	
+	
+	
 	/**
 	 * @function HandleStatementVisit
 	 * @description Checks for the type of the previous node, and acts accordingly. This meaning that it will place itself has the next Statement node for the previous one.
