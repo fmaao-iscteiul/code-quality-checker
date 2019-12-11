@@ -201,7 +201,11 @@ public class CFGVisitor implements IVisitor {
 //			lastLoopNode.setNext(selection);
 ////			setLastLoopNode(null);
 //		}	
-		
+		if(lastSelectionNode != null && lastNode.getNext() != null) lastSelectionNode.setNext(selection);
+		else if(lastLoopNode != null && lastLoopNode.hasBranch() && lastNode.getNext() != null) {
+			lastLoopNode.setNext(selection);
+//			setLastLoopNode(null);
+		}
 		if(lastNode instanceof IBranchNode && !((IBranchNode) lastNode).hasBranch()) ((IBranchNode) lastNode).setBranch(selection);
 		else if(lastNode != null && lastNode.getNext() == null) lastNode.setNext(selection);
 		else if(lastNode == null) this.CFG.getEntryNode().setNext(selection);
@@ -220,7 +224,7 @@ public class CFGVisitor implements IVisitor {
 //			lastSelectionNode.setNext(branch);
 //		}
 		if(lastSelectionNode != null && lastNode.getNext() != null) lastSelectionNode.setNext(loop);
-		if(lastLoopNode != null && lastLoopNode.hasBranch() && lastNode.getNext() != null) {
+		else if(lastLoopNode != null && lastLoopNode.hasBranch() && lastNode.getNext() != null) {
 			lastLoopNode.setNext(loop);
 //			setLastLoopNode(null);
 		}	
