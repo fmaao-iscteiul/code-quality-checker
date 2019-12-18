@@ -29,8 +29,7 @@ public class Teste {
 		IModule module1 = translator.createProgram();
 		IProcedure procedure = module1.getProcedures().iterator().next(); // first procedure
 		
-		CFGBuilder cfgBuilder = new CFGBuilder(procedure);
-		
+		IControlFLowGraphBuilder cfgBuilder = IControlFLowGraphBuilder.create(procedure);
 		cfgBuilder.display();
 	}
 
