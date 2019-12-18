@@ -42,7 +42,6 @@ public class CFGVisitor implements IVisitor {
 
 	public CFGVisitor(IControlFlowGraph CFG) {
 		this.CFG = CFG;
-
 		this.selectionNodeStack = new ArrayDeque<>();
 		this.loopNodeStack = new ArrayDeque<>();
 	}

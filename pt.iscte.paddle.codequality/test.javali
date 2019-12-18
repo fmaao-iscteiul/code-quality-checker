@@ -31,6 +31,9 @@ int max(int[] array) {
 		i = i + 1;
 	}
 	m = 10;
+	while(i > 200){
+		m = m + 135;
+	}
 	m = 20;
 	m = 30;
 	return m; 
