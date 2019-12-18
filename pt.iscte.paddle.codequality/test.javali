@@ -16,7 +16,6 @@ int max(int[] array) {
 					else {	 
 						m = m - 5; 
 					}
-					//m = 0;
 				}
 				m = m + 100;
 				m = m + 101;
