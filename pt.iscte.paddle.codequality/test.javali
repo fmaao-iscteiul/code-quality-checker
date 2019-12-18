@@ -14,7 +14,10 @@ int max(int[] array) {
 						m = m - 15; 
 					}
 					else {	 
-						m = m - 5; 
+						m = m - 5;
+						while(i > 200){
+							m = m + 135;
+						}
 					}
 				}
 				m = m + 100;
