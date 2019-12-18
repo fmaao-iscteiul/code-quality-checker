@@ -87,8 +87,9 @@ public class CFGVisitor implements IVisitor {
 		System.out.println("orphans state: " + selectionNodeStack.size());
 		System.out.println("last loop: " + lastLoopNode);
 		System.out.println("last node: " + lastNode);
-		if(this.selectionNodeStack.size() > 0) 
-			this.setlastSelectionNode(this.selectionNodeStack.pop());
+		if(getLastSelectionNode() != null && getLastSelectionNode().getNext() == null) 
+			this.selectionNodeStack.peek().orphans.add(getLastSelectionNode());
+		this.setlastSelectionNode(this.selectionNodeStack.pop());
 	}
 
 	@Override
@@ -99,11 +100,11 @@ public class CFGVisitor implements IVisitor {
 		System.out.println("last selection: " + getLastSelectionNode());
 		System.out.println("last loop: " + lastLoopNode);
 		System.out.println("last node: " + lastNode);
-		if(lastSelectionNode == null && selectionNodeStack.size() > 0 && !selectionNodeStack.peek().orphans.contains(lastNode)) {
+		if(lastNode.getNext() == null && lastSelectionNode == null && selectionNodeStack.size() > 0 && !selectionNodeStack.peek().orphans.contains(lastNode)) {
 			System.out.println("pushed lastnode: "+lastNode);
 			System.out.println("selectioNodeStack size: " + selectionNodeStack.size());
 			selectionNodeStack.peek().orphans.add(lastNode);
-		} else lastSelectionNode.orphans.add(lastNode);
+		}
 		/* Because of else's after selection, that need to be set as next.*/
 		this.setlastSelectionNode(selectionNodeStack.peek());
 	}
@@ -115,9 +116,10 @@ public class CFGVisitor implements IVisitor {
 		System.out.println("last selection: " + getLastSelectionNode());
 		System.out.println("last loop: " + lastLoopNode);
 		System.out.println("last node: " + lastNode);
-		if(selectionNodeStack.size() > 0 && !selectionNodeStack.peek().orphans.contains(lastNode)) {
+		if(lastNode.getNext() == null && selectionNodeStack.size() > 0 && !selectionNodeStack.peek().orphans.contains(lastNode)) {
 			selectionNodeStack.peek().orphans.add(lastNode);
-		} else lastSelectionNode.orphans.add(lastNode);
+			System.out.println("pushed lastnode: "+lastNode);
+		}
 		return IVisitor.super.visitAlternative(selection);
 	}
 
@@ -125,16 +127,15 @@ public class CFGVisitor implements IVisitor {
 	public void endVisitAlternative(ISelection selection) {
 		if(selectionNodeStack.size() > 0) currentBranchType = BRANCH_TYPE_STATE.SELECTION;
 		else currentBranchType = null;
-		
+
 		System.out.println("------------------- END VISIT ALTERNATIVE selection: "+ selection.getGuard() +" --------------------");
 		System.out.println("last selection: " + getLastSelectionNode());
 		System.out.println("last loop: " + lastLoopNode);
 		System.out.println("last node: " + lastNode);
-		if(lastSelectionNode == null && !selection.getAlternativeBlock().isEmpty() &&
+		if(lastNode.getNext() == null && lastSelectionNode == null && !selection.getAlternativeBlock().isEmpty() &&
 				selectionNodeStack.size() > 0 && 
-					!selectionNodeStack.peek().orphans.contains(lastNode)) 
+				!selectionNodeStack.peek().orphans.contains(lastNode)) 
 			selectionNodeStack.peek().orphans.add(lastNode);
-		else lastSelectionNode.orphans.add(lastNode);
 	}
 
 	@Override
@@ -163,11 +164,11 @@ public class CFGVisitor implements IVisitor {
 			IBranchNode finishedLoopBranch = this.loopNodeStack.pop();
 			/* So that the last Node can point to the beginning of the next loop. */
 			setLastLoopNode(finishedLoopBranch);
-			
+
 			if(lastSelectionNode != null && selectionNodeStack.size() > 0)
 				adoptOrphans(lastSelectionNode, finishedLoopBranch);
 
-			if(lastNode != null && lastNode.getNext() == null) lastNode.setNext(lastLoopNode);
+			if(lastNode != null && lastNode.getNext() == null) lastNode.setNext(finishedLoopBranch);
 		}
 	}
 
@@ -206,12 +207,12 @@ public class CFGVisitor implements IVisitor {
 	 * @param INode The statement that is has been visited and will be inserted in the Control Flow Graph.
 	 */
 	private void handleStatementVisit(INode statement) {
-		
+
 		if(currentBranchType != BRANCH_TYPE_STATE.ALTERNATIVE && lastSelectionNode != null && lastSelectionNode.orphans.size() > 0) {
 			System.out.println("entrei nos orfãos");
 			adoptOrphans(lastSelectionNode, statement);
 		}
-		
+
 		if(getLastSelectionNode() != null && getLastSelectionNode().hasBranch() && getLastSelectionNode().getNext() == null) {
 			getLastSelectionNode().setNext(statement);
 			setlastSelectionNode(null);
@@ -229,26 +230,26 @@ public class CFGVisitor implements IVisitor {
 			System.out.println("djwdnawnjdjdwajn");
 			lastNode.setNext(statement);
 		}
-			
+
 		/* In case that this is the statement right after a loop visitor has ended. */ 
-		
+
 	}
 
 	private void handleSelectionBranchVisit(IBranchNode selection) {
-		
+
 		if(lastLoopNode != null && lastLoopNode.hasBranch() && lastNode.getNext() != null) {
 			lastLoopNode.setNext(selection);
 			setLastLoopNode(null);
 		}
-		
+
 		if(getLastSelectionNode() != null && getLastSelectionNode().hasBranch() && getLastSelectionNode().getNext() == null) {
 			getLastSelectionNode().setNext(selection);
 			setlastSelectionNode(null);
 		}
-		
+
 		if(lastSelectionNode != null && lastSelectionNode.orphans.size() > 0)
 			adoptOrphans(lastSelectionNode, selection);
-		
+
 		if(lastNode instanceof IBranchNode && !((IBranchNode) lastNode).hasBranch()) ((IBranchNode) lastNode).setBranch(selection);
 		else if(lastNode != null && lastNode.getNext() == null) lastNode.setNext(selection);
 		else if(lastNode == null) this.CFG.getEntryNode().setNext(selection);
@@ -260,7 +261,7 @@ public class CFGVisitor implements IVisitor {
 	 * @param IBranchNode branch The statement that is has been visited and will be inserted in the Control Flow Graph.
 	 */
 	private void handleLoopBranchVisit(IBranchNode loop) {
-		
+
 		if(getLastSelectionNode() != null && getLastSelectionNode().hasBranch() && getLastSelectionNode().getNext() == null) {
 			getLastSelectionNode().setNext(loop);
 			setlastSelectionNode(null);
@@ -269,10 +270,11 @@ public class CFGVisitor implements IVisitor {
 			lastLoopNode.setNext(loop);
 			setLastLoopNode(null);
 		}
-			
+
 		if(lastSelectionNode != null && lastSelectionNode.orphans.size() > 0)
 			adoptOrphans(lastSelectionNode, loop);
-		else if(lastNode instanceof IBranchNode && !((IBranchNode) lastNode).hasBranch()) ((IBranchNode) lastNode).setBranch(loop);
+
+		if(lastNode instanceof IBranchNode && !((IBranchNode) lastNode).hasBranch()) ((IBranchNode) lastNode).setBranch(loop);
 		else if(lastNode != null && lastNode.getNext() == null) lastNode.setNext(loop);
 		else if( lastNode == null ) this.CFG.getEntryNode().setNext(loop);
 	}

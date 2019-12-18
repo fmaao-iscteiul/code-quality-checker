@@ -15,7 +15,7 @@ int max(int[] array) {
 					}
 					else {	 
 						m = m - 5;
-						while(i > 200){
+						if(i > 200){
 							m = m + 135;
 						}
 					}
