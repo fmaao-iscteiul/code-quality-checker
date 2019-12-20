@@ -22,13 +22,16 @@ import pt.iscte.paddle.model.cfg.IStatementNode;
 public class CFGVisitor implements IVisitor {
 
 	private IControlFlowGraph CFG;
+	
 	private INode lastNode = null;
 	private SelectionNode lastSelectionNode = null;
 	private IBranchNode lastLoopNode = null;
+	private IStatementNode lastBreakStatement = null;
 	private BRANCH_TYPE_STATE currentBranchType = null;
 
 	private Deque<SelectionNode> selectionNodeStack;
 	private Deque<IBranchNode> loopNodeStack;
+	private Deque<BreakNode> breakNodeStack;
 
 	private static class SelectionNode {
 		final IBranchNode node;
@@ -39,11 +42,24 @@ public class CFGVisitor implements IVisitor {
 			orphans = new ArrayList<INode>();
 		}
 	}
+	
+	private static class BreakNode {
+		final IStatementNode node;
+		final List<INode> orphans;
+
+		BreakNode(IStatementNode breakStatement) {
+			node = breakStatement;
+			orphans = new ArrayList<INode>();
+		}
+	}
+	
+	
 
 	public CFGVisitor(IControlFlowGraph CFG) {
 		this.CFG = CFG;
 		this.selectionNodeStack = new ArrayDeque<>();
 		this.loopNodeStack = new ArrayDeque<>();
+		this.breakNodeStack = new ArrayDeque<>();
 	}
 
 	@Override
@@ -169,6 +185,10 @@ public class CFGVisitor implements IVisitor {
 
 			if(lastNode != null && lastNode.getNext() == null) lastNode.setNext(finishedLoopBranch);
 		}
+		if(breakNodeStack.size() > 0) {
+			BreakNode lastBrake = this.breakNodeStack.pop();
+			setLastBreakStatement(lastBrake.node);
+		}
 	}
 
 	@Override
@@ -198,6 +218,10 @@ public class CFGVisitor implements IVisitor {
 
 	@Override
 	public void visit(IBreak breakStatement) {
+		IStatementNode break_statement = CFG.newStatement(breakStatement);
+		if(lastNode instanceof IBranchNode) ((IBranchNode) lastNode).setBranch(break_statement);
+		else lastNode.setNext(break_statement);
+		this.breakNodeStack.add(new BreakNode(break_statement));
 	}
 
 	/**
@@ -210,7 +234,11 @@ public class CFGVisitor implements IVisitor {
 		if(currentBranchType != BRANCH_TYPE_STATE.ALTERNATIVE && lastSelectionNode != null && lastSelectionNode.orphans.size() > 0)
 			adoptOrphans(lastSelectionNode, statement);
 		
-
+		if(lastBreakStatement != null) {
+			lastBreakStatement.setNext(statement);
+			setLastBreakStatement(null);
+		}
+		
 		if(getLastSelectionNode() != null && getLastSelectionNode().hasBranch() && getLastSelectionNode().getNext() == null) {
 			getLastSelectionNode().setNext(statement);
 			setlastSelectionNode(null);
@@ -221,7 +249,7 @@ public class CFGVisitor implements IVisitor {
 		}
 		if(lastNode == null) 
 			this.CFG.getEntryNode().setNext(statement);
-		else if(lastNode instanceof IBranchNode) 
+		else if(lastNode instanceof IBranchNode && !((IBranchNode) lastNode).hasBranch()) 
 			((IBranchNode) lastNode).setBranch(statement);
 		/* The middle condition is duo to the possibility of having an assignment inside an else, that can't be set as the lastNode's next.*/
 		else if(lastNode != null && (selectionNodeStack.size() == 0 || !selectionNodeStack.peek().orphans.contains(lastNode)) && lastNode.getNext() == null)
@@ -237,6 +265,11 @@ public class CFGVisitor implements IVisitor {
 		if(lastLoopNode != null && lastLoopNode.hasBranch() && lastNode.getNext() != null) {
 			lastLoopNode.setNext(selection);
 			setLastLoopNode(null);
+		}
+		
+		if(lastBreakStatement != null) {
+			lastBreakStatement.setNext(selection);
+			setLastBreakStatement(null);
 		}
 
 		if(getLastSelectionNode() != null && getLastSelectionNode().hasBranch() && getLastSelectionNode().getNext() == null) {
@@ -286,6 +319,9 @@ public class CFGVisitor implements IVisitor {
 	}
 	private void setLastLoopNode(IBranchNode lastLoopNode) {
 		this.lastLoopNode = lastLoopNode;
+	}
+	public void setLastBreakStatement(IStatementNode lastBreakStatement) {
+		this.lastBreakStatement = lastBreakStatement;
 	}
 	private void setLastNode(INode lastNode) {
 		this.lastNode = lastNode;
