@@ -1,11 +1,4 @@
-int maiorInteiro(int[] array_inteiros){
-	int i = 0;
-	int maior_inteiro = 0;
-	while(i < array_inteiros.length){
-		if(array_inteiros[i] > maior_inteiro){
-			maior_inteiro = array_inteiros[i];
-		}
-		i = i + 1;
-	}
-	return maior_inteiro;
+void max(int i) {
+	i = i + 1;
+	return i;
 }

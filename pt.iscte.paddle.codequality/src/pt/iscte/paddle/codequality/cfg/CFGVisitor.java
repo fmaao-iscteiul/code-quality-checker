@@ -35,6 +35,7 @@ public class CFGVisitor implements IVisitor {
 
 	private static class SelectionNode {
 		final IBranchNode node;
+		
 		final List<INode> orphans;
 
 		SelectionNode(IBranchNode if_branch) {

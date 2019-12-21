@@ -19,7 +19,6 @@ int max(int[] array) {
 							break;
 							m = m + 135;
 						}
-						m = i - 1000;
 					}
 				}
 				m = m + 100;

@@ -14,9 +14,9 @@ public interface IControlFLowGraphBuilder {
 	/** Build the Control Flow Graph */
 	void build();
 	void display();
+	IControlFlowGraph getCFG();
 	
 	static CFGBuilder create(IProcedure procedure) {
 		return new CFGBuilder(procedure);
 	}
-	
 }

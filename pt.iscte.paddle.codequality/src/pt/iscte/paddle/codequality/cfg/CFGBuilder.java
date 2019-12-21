@@ -7,6 +7,7 @@ import static pt.iscte.paddle.model.IType.INT;
 import java.io.File;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import pt.iscte.paddle.model.cfg.impl.*;
@@ -22,6 +23,7 @@ import pt.iscte.paddle.model.IVariableAssignment;
 import pt.iscte.paddle.model.IBlock.IVisitor;
 import pt.iscte.paddle.model.cfg.IBranchNode;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
+import pt.iscte.paddle.model.cfg.INode;
 import pt.iscte.paddle.model.cfg.IStatementNode;
 
 public class CFGBuilder implements IControlFLowGraphBuilder{
@@ -38,7 +40,7 @@ public class CFGBuilder implements IControlFLowGraphBuilder{
 		loadVisitor();
 		build();
 	}
-
+	
 	@Override
 	public void load(){
 		this.CFG = IControlFlowGraph.create(procedure);
