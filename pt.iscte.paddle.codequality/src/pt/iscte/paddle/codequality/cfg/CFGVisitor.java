@@ -150,8 +150,10 @@ public class CFGVisitor implements IVisitor {
 		if(lastNode.getNext() == null && lastSelectionNode == null && 
 				!selection.getAlternativeBlock().isEmpty() &&
 					selectionNodeStack.size() > 0 && 
-						!selectionNodeStack.peek().orphans.contains(lastNode)) 
+						!selectionNodeStack.peek().orphans.contains(lastNode)) {
+			System.out.println("pushed into orphan list: "+lastNode + "current size: " + selectionNodeStack.peek().orphans.size());
 			selectionNodeStack.peek().orphans.add(lastNode);
+		}	
 	}
 
 	@Override
@@ -178,13 +180,14 @@ public class CFGVisitor implements IVisitor {
 		System.out.println("last node: " + lastNode);
 		if(this.loopNodeStack.size() > 0) {
 			IBranchNode finishedLoopBranch = this.loopNodeStack.pop();
-			/* So that the last Node can point to the beginning of the next loop. */
-			setLastLoopNode(finishedLoopBranch);
-
-			if(lastSelectionNode != null && selectionNodeStack.size() > 0)
+			
+			if(lastSelectionNode != null /* && selectionNodeStack.size() > 0 */) {
 				adoptOrphans(lastSelectionNode, finishedLoopBranch);
+			}
 
 			if(lastNode != null && lastNode.getNext() == null) lastNode.setNext(finishedLoopBranch);
+			/* So that the last Node can point to the beginning of the next loop. */
+			setLastLoopNode(finishedLoopBranch);
 		}
 		if(breakNodeStack.size() > 0) {
 			BreakNode lastBrake = this.breakNodeStack.pop();
@@ -198,7 +201,6 @@ public class CFGVisitor implements IVisitor {
 		System.out.println("last selection: " + getLastSelectionNode());
 		System.out.println("last loop: " + lastLoopNode);
 		System.out.println("last node: " + lastNode);
-		System.out.println("------------------- VISITOR JUST ENDED --------------------");
 		IStatementNode ret = this.CFG.newStatement(returnStatement);
 		if(lastNode instanceof IBranchNode && !((IBranchNode) lastNode).hasBranch()) ((IBranchNode) lastNode).setBranch(ret);
 		else if(lastNode != null && lastNode.getNext() == null) lastNode.setNext(ret);
@@ -206,6 +208,12 @@ public class CFGVisitor implements IVisitor {
 		ret.setNext(this.CFG.getExitNode());
 		setLastNode(ret);
 		return true;
+	}
+	
+	@Override
+	public void endVisit(IBlock block) {
+		System.out.println("------------------- VISITOR JUST ENDED --------------------");
+		IVisitor.super.endVisit(block);
 	}
 
 	@Override

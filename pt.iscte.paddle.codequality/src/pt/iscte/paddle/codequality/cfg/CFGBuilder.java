@@ -49,11 +49,14 @@ public class CFGBuilder implements IControlFLowGraphBuilder{
 	@Override
 	public void loadVisitor() {
 		this.visitor = new CFGVisitor(this.CFG);
+//		CFG.getNodes().add(CFG.getExitNode());
 	}
 
 	@Override
 	public void build() {
 		this.procedure.accept(visitor);
+//		INode exit = this.CFG.getExitNode();
+//		this.CFG.newStatement(exit);
 	}
 
 	@Override
