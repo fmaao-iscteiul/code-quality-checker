@@ -6,18 +6,5 @@ Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: pt.iscte.paddle.codequality
 Require-Bundle: pt.iscte.paddle.javali;bundle-version="1.0.0",
  pt.iscte.paddle.model;bundle-version="0.1.0",
- org.junit,
- org.junit.jupiter.api,
- org.junit.jupiter.engine,
- org.junit.jupiter.migrationsupport,
- org.junit.jupiter.params,
- org.junit.platform.commons,
- org.junit.platform.engine,
- org.junit.platform.launcher,
- org.junit.platform.runner,
- org.junit.platform.suite.api,
- org.junit.vintage.engine,
- org.hamcrest.core,
- org.opentest4j,
- org.apiguardian
+ org.junit
 Export-Package: pt.iscte.paddle.codequality.cfg
