@@ -167,7 +167,7 @@ public class CFGVisitor implements IVisitor {
 
 		this.loopNodeStack.push(loop_branch);	
 		this.handleLoopBranchVisit(loop_branch);
-		setLastLoopNode(loop_branch);
+//		setLastLoopNode(loop_branch);
 		this.setLastNode(loop_branch);
 		return true;
 	}
@@ -178,13 +178,17 @@ public class CFGVisitor implements IVisitor {
 		System.out.println("finished loop: " + loop.getGuard());
 		System.out.println("last selection: " + getLastSelectionNode());
 		System.out.println("last node: " + lastNode);
+		
 		if(this.loopNodeStack.size() > 0) {
 			IBranchNode finishedLoopBranch = this.loopNodeStack.pop();
 			
 			if(lastSelectionNode != null /* && selectionNodeStack.size() > 0 */) {
 				adoptOrphans(lastSelectionNode, finishedLoopBranch);
 			}
-
+			
+			if(lastLoopNode != null && lastLoopNode.getNext() == null){
+				lastLoopNode.setNext(finishedLoopBranch);
+			}
 			if(lastNode != null && lastNode.getNext() == null) lastNode.setNext(finishedLoopBranch);
 			/* So that the last Node can point to the beginning of the next loop. */
 			setLastLoopNode(finishedLoopBranch);
@@ -261,7 +265,7 @@ public class CFGVisitor implements IVisitor {
 		else if(lastNode instanceof IBranchNode && !((IBranchNode) lastNode).hasBranch()) 
 			((IBranchNode) lastNode).setBranch(statement);
 		/* The middle condition is duo to the possibility of having an assignment inside an else, that can't be set as the lastNode's next.*/
-		else if(lastNode != null && (selectionNodeStack.size() == 0 || !selectionNodeStack.peek().orphans.contains(lastNode)) && lastNode.getNext() == null)
+		else if(lastNode != null && !(lastNode instanceof IBranchNode) && (selectionNodeStack.size() == 0 || !selectionNodeStack.peek().orphans.contains(lastNode)) && lastNode.getNext() == null)
 			lastNode.setNext(statement);
 		
 
@@ -317,6 +321,7 @@ public class CFGVisitor implements IVisitor {
 		else if(lastNode != null && lastNode.getNext() == null) lastNode.setNext(loop);
 		else if( lastNode == null ) this.CFG.getEntryNode().setNext(loop);
 	}
+	
 	public IBranchNode getLastSelectionNode() {
 		if(this.lastSelectionNode != null && lastSelectionNode.node != null) return lastSelectionNode.node;
 		else return null;
