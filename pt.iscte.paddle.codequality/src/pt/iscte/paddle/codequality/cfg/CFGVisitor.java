@@ -181,6 +181,11 @@ public class CFGVisitor implements IVisitor {
 		if(this.loopNodeStack.size() > 0) {
 			IBranchNode finishedLoopBranch = this.loopNodeStack.pop();
 			
+			if(lastBreakStatement != null) {
+				lastBreakStatement.setNext(finishedLoopBranch);
+				setLastBreakStatement(null);
+			}
+			
 			if(lastSelectionNode != null /* && selectionNodeStack.size() > 0 */) {
 				adoptOrphans(lastSelectionNode, finishedLoopBranch);
 			}
