@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 import java.util.Observable;
+import java.util.Queue;
 
 import pt.iscte.paddle.model.IBlock.IVisitor;
 import pt.iscte.paddle.codequality.ICfg.BRANCH_TYPE_STATE;
@@ -48,8 +49,8 @@ public class Visitor implements IVisitor {
 		}
 	}
 	
-	private static class BreakNode {
-		final IStatementNode node;
+	static class BreakNode {
+		 IStatementNode node;
 		final IBlock parent;
 
 		BreakNode(IStatementNode breakStatement, IBlock parentBlock) {
@@ -106,11 +107,9 @@ public class Visitor implements IVisitor {
 		if(lastNode.getNext() == null 
 				&& lastSelectionNode == null 
 				&& selectionNodeStack.size() > 0 
-				&& !selectionNodeStack.peek().orphans.contains(lastNode)) {
-			System.out.println(selectionNodeStack.size());
-			System.out.println("pushed into orphan list: "+lastNode);
+				&& !selectionNodeStack.peek().orphans.contains(lastNode)) 
 			selectionNodeStack.peek().orphans.add(lastNode);
-		}
+		
 		/* Because of else's after selection, that needs to be set as next.*/
 		this.setlastSelectionNode(selectionNodeStack.peek());
 	}
@@ -120,7 +119,6 @@ public class Visitor implements IVisitor {
 		setCurrentBranchType(BRANCH_TYPE_STATE.ALTERNATIVE);
 		if(lastNode.getNext() == null && selectionNodeStack.size() > 0 && !selectionNodeStack.peek().orphans.contains(lastNode)) {
 			selectionNodeStack.peek().orphans.add(lastNode);
-			System.out.println("pushed into orphan list: "+lastNode);
 		}
 		return IVisitor.super.visitAlternative(selection);
 	}
@@ -135,7 +133,7 @@ public class Visitor implements IVisitor {
 					selectionNodeStack.size() > 0 && 
 						!selectionNodeStack.peek().orphans.contains(lastNode)) {
 			selectionNodeStack.peek().orphans.add(lastNode);
-		}	
+		}
 	}
 
 	@Override
@@ -151,22 +149,21 @@ public class Visitor implements IVisitor {
 
 	@Override
 	public void endVisit(ILoop loop) {
+				
+		IBranchNode finishedLoopBranch = this.loopNodeStack.pop();
 		
-		if(this.loopNodeStack.size() > 0) {
-			IBranchNode finishedLoopBranch = this.loopNodeStack.pop();
-			
-			handler.setLastBreakNext(finishedLoopBranch);			
-			handler.handleOrphansAdoption(finishedLoopBranch);
-			
-			if(lastLoopNode != null && lastLoopNode.getNext() == null){
-				lastLoopNode.setNext(finishedLoopBranch);
-			}
-			if(lastNode != null && lastNode.getNext() == null) lastNode.setNext(finishedLoopBranch);
-			/* So that the last Node can point to the beginning of the next loop. */
-			setLastLoopNode(finishedLoopBranch);
+		handler.setLastBreakNext(finishedLoopBranch);			
+		handler.handleOrphansAdoption(finishedLoopBranch);
+		
+		if(lastLoopNode != null && lastLoopNode.getNext() == null){
+			lastLoopNode.setNext(finishedLoopBranch);
 		}
-		if(breakNodeStack.size() > 0 && !breakNodeStack.peek().parent.equals(loop.getParent()))
-			setLastBreakStatement(this.breakNodeStack.pop().node);
+		if(lastNode != null && lastNode.getNext() == null) lastNode.setNext(finishedLoopBranch);
+		/* So that the last Node can point to the beginning of the next loop. */
+		setLastLoopNode(finishedLoopBranch);
+		
+		if(breakNodeStack.size() > 0 )
+			setLastBreakStatement(this.breakNodeStack.pollLast().node);
 	}
 
 	@Override
@@ -193,8 +190,6 @@ public class Visitor implements IVisitor {
 
 	@Override
 	public void visit(IBreak breakStatement) {
-		System.out.println("break visit");
-		System.out.println(breakStatement.getParent());
 		IStatementNode break_statement = cfg.newStatement(breakStatement);
 		
 		if(lastNode instanceof IBranchNode) ((IBranchNode) lastNode).setBranch(break_statement);
@@ -266,13 +261,7 @@ public class Visitor implements IVisitor {
 	}
 	protected void adoptOrphans(SelectionNode selection, INode parent) {
 		if(getCurrentBranchType() != BRANCH_TYPE_STATE.ALTERNATIVE)
-			selection.orphans.forEach(node -> {
-			System.out.println("ADOPTINGG");
-			System.out.println(selection.node.getElement());
-			System.out.println("ORFÃO: " + node);
-			System.out.println(node.getElement());
-			node.setNext(parent);
-		});
+			selection.orphans.forEach(node -> node.setNext(parent));
 		selection.orphans.clear();
 	}
 }

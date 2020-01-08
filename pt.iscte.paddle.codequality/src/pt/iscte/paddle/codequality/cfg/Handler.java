@@ -51,10 +51,13 @@ public class Handler implements IVisitHandler{
 	 */
 	@Override
 	public void handleBranchVisit(IBranchNode branch) {		
-		this.handleOrphansAdoption(branch);
-		this.setLastBreakNext(branch);
+		
 		this.setLastSelectionNext(branch);
 		this.setLastLoopNext(branch);
+		this.setLastBreakNext(branch);
+		
+		if(visitor.getCurrentBranchType() != BRANCH_TYPE_STATE.ALTERNATIVE)
+			this.handleOrphansAdoption(branch);
 
 		INode lastNode = visitor.getLastNode();
 		if(lastNode instanceof IBranchNode && !((IBranchNode) lastNode).hasBranch()) ((IBranchNode) lastNode).setBranch(branch);
