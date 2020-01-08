@@ -67,14 +67,18 @@ public class Handler implements IVisitHandler{
 	
 	@Override
 	public void setLastLoopNext(INode node) {
-		if(visitor.getLastLoopNode() != null && visitor.getLastLoopNode().hasBranch() && visitor.getLastNode().getNext() != null) {
+		if(visitor.getLastLoopNode() != null 
+				&& visitor.getLastLoopNode().hasBranch() 
+					&& visitor.getLastNode().getNext() != null) {
 			visitor.getLastLoopNode().setNext(node);
 			visitor.setLastLoopNode(null);
 		}
 	}
 	
 	public void setLastSelectionNext(INode node) {
-		if(visitor.getLastSelectionBranch() != null && visitor.getLastSelectionBranch().hasBranch() && visitor.getLastSelectionBranch().getNext() == null) {
+		if(visitor.getLastSelectionBranch() != null 
+				&& visitor.getLastSelectionBranch().hasBranch() 
+					&& visitor.getLastSelectionBranch().getNext() == null) {
 			visitor.getLastSelectionBranch().setNext(node);
 			visitor.setlastSelectionNode(null);
 		}
@@ -89,10 +93,17 @@ public class Handler implements IVisitHandler{
 	}
 	
 	public void handleOrphansAdoption(INode node) {
-		if(visitor.getLastSelectionNode() != null && visitor.getLastSelectionOrphans().size() > 0) {
+		if(visitor.getLastSelectionNode() != null 
+				&& visitor.getLastSelectionOrphans().size() > 0) 
 			visitor.adoptOrphans(visitor.getLastSelectionNode(), node);
-		}
-			
-	}	
+	}
+	
+	public void setReturnStatementNext(INode ret) {
+		INode lastNode = visitor.getLastNode();
+		
+		if(lastNode instanceof IBranchNode && !((IBranchNode) lastNode).hasBranch()) ((IBranchNode) lastNode).setBranch(ret);
+		else if(lastNode != null && lastNode.getNext() == null) lastNode.setNext(ret);
+		else lastNode.getNext().setNext(ret);
+	}
 
 }

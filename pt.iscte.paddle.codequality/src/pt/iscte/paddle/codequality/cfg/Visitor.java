@@ -71,7 +71,7 @@ public class Visitor implements IVisitor {
 
 	@Override
 	public boolean visit(IVariableAssignment assignment) {
-		IStatementNode assignment_statement = this.cfg.newStatement(assignment);
+		IStatementNode assignment_statement = cfg.newStatement(assignment);
 
 		handler.handleStatementVisit(assignment_statement);
 		setLastNode(assignment_statement);
@@ -80,14 +80,15 @@ public class Visitor implements IVisitor {
 
 	@Override
 	public boolean visit(ISelection selection) {
-		IBranchNode if_branch = this.cfg.newBranch(selection.getGuard());
+		setCurrentBranchType(BRANCH_TYPE_STATE.SELECTION);
+		
+		IBranchNode if_branch = cfg.newBranch(selection.getGuard());
 
 		/* Checks if the previous node is a statement or a branch, and acts accordingly. */
 		handler.handleBranchVisit(if_branch);		
+		
 		selectionNodeStack.push(new SelectionNode(if_branch));
-		/* Pushes the new node into the INode Collection. */
 		setLastNode(if_branch);
-		setCurrentBranchType(BRANCH_TYPE_STATE.SELECTION);
 		return true;
 	}
 
@@ -96,14 +97,16 @@ public class Visitor implements IVisitor {
 	public void endVisit(ISelection selection) {
 		currentBranchType = null;
 		if(getLastSelectionBranch() != null && getLastSelectionBranch().getNext() == null) 
-			this.selectionNodeStack.peek().orphans.add(getLastSelectionBranch());
-		setlastSelectionNode(this.selectionNodeStack.pop());
+			selectionNodeStack.peek().orphans.add(getLastSelectionBranch());
+		setlastSelectionNode(selectionNodeStack.pop());
 	}
 
 	@Override
 	public void endVisitBranch(ISelection selection) {
 		if(selectionNodeStack.size() > 0) setCurrentBranchType(BRANCH_TYPE_STATE.SELECTION);
-		else currentBranchType = null;
+		else setCurrentBranchType(null);
+		
+		/* Pushes the last node to the current level orphans list. */
 		if(lastNode.getNext() == null 
 				&& lastSelectionNode == null 
 				&& selectionNodeStack.size() > 0 
@@ -111,7 +114,7 @@ public class Visitor implements IVisitor {
 			selectionNodeStack.peek().orphans.add(lastNode);
 		
 		/* Because of else's after selection, that needs to be set as next.*/
-		this.setlastSelectionNode(selectionNodeStack.peek());
+		setlastSelectionNode(selectionNodeStack.peek());
 	}
 
 	@Override
@@ -128,6 +131,7 @@ public class Visitor implements IVisitor {
 		if(selectionNodeStack.size() > 0) setCurrentBranchType(BRANCH_TYPE_STATE.SELECTION);
 		else setCurrentBranchType(null);
 
+		/* Pushes the last node to the current level orphans list. */
 		if(lastNode.getNext() == null && lastSelectionNode == null && 
 				!selection.getAlternativeBlock().isEmpty() &&
 					selectionNodeStack.size() > 0 && 
@@ -138,9 +142,9 @@ public class Visitor implements IVisitor {
 
 	@Override
 	public boolean visit(ILoop loop) {
-		IBranchNode loop_branch = this.cfg.newBranch(loop.getGuard());
+		IBranchNode loop_branch = cfg.newBranch(loop.getGuard());
+		loopNodeStack.push(loop_branch);
 		
-		loopNodeStack.push(loop_branch);	
 		handler.handleBranchVisit(loop_branch);
 		
 		setLastNode(loop_branch);
@@ -150,31 +154,32 @@ public class Visitor implements IVisitor {
 	@Override
 	public void endVisit(ILoop loop) {
 				
-		IBranchNode finishedLoopBranch = this.loopNodeStack.pop();
+		IBranchNode finishedLoopBranch = loopNodeStack.pop();
 		
-		handler.setLastBreakNext(finishedLoopBranch);			
+		/* When inside a loop and there isn't a statement after the selections. */
+		handler.setLastBreakNext(finishedLoopBranch);
 		handler.handleOrphansAdoption(finishedLoopBranch);
 		
-		if(lastLoopNode != null && lastLoopNode.getNext() == null){
-			lastLoopNode.setNext(finishedLoopBranch);
-		}
-		if(lastNode != null && lastNode.getNext() == null) lastNode.setNext(finishedLoopBranch);
-		/* So that the last Node can point to the beginning of the next loop. */
-		setLastLoopNode(finishedLoopBranch);
+		/* When a loop inside another loop finishes and there no statements of branches left before ending the wrapping loop, so
+		 * the inside loop's next needs to become the wrapping loop.*/
+		handler.setLastLoopNext(finishedLoopBranch);
 		
-		if(breakNodeStack.size() > 0 )
-			setLastBreakStatement(this.breakNodeStack.pollLast().node);
+		if(lastNode != null && lastNode.getNext() == null) lastNode.setNext(finishedLoopBranch);
+		
+		/* Checks for the existance of break nodes, that set's the last one as the lastBreakStatement node. */
+		if(breakNodeStack.size() > 0 && !breakNodeStack.peekLast().parent.equals(loop.getParent()))
+			setLastBreakStatement(breakNodeStack.pollLast().node);
+		
+		setLastLoopNode(finishedLoopBranch);
 	}
 
 	@Override
 	public boolean visit(IReturn returnStatement) {
-		IStatementNode ret = this.cfg.newStatement(returnStatement);
+		IStatementNode ret = cfg.newStatement(returnStatement);
 		
-		if(lastNode instanceof IBranchNode && !((IBranchNode) lastNode).hasBranch()) ((IBranchNode) lastNode).setBranch(ret);
-		else if(lastNode != null && lastNode.getNext() == null) lastNode.setNext(ret);
-		else lastNode.getNext().setNext(ret);
+		handler.setReturnStatementNext(ret);
 		
-		ret.setNext(this.cfg.getExitNode());
+		ret.setNext(cfg.getExitNode());
 		setLastNode(ret);
 		return true;
 	}
@@ -182,9 +187,12 @@ public class Visitor implements IVisitor {
 	@Override
 	public void visit(IContinue continueStatement) {
 		IStatementNode continue_statement = cfg.newStatement(continueStatement);
+		
 		if(lastNode instanceof IBranchNode) ((IBranchNode) lastNode).setBranch(continue_statement);
 		else lastNode.setNext(continue_statement);
+		
 		if(loopNodeStack.peek() != null) continue_statement.setNext(loopNodeStack.peek());
+		
 		setLastNode(continue_statement);
 	}
 
@@ -195,14 +203,14 @@ public class Visitor implements IVisitor {
 		if(lastNode instanceof IBranchNode) ((IBranchNode) lastNode).setBranch(break_statement);
 		else lastNode.setNext(break_statement);
 		
-		this.breakNodeStack.add(new BreakNode(break_statement, breakStatement.getParent()));
+		breakNodeStack.add(new BreakNode(break_statement, breakStatement.getParent()));
 	}
 	
 	public IBranchNode getLastLoopNode() {
 		return lastLoopNode;
 	}
 	public void setCurrentBranchType(BRANCH_TYPE_STATE currentBranchType) {
-		this.currentBranchType = currentBranchType;
+		currentBranchType = currentBranchType;
 	}
 	public BRANCH_TYPE_STATE getCurrentBranchType() {
 		return currentBranchType;

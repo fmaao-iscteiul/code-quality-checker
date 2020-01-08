@@ -13,6 +13,7 @@ import org.junit.runners.Suite;
 	TestMax.class,
 	TestArrayCount.class,
 	TestMax.class,
+	TestDeadNodes.class,
 })
 
 public class Main {

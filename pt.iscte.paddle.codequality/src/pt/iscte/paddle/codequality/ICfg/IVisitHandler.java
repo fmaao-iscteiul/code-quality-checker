@@ -15,6 +15,7 @@ public interface IVisitHandler {
 	void setLastSelectionNext(INode node);
 	void setLastBreakNext(INode node);
 	void handleOrphansAdoption(INode node);
+	void setReturnStatementNext(INode ret);
 	
 	static Handler create(IControlFlowGraph cfg, Visitor visitor) {
 		return new Handler(cfg, visitor);
