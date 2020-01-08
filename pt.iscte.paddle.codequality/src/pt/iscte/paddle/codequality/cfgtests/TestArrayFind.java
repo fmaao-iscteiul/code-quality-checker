@@ -10,7 +10,7 @@ import static pt.iscte.paddle.model.IType.INT;
 
 import org.junit.Test;
 
-import pt.iscte.paddle.codequality.cfg.CFGBuilder;
+import pt.iscte.paddle.codequality.cfg.Builder;
 import pt.iscte.paddle.model.IBlock;
 import pt.iscte.paddle.model.ILoop;
 import pt.iscte.paddle.model.IModule;
@@ -72,7 +72,7 @@ public class TestArrayFind {
 		
 		s_ret.setNext(cfg.getExitNode());
 		
-		CFGBuilder cfgBuilder = new CFGBuilder(exists); 
+		Builder cfgBuilder = new Builder(exists); 
 		System.out.println("------------------------------");
 		cfg.getNodes().forEach(node -> System.out.println(node));
 		System.out.println("------------------------------");

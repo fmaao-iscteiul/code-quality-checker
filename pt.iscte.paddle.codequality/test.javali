@@ -18,12 +18,15 @@ int max(int[] array) {
 						m = m - 5;
 						while(i > 200){
 							break;
+							while(i < 100){
+								m = m - 50;
+							}
 							m = m + 135;
 						}
+						m = m + 101;
 					}
 				}
 				m = m + 100;
-				m = m + 101;
 			}
 			m = array[i];
 			while(m < 20){

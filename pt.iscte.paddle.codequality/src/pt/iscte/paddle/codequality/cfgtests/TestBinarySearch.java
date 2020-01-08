@@ -12,7 +12,7 @@ import static pt.iscte.paddle.model.IType.INT;
 
 import org.junit.Test;
 
-import pt.iscte.paddle.codequality.cfg.CFGBuilder;
+import pt.iscte.paddle.codequality.cfg.Builder;
 import pt.iscte.paddle.model.IBlock;
 import pt.iscte.paddle.model.ILoop;
 import pt.iscte.paddle.model.IModule;
@@ -88,7 +88,7 @@ public class TestBinarySearch {
 		
 		s_retFalse.setNext(cfg.getExitNode());
 	
-		CFGBuilder cfgBuilder = new CFGBuilder(binarySearch); 
+		Builder cfgBuilder = new Builder(binarySearch); 
 		System.out.println("------------------------------");
 		cfg.getNodes().forEach(node -> System.out.println(node));
 		System.out.println("------------------------------");
