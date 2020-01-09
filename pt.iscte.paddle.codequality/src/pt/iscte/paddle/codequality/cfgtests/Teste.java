@@ -1,4 +1,4 @@
-package pt.iscte.paddle.codequality.cfg;
+package pt.iscte.paddle.codequality.cfgtests;
 
 import java.io.File;
 import pt.iscte.paddle.codequality.ICfg.IControlFLowGraphBuilder;

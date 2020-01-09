@@ -1,4 +1,4 @@
-package pt.iscte.paddle.codequality.ICfg;
+package pt.iscte.paddle.codequality.cfg;
 
 /**
  * 

@@ -13,11 +13,11 @@ public class Builder implements IControlFLowGraphBuilder{
 
 	public Builder(IProcedure procedure){
 		this.procedure = procedure;
-		
+
 		this.load();
 		build();
 	}
-	
+
 	@Override
 	public void load(){
 		this.cfg = IControlFlowGraph.create(procedure);
