@@ -1,7 +1,8 @@
-package pt.iscte.paddle.codequality.cfgtests;
+package pt.iscte.paddle.codequality.tests;
 
 import java.io.File;
-import pt.iscte.paddle.codequality.ICfg.IControlFLowGraphBuilder;
+
+import pt.iscte.paddle.codequality.Icfg.IControlFlowGraphBuilder;
 import pt.iscte.paddle.javali.translator.Translator;
 import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.IProcedure;
@@ -15,7 +16,7 @@ public class Teste {
 		IModule module1 = translator.createProgram();
 		IProcedure procedure = module1.getProcedures().iterator().next(); // first procedure
 		
-		IControlFLowGraphBuilder cfgBuilder = IControlFLowGraphBuilder.create(procedure);
+		IControlFlowGraphBuilder cfgBuilder = IControlFlowGraphBuilder.create(procedure);
 		cfgBuilder.display();
 	}
 

@@ -1,6 +1,6 @@
 package pt.iscte.paddle.codequality.cfg;
 
-import pt.iscte.paddle.codequality.ICfg.IVisitHandler;
+import pt.iscte.paddle.codequality.Icfg.IVisitHandler;
 import pt.iscte.paddle.codequality.cfg.Visitor.SelectionNode;
 import pt.iscte.paddle.model.cfg.IBranchNode;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
@@ -100,13 +100,12 @@ public class Handler implements IVisitHandler{
 				&& visitor.getLastSelectionOrphans().size() > 0) 
 			adoptOrphans(visitor.getLastSelectionNode(), node);
 	}
+	
+	public void adoptOrphans(SelectionNode selection, INode parent) {
+		if(visitor.getCurrentBranchType() != BRANCH_TYPE_STATE.ALTERNATIVE) 	
+			selection.orphans.forEach(node -> node.setNext(parent));
 
-	public void setReturnStatementNext(INode ret) {
-		INode lastNode = visitor.getLastNode();
-
-		if(lastNode instanceof IBranchNode && !((IBranchNode) lastNode).hasBranch()) ((IBranchNode) lastNode).setBranch(ret);
-		else if(lastNode != null && lastNode.getNext() == null) lastNode.setNext(ret);
-		else lastNode.getNext().setNext(ret);
+		selection.orphans.clear();
 	}
 
 	public void updateOrphansList(INode orphan) {
@@ -117,12 +116,13 @@ public class Handler implements IVisitHandler{
 				&& !visitor.getSelectionNodeStack().peek().orphans.contains(orphan))
 			visitor.getSelectionNodeStack().peek().orphans.add(orphan);
 	}
+	
+	public void setReturnStatementNext(INode ret) {
+		INode lastNode = visitor.getLastNode();
 
-	public void adoptOrphans(SelectionNode selection, INode parent) {
-		if(visitor.getCurrentBranchType() != BRANCH_TYPE_STATE.ALTERNATIVE) 	
-			selection.orphans.forEach(node -> node.setNext(parent));
-
-		selection.orphans.clear();
+		if(lastNode instanceof IBranchNode && !((IBranchNode) lastNode).hasBranch()) ((IBranchNode) lastNode).setBranch(ret);
+		else if(lastNode != null && lastNode.getNext() == null) lastNode.setNext(ret);
+		else lastNode.getNext().setNext(ret);
 	}
 
 }

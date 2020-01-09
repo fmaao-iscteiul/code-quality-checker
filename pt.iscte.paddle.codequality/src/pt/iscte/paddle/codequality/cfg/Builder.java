@@ -1,11 +1,11 @@
 package pt.iscte.paddle.codequality.cfg;
 
-import pt.iscte.paddle.codequality.ICfg.IControlFLowGraphBuilder;
+import pt.iscte.paddle.codequality.Icfg.IControlFlowGraphBuilder;
 import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IBlock.IVisitor;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
 
-public class Builder implements IControlFLowGraphBuilder{
+public class Builder implements IControlFlowGraphBuilder{
 
 	private IProcedure procedure;
 	private IControlFlowGraph cfg;

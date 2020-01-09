@@ -1,4 +1,4 @@
-package pt.iscte.paddle.codequality.cfgtests;
+package pt.iscte.paddle.codequality.tests;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

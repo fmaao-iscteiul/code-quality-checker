@@ -7,4 +7,5 @@ Automatic-Module-Name: pt.iscte.paddle.codequality
 Require-Bundle: pt.iscte.paddle.javali;bundle-version="1.0.0",
  pt.iscte.paddle.model;bundle-version="0.1.0",
  org.junit
-Export-Package: pt.iscte.paddle.codequality.cfg
+Export-Package: pt.iscte.paddle.codequality.Icfg,
+ pt.iscte.paddle.codequality.cfg

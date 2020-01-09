@@ -12,7 +12,7 @@ import java.util.Observable;
 import java.util.Queue;
 
 import pt.iscte.paddle.model.IBlock.IVisitor;
-import pt.iscte.paddle.codequality.ICfg.IVisitHandler;
+import pt.iscte.paddle.codequality.Icfg.IVisitHandler;
 import pt.iscte.paddle.model.IBlock;
 import pt.iscte.paddle.model.IBreak;
 import pt.iscte.paddle.model.IConditionalExpression;
