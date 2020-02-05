@@ -8,4 +8,5 @@ while(i < array.length) {
            m = array[i];
 }
 i = i + 1; }
+if(i == 0){}
 return m; }

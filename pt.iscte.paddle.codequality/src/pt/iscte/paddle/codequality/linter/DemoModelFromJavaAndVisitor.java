@@ -1,3 +1,4 @@
+package pt.iscte.paddle.codequality.linter;
 import java.io.File;
 
 import pt.iscte.paddle.codequality.cases.EmptyCondition;

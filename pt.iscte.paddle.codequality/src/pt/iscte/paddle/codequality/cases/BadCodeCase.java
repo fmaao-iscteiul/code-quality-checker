@@ -12,7 +12,7 @@ public abstract class BadCodeCase {
 	public final Set<CaseType> caseTypes;
 	public String explanation;
 	public IBlock block;
-	public ElementLocation BlockLocation;
+	public ElementLocation blockLocation;
 	
 	abstract static class Builder<T extends Builder<T>> {
 		EnumSet<CaseType> caseTypes = EnumSet.noneOf(CaseType.class);
@@ -52,5 +52,14 @@ public abstract class BadCodeCase {
 	public String getExplanation() {
 		return explanation;
 	}
+	
+	public ElementLocation getBlockLocation() {
+		return blockLocation;
+	}
+	
+	public Set<CaseType> getCaseTypes() {
+		return caseTypes;
+	}
+	
 
 }
