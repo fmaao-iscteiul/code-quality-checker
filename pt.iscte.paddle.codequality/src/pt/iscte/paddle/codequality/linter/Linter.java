@@ -2,7 +2,7 @@ package pt.iscte.paddle.codequality.linter;
 import java.io.File;
 import java.util.ArrayList;
 
-import pt.iscte.paddle.codequality.cases.EmptyCondition;
+import pt.iscte.paddle.codequality.cases.EmptySelection;
 import pt.iscte.paddle.interpreter.ExecutionError;
 import pt.iscte.paddle.javali.translator.Translator;
 import pt.iscte.paddle.model.IBlock.IVisitor;
@@ -10,6 +10,8 @@ import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.IProcedure;
 
 public class Linter {
+	
+	public static final Linter INSTANCE = new Linter(new File("test3.javali"));
 	
 	private Translator translator;
 	private IModule module;
@@ -26,7 +28,7 @@ public class Linter {
 	
 	void loadVisitors() throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 
-		this.visitors.add(new pt.iscte.paddle.codequality.visitors.Condition());		
+		this.visitors.add(new pt.iscte.paddle.codequality.visitors.Selection());		
 	}
 	
 	public ArrayList<IVisitor> getVisitors() {

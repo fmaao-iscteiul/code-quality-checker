@@ -1,14 +1,14 @@
 package pt.iscte.paddle.codequality.visitors;
 import pt.iscte.paddle.codequality.cases.BadCodeCase.CaseType;
-import pt.iscte.paddle.codequality.cases.EmptyCondition;
-import pt.iscte.paddle.codequality.cases.EmptyCondition.Builder;
+import pt.iscte.paddle.codequality.cases.EmptySelection;
+import pt.iscte.paddle.codequality.cases.EmptySelection.Builder;
 import pt.iscte.paddle.javali.translator.ElementLocation;
 import pt.iscte.paddle.model.ISelection;
 import pt.iscte.paddle.model.IBlock.IVisitor;
 
-public class Condition implements IVisitor {
+public class Selection implements IVisitor {
 	
-	public Condition() {
+	public Selection() {
 	}
 	
 	@Override
@@ -23,7 +23,7 @@ public class Condition implements IVisitor {
 			+ "By doing this, you are targeting the desired condition right away, and there is no need to leave empty code blocks,  "
 			+ "like an if statement.";
 
-			EmptyCondition emptyCondition = new EmptyCondition.Builder(selection.getGuard())
+			EmptySelection emptyCondition = new EmptySelection.Builder(selection.getGuard())
 			.addType(CaseType.EMPTY_SELECTION)
 			.setExplanation(explanation)
 			.setLocation(location).build();
@@ -31,8 +31,14 @@ public class Condition implements IVisitor {
 			System.out.println(emptyCondition.getExplanation());
 			System.out.println(emptyCondition.getBlockLocation());
 			emptyCondition.getCaseTypes().forEach(type -> System.out.println(type));
+			System.out.println(emptyCondition.getGuard());
+		}
+		if(selection.hasAlternativeBlock()) {
+//			selection.getAlternativeBlock().isEmpty()
 		}
 		return true;
 	}
+	
+	
 
 }

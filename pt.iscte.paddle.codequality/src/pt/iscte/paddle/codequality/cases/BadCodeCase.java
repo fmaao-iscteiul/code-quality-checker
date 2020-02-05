@@ -47,6 +47,9 @@ public abstract class BadCodeCase {
 	
 	BadCodeCase(Builder<?> builder){
 		caseTypes = builder.caseTypes.clone();
+		explanation = builder.explanation;
+		block = builder.block;
+		blockLocation = builder.blockLocation;
 	}
 	
 	public String getExplanation() {

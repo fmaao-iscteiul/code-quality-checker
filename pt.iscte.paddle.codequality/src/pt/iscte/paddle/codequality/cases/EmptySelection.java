@@ -3,7 +3,7 @@ package pt.iscte.paddle.codequality.cases;
 import java.util.Objects;
 import pt.iscte.paddle.model.IExpression;
 
-public class EmptyCondition extends BadCodeCase{
+public class EmptySelection extends BadCodeCase{
 
 	private final IExpression guard;
 
@@ -17,8 +17,8 @@ public class EmptyCondition extends BadCodeCase{
 
 
 		@Override
-		public EmptyCondition build() {
-			return new EmptyCondition(this);
+		public EmptySelection build() {
+			return new EmptySelection(this);
 		}
 
 
@@ -28,10 +28,14 @@ public class EmptyCondition extends BadCodeCase{
 		}
 	}
 
-	private EmptyCondition(Builder builder) {
+	private EmptySelection(Builder builder) {
 		super(builder);
 		this.guard = builder.guard;
 		super.explanation = builder.explanation;
 		super.blockLocation = builder.blockLocation;
+	}
+	
+	public IExpression getGuard() {
+		return guard;
 	}
 }

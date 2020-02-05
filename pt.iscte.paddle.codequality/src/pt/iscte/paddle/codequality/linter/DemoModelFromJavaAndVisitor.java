@@ -1,7 +1,7 @@
 package pt.iscte.paddle.codequality.linter;
 import java.io.File;
 
-import pt.iscte.paddle.codequality.cases.EmptyCondition;
+import pt.iscte.paddle.codequality.cases.EmptySelection;
 import pt.iscte.paddle.interpreter.ExecutionError;
 import pt.iscte.paddle.javali.translator.Translator;
 import pt.iscte.paddle.model.IModel2CodeTranslator;
