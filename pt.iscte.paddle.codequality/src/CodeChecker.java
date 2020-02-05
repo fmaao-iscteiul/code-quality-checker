@@ -2,7 +2,6 @@ import java.io.File;
 import java.util.ArrayList;
 
 import pt.iscte.paddle.codequality.cases.EmptyCondition;
-import pt.iscte.paddle.codequality.cases.EmptyLoop;
 import pt.iscte.paddle.interpreter.ExecutionError;
 import pt.iscte.paddle.javali.translator.Translator;
 import pt.iscte.paddle.model.IBlock.IVisitor;
@@ -29,8 +28,6 @@ public class CodeChecker {
 //		for (File caseFile : casesFolder.listFiles()) {
 //			this.visitors.add((IVisitor) Class.forName(caseFile.getAbsolutePath() ).newInstance() ) ;
 //		}
-		this.visitors.add(new EmptyCondition());
-		this.visitors.add(new EmptyLoop());
 //		this.visitors.add(new EmptyExcepetion());
 //		this.visitors.add(new CatchBlock());
 //		this.visitors.add(new Loop());

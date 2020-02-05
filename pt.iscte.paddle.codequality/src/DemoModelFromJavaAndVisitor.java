@@ -23,8 +23,6 @@ public class DemoModelFromJavaAndVisitor {
 		// Model visitor
 		System.out.println("Checking the following block of code: ");
 		System.out.println(nats);
-		EmptyCondition IfChecker = new EmptyCondition();
 		
-		nats.accept(IfChecker);
 	}
 }
