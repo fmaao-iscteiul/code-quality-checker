@@ -2,14 +2,18 @@ package pt.iscte.paddle.codequality.visitors;
 import pt.iscte.paddle.codequality.cases.BadCodeCase.CaseType;
 import pt.iscte.paddle.codequality.cases.EmptySelection;
 import pt.iscte.paddle.codequality.cases.EmptySelection.Builder;
+import pt.iscte.paddle.codequality.linter.Linter;
 import pt.iscte.paddle.javali.translator.ElementLocation;
 import pt.iscte.paddle.model.ISelection;
 import pt.iscte.paddle.model.IBlock.IVisitor;
 
 public class Selection implements IVisitor {
 	
-	public Selection() {
+	public static Selection buildSelectionVisitor() {
+		return new Selection();
 	}
+	
+	private Selection() {}
 	
 	@Override
 	public boolean visit(ISelection selection) {
@@ -28,14 +32,24 @@ public class Selection implements IVisitor {
 			.setExplanation(explanation)
 			.setLocation(location).build();
 			
-			System.out.println(emptyCondition.getExplanation());
-			System.out.println(emptyCondition.getBlockLocation());
-			emptyCondition.getCaseTypes().forEach(type -> System.out.println(type));
-			System.out.println(emptyCondition.getGuard());
+			Linter.getInstance().registerCatchedCase(emptyCondition);
 		}
-		if(selection.hasAlternativeBlock()) {
-//			selection.getAlternativeBlock().isEmpty()
-		}
+		return true;
+	}
+	
+	
+	@Override
+	public boolean visitAlternative(ISelection selection) {
+		ElementLocation location = (ElementLocation) selection.getProperty(ElementLocation.Part.WHOLE);
+
+		final String explanation = "Bla Bla Bla";
+
+		EmptySelection emptyCondition = new EmptySelection.Builder(selection.getGuard())
+		.addType(CaseType.EMPTY_ALTERNATIVE	)
+		.setExplanation(explanation)
+		.setLocation(location).build();
+		
+		Linter.getInstance().registerCatchedCase(emptyCondition);
 		return true;
 	}
 	

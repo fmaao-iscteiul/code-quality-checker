@@ -8,7 +8,7 @@ import pt.iscte.paddle.model.IBlock;
 
 public abstract class BadCodeCase {
 	
-	public enum CaseType { EMPTY_SELECTION, EMPTY_LOOP, DUPLICATE, DEAD_CODE, FAULTY_CHECK }
+	public enum CaseType { EMPTY_SELECTION, EMPTY_ALTERNATIVE, EMPTY_LOOP, DUPLICATE, DEAD_CODE, FAULTY_CHECK }
 	public final Set<CaseType> caseTypes;
 	public String explanation;
 	public IBlock block;
