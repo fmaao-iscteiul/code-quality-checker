@@ -8,19 +8,19 @@ import pt.iscte.paddle.model.IBlock;
 
 public abstract class BadCodeCase {
 	
-	public enum CaseType { EMPTY_SELECTION, EMPTY_ALTERNATIVE, EMPTY_LOOP, DUPLICATE, DEAD_CODE, FAULTY_CHECK }
-	public final Set<CaseType> caseTypes;
+	public enum Category { EMPTY_SELECTION, EMPTY_ALTERNATIVE, EMPTY_LOOP, DUPLICATE, DEAD_CODE, FAULTY_BOOLEAN_CHECK }
+	public final Set<Category> categories;
 	public String explanation;
 	public IBlock block;
 	public ElementLocation blockLocation;
 	
-	abstract static class Builder<T extends Builder<T>> {
-		EnumSet<CaseType> caseTypes = EnumSet.noneOf(CaseType.class);
-		public String explanation = new String("Enter explanation here.");
+	public abstract static class Builder<T extends Builder<T>> {
+		EnumSet<Category> caseTypes = EnumSet.noneOf(Category.class);
+		public String explanation = "Enter explanation here.";
 		public IBlock block = null;
 		public ElementLocation blockLocation = null;
 		
-		public T addType(CaseType type) {
+		public T addCategory(Category type) {
 			caseTypes.add(type);
 			return self();
 		}
@@ -46,7 +46,7 @@ public abstract class BadCodeCase {
 	}
 	
 	BadCodeCase(Builder<?> builder){
-		caseTypes = builder.caseTypes.clone();
+		categories = builder.caseTypes.clone();
 		explanation = builder.explanation;
 		block = builder.block;
 		blockLocation = builder.blockLocation;
@@ -60,8 +60,8 @@ public abstract class BadCodeCase {
 		return blockLocation;
 	}
 	
-	public Set<CaseType> getCaseTypes() {
-		return caseTypes;
+	public Set<Category> getCaseTypes() {
+		return categories;
 	}
 	
 

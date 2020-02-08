@@ -1,15 +1,15 @@
 package pt.iscte.paddle.codequality.cases;
 
 import java.util.Objects;
+
 import pt.iscte.paddle.model.IExpression;
 
-public class EmptySelection extends BadCodeCase{
+public class EmptyBranch extends BadCodeCase{
 
 	private final IExpression guard;
 
 	public static class Builder extends BadCodeCase.Builder<Builder> {
 		private final IExpression guard;
-
 
 		public Builder(IExpression selectionGuard) {
 			this.guard = Objects.requireNonNull(selectionGuard);
@@ -17,8 +17,8 @@ public class EmptySelection extends BadCodeCase{
 
 
 		@Override
-		public EmptySelection build() {
-			return new EmptySelection(this);
+		public EmptyBranch build() {
+			return new EmptyBranch(this);
 		}
 
 
@@ -28,7 +28,7 @@ public class EmptySelection extends BadCodeCase{
 		}
 	}
 
-	private EmptySelection(Builder builder) {
+	private EmptyBranch(Builder builder) {
 		super(builder);
 		this.guard = builder.guard;
 		super.explanation = builder.explanation;
