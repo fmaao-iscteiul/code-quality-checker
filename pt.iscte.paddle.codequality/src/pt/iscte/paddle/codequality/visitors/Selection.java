@@ -18,10 +18,10 @@ public class Selection implements IVisitor {
 
 	@Override
 	public boolean visit(ISelection selection) {
-	
+
 		ElementLocation location = (ElementLocation) selection.getProperty(ElementLocation.Part.WHOLE);
 		IExpression guard = selection.getGuard();
-		
+
 		if(selection.getGuard().toString().matches("\\W+\\w+\\s*==\\s*[false|true]*")) {
 			Linter.getInstance()
 			.register(
@@ -31,7 +31,7 @@ public class Selection implements IVisitor {
 					.setLocation((ElementLocation) guard.getProperty(ElementLocation.Part.WHOLE))
 					.build());
 		}
-			
+
 		if(selection.getBlock().isEmpty()) {
 
 			final String explanation = "You have an empty If on the line : " +location.getLine() 
@@ -53,16 +53,19 @@ public class Selection implements IVisitor {
 
 	@Override
 	public boolean visitAlternative(ISelection selection) {
-		ElementLocation location = (ElementLocation) selection.getProperty(ElementLocation.Part.WHOLE);
+		if(selection.isEmpty()) {
+			ElementLocation location = (ElementLocation) selection.getProperty(ElementLocation.Part.WHOLE);
 
-		final String explanation = "Bla Bla Bla";
+			final String explanation = "Bla Bla Bla";
 
-		EmptyBranch emptyCondition = new EmptyBranch.Builder(selection.getGuard())
-				.addCategory(Category.EMPTY_ALTERNATIVE	)
-				.setExplanation(explanation)
-				.setLocation(location).build();
+			EmptyBranch emptyCondition = new EmptyBranch.Builder(selection.getGuard())
+					.addCategory(Category.EMPTY_ALTERNATIVE	)
+					.setExplanation(explanation)
+					.setLocation(location).build();
 
-		Linter.getInstance().register(emptyCondition);
+			Linter.getInstance().register(emptyCondition);
+		}
+
 		return true;
 	}
 

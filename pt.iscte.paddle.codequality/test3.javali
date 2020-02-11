@@ -4,6 +4,11 @@ int max(int[] array) {
 	int i;
 	i = 1;
 	boolean test = false;
+	if(test){
+		return true;
+	} else { 
+		return false;
+	}
 	if(true){}
 	while(i < array.length) {
 		if(array[i] > m) {

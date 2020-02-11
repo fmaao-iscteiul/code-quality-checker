@@ -30,8 +30,9 @@ public enum Linter {
 	private IProcedure procedure;
 
 	private ArrayList<IVisitor> visitors = new ArrayList<>();
-	private ArrayList<BadCodeCase> caughtCases = new ArrayList<>();
 	private List<BadCodeAnalyser> analysers = new ArrayList<BadCodeAnalyser>();
+	
+	private ArrayList<BadCodeCase> caughtCases = new ArrayList<>();
 	
 	IControlFlowGraphBuilder cfg;
 
@@ -56,9 +57,10 @@ public enum Linter {
 		return this;
 	}
 	
-	public void analyse() {
+	public ArrayList<BadCodeCase> analyse() {
 		this.visitors.forEach(visitor -> this.procedure.accept(visitor));
 		this.analysers.forEach(analyser -> analyser.analyse());
+		return caughtCases;
 	}
 
 	public ArrayList<IVisitor> getVisitors() {
@@ -79,10 +81,8 @@ public enum Linter {
 
 	public static void main(String[] args) throws ExecutionError, InstantiationException, IllegalAccessException, ClassNotFoundException{
 		Linter TheLinter = Linter.INSTANCE.init(new File("test3.javali"));
-		IProcedure currentProcedure = TheLinter.getProcedure();
 		
-		TheLinter.loadVisitors().analyse();
-		TheLinter.caughtCases.forEach(caughtCase -> System.out.println(caughtCase.getCaseTypes()));
+		TheLinter.loadVisitors().analyse().forEach(caughtCase -> System.out.println(caughtCase.getCaseTypes()));
 	}
 }
 
