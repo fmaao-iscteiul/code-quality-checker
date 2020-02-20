@@ -23,10 +23,7 @@ public class Loop implements IVisitor{
 			+ "By doing this, you are targeting the desired condition right away, and there is no need to leave empty code blocks,  "
 			+ "like an if statement.";
 
-			EmptyBranch emptyCondition = new EmptyBranch.Builder(loop.getGuard())
-					.addCategory(Category.EMPTY_LOOP)
-					.setExplanation(explanation)
-					.setLocation(location).build();
+			EmptyBranch emptyCondition = new EmptyBranch(Category.EMPTY_LOOP, location, explanation, loop);
 
 			Linter.getInstance().register(emptyCondition);
 		}

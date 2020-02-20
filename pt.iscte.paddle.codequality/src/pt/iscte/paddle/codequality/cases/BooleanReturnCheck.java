@@ -2,35 +2,17 @@ package pt.iscte.paddle.codequality.cases;
 
 import java.util.Objects;
 
-import pt.iscte.paddle.codequality.cases.BooleanCheck.Builder;
+import pt.iscte.paddle.codequality.cases.BadCodeCase.Category;
+import pt.iscte.paddle.javali.translator.ElementLocation;
 import pt.iscte.paddle.model.IExpression;
 import pt.iscte.paddle.model.IProgramElement;
 
 public class BooleanReturnCheck extends BadCodeCase{
+	
+	private final IProgramElement faultyVerification;
 
-	private BooleanReturnCheck(Builder builder) {
-		super(builder);
+	private BooleanReturnCheck(Category category, ElementLocation location, String explanation, IProgramElement verification) {
+		super(category, location, explanation);
+		this.faultyVerification = Objects.requireNonNull(verification);
 	}
-
-	public static class Builder extends BadCodeCase.Builder<Builder> {
-		private final IProgramElement faultyVerification;
-
-
-		public Builder(IProgramElement faultyVerification) {
-			this.faultyVerification = Objects.requireNonNull(faultyVerification);
-		}
-
-
-		@Override
-		public BooleanReturnCheck build() {
-			return new BooleanReturnCheck(this);
-		}
-
-
-		@Override
-		protected Builder self() {
-			return this;
-		}
-	}
-
 }

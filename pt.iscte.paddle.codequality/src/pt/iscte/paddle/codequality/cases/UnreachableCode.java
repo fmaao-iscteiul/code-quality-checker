@@ -3,34 +3,22 @@ package pt.iscte.paddle.codequality.cases;
 import java.util.List;
 import java.util.Objects;
 
-import pt.iscte.paddle.codequality.cases.EmptyBranch.Builder;
+import pt.iscte.paddle.codequality.cases.BadCodeCase.Category;
+import pt.iscte.paddle.javali.translator.ElementLocation;
 import pt.iscte.paddle.model.IExpression;
 import pt.iscte.paddle.model.cfg.INode;
 
-public class UnreachableCode extends BadCodeCase{
+public class UnreachableCode extends BadCodeCase {
 	
-	public static class Builder extends BadCodeCase.Builder<Builder> {
-		private final List<INode> deadNodes;
+	private final List<INode> deadNodes;
 
-
-		public Builder(List<INode> deadNodes) {
-			this.deadNodes = Objects.requireNonNull(deadNodes);
-		}
-
-
-		@Override
-		public UnreachableCode build() {
-			return new UnreachableCode(this);
-		}
-
-
-		@Override
-		protected Builder self() {
-			return this;
-		}
+	public UnreachableCode(Category category, ElementLocation location, String explanation, List<INode> deadNodes) {
+		super(category, location, explanation);
+		
+		this.deadNodes = deadNodes;
 	}
-
-	private UnreachableCode(Builder builder) {
-		super(builder);
+	
+	public List<INode> getDeadNodes() {
+		return deadNodes;
 	}
 }

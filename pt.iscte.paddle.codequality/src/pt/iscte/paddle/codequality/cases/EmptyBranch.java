@@ -1,41 +1,19 @@
 package pt.iscte.paddle.codequality.cases;
 
-import java.util.Objects;
-
+import pt.iscte.paddle.javali.translator.ElementLocation;
+import pt.iscte.paddle.model.IControlStructure;
 import pt.iscte.paddle.model.IExpression;
 
 public class EmptyBranch extends BadCodeCase{
 
-	private final IExpression guard;
+	private final IControlStructure branch;
 
-	public static class Builder extends BadCodeCase.Builder<Builder> {
-		private final IExpression guard;
-
-		public Builder(IExpression selectionGuard) {
-			this.guard = Objects.requireNonNull(selectionGuard);
-		}
-
-
-		@Override
-		public EmptyBranch build() {
-			return new EmptyBranch(this);
-		}
-
-
-		@Override
-		protected Builder self() {
-			return this;
-		}
-	}
-
-	private EmptyBranch(Builder builder) {
-		super(builder);
-		this.guard = builder.guard;
-		super.explanation = builder.explanation;
-		super.blockLocation = builder.blockLocation;
+	public EmptyBranch(Category category, ElementLocation location, String explanation, IControlStructure branch) {
+		super(category, location, explanation);
+		this.branch = branch;
 	}
 	
-	public IExpression getGuard() {
-		return guard;
+	public IControlStructure getBranch() {
+		return branch;
 	}
 }
