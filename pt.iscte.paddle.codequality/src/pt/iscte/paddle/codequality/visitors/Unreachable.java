@@ -12,22 +12,22 @@ import pt.iscte.paddle.model.cfg.INode;
 
 public class Unreachable implements BadCodeAnalyser {
 	
-	IControlFlowGraphBuilder cfg;
+	IControlFlowGraphBuilder cfgBuilder;
 	
 	public static Unreachable build(IControlFlowGraphBuilder cfg) {
 		return new Unreachable(cfg);
 	}
 	
 	private Unreachable(IControlFlowGraphBuilder cfg) {
-		this.cfg = cfg;
+		this.cfgBuilder = cfg;
 	}
 
 	@Override
 	public void analyse() {
-		List<INode> deadNodes = this.cfg.getCFG().deadNodes();
-		if(!this.cfg.getCFG().deadNodes().isEmpty()) {
+		List<INode> deadNodes = this.cfgBuilder.getCFG().deadNodes();
+		if(!this.cfgBuilder.getCFG().deadNodes().isEmpty()) {
 			String explanation = "bla bla bla";
-			Linter.getInstance().register(new UnreachableCode.Builder(deadNodes).addCategory(Category.DEAD_CODE).setExplanation(explanation).build());
+			Linter.getInstance().register(new UnreachableCode(Category.DEAD_CODE, null, explanation, deadNodes));
 		}
 	}
 

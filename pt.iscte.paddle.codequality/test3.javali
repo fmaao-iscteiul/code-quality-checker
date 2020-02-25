@@ -3,20 +3,21 @@ int max(int[] array) {
 	m = array[0];
 	int i;
 	i = 1;
+	i = 1;
 	boolean test = false;
 	if(test){
 		return true;
 	} else { 
 		return false;
 	}
-	if(true){}
+	if(test == true && test == false){}
 	while(i < array.length) {
 		if(array[i] > m) {
 			m = array[i];
 		}
 		i = i + 1;
 	}
-	return m;
+	return test;
 	m = 10;
 	return m; 
 }

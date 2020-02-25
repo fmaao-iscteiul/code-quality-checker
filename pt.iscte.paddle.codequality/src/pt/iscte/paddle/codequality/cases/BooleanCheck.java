@@ -10,7 +10,7 @@ public class BooleanCheck extends BadCodeCase {
 	
 	private IExpression guard;
 	
-	private BooleanCheck(Category category, ElementLocation location, String explanation, IExpression selectionGuard) {
+	public BooleanCheck(Category category, ElementLocation location, String explanation, IExpression selectionGuard) {
 		super(category, location, explanation);
 		this.guard = Objects.requireNonNull(selectionGuard);
 	}
