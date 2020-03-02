@@ -13,7 +13,7 @@ public class UnreachableCode extends BadCodeCase {
 	private final List<INode> deadNodes;
 
 	public UnreachableCode(Category category, ElementLocation location, String explanation, List<INode> deadNodes) {
-		super(category, location, explanation, null);
+		super(category, location, explanation);
 		
 		this.deadNodes = deadNodes;
 	}

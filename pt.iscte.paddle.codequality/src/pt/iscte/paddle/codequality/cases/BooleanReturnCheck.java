@@ -12,7 +12,7 @@ public class BooleanReturnCheck extends BadCodeCase{
 	private final IProgramElement faultyVerification;
 
 	public BooleanReturnCheck(Category category, ElementLocation location, String explanation, IProgramElement verification) {
-		super(category, location, explanation, null);
+		super(category, location, explanation);
 		this.faultyVerification = Objects.requireNonNull(verification);
 	}
 }

@@ -9,7 +9,7 @@ public class EmptyBranch extends BadCodeCase{
 	private final IControlStructure branch;
 
 	public EmptyBranch(Category category, ElementLocation location, String explanation, IControlStructure branch) {
-		super(category, location, explanation, null);
+		super(category, location, explanation);
 		this.branch = branch;
 	}
 	

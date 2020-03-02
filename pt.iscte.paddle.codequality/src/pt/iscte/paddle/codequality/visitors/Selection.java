@@ -2,6 +2,8 @@ package pt.iscte.paddle.codequality.visitors;
 import pt.iscte.paddle.codequality.cases.BooleanCheck;
 import pt.iscte.paddle.codequality.cases.EmptyBranch;
 
+import com.sun.javafx.fxml.expression.BinaryExpression;
+import com.sun.xml.internal.bind.v2.schemagen.xmlschema.List;
 
 import pt.iscte.paddle.codequality.cases.BadCodeCase.Category;
 import pt.iscte.paddle.codequality.linter.Linter;

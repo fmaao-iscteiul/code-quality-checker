@@ -6,7 +6,7 @@ import java.util.List;
 import pt.iscte.paddle.codequality.Icfg.IControlFlowGraphBuilder;
 import pt.iscte.paddle.codequality.cases.BadCodeCase;
 import pt.iscte.paddle.codequality.misc.BadCodeAnalyser;
-import pt.iscte.paddle.codequality.visitors.Duplication;
+import pt.iscte.paddle.codequality.visitors.Assignment;
 import pt.iscte.paddle.codequality.visitors.Loop;
 import pt.iscte.paddle.codequality.visitors.Return;
 import pt.iscte.paddle.codequality.visitors.Selection;
@@ -45,20 +45,12 @@ public enum Linter {
 		
 		return INSTANCE;
 	}
-	
-	public Linter init(IModule module) {
-		this.module = module;
-		this.procedure = module.getProcedures().iterator().next(); // first procedure
-		this.cfg = IControlFlowGraphBuilder.create(procedure);
-		
-		return INSTANCE;
-	}
 
 	public Linter loadVisitors() throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 		this.visitors.add(Selection.build());
 		this.visitors.add(Loop.build());
 		this.visitors.add(Return.build());
-		this.visitors.add(Duplication.build());
+		this.visitors.add(Assignment.build());
 		this.analysers.add(Unreachable.build(cfg));
 		return this;
 	}
@@ -91,10 +83,7 @@ public enum Linter {
 	public static void main(String[] args) throws ExecutionError, InstantiationException, IllegalAccessException, ClassNotFoundException{
 		Linter TheLinter = Linter.INSTANCE.init(new File("test3.javali"));
 		
-		TheLinter.loadVisitors().analyse().forEach(caughtCase -> System.out.println(caughtCase.getCaseCategory()));
-		
-		
-		TheLinter.getModule();
+		TheLinter.loadVisitors().analyse().forEach(caughtCase -> System.out.println(caughtCase.getCaseTypes()));
 	}
 }
 
