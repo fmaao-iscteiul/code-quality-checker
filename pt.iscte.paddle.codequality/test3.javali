@@ -4,20 +4,11 @@ int max(int[] array) {
 	int i;
 	i = 1;
 	i = 1;
-	boolean test = false;
-	if(test){
-		return true;
-	} else { 
-		return false;
+	i = 1;
+	i = 1;
+	boolean teste = false;
+	if(teste == false){
 	}
-	if(test == true && test == false){}
-	while(i < array.length) {
-		if(array[i] > m) {
-			m = array[i];
-		}
-		i = i + 1;
-	}
-	return test;
-	m = 10;
-	return m; 
+	
+	return i;
 }

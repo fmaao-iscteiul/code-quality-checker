@@ -1,4 +1,4 @@
-package pt.iscte.paddle.codequality.tests;
+package pt.iscte.paddle.codequality.tests.cfg;
 
 import static org.junit.Assert.assertTrue;
 import static pt.iscte.paddle.model.IOperator.EQUAL;
@@ -19,8 +19,9 @@ import pt.iscte.paddle.model.IVariableAssignment;
 import pt.iscte.paddle.model.cfg.IBranchNode;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
 import pt.iscte.paddle.model.cfg.IStatementNode;
+import pt.iscte.paddle.model.tests.BaseTest;
 
-public class TestArrayCount{
+public class TestArrayCount extends BaseTest{
 	
 	IModule module = IModule.create();
 	IProcedure count = module.addProcedure(INT);
@@ -37,8 +38,7 @@ public class TestArrayCount{
 	IVariableAssignment iInc = loop.addIncrement(i);
 	IReturn ret = body.addReturn(c);
 	
-	IControlFlowGraph cfg = IControlFlowGraph.create(count);
-	
+	IControlFlowGraph cfg = IControlFlowGraph.create(count);	
 	
 	@Test
 	public void TEstArrayCount() {
@@ -68,7 +68,7 @@ public class TestArrayCount{
 		b_loop.setNext(s_ret);
 		
 		s_ret.setNext(cfg.getExitNode());
-		
+	
 		cfg.getNodes().forEach(node -> System.out.println(node));
 		Builder cfgBuilder = new Builder(count);
 		assertTrue("The CFG's are not equal.", cfgBuilder.getCFG().isEquivalentTo(cfg));	

@@ -1,11 +1,20 @@
 package pt.iscte.paddle.codequality.cases;
 
-import pt.iscte.paddle.javali.translator.ElementLocation;
+import java.util.List;
 
-public class Duplicate extends BadCodeCase{
+import pt.iscte.paddle.codequality.misc.Category;
+import pt.iscte.paddle.model.cfg.INode;
 
-	public Duplicate(Category category, ElementLocation location, String explanation) {
-		super(category, location, explanation);
+public class Duplicate extends BadCodeCase {
+	
+	List<INode> duplicates;
+
+	public Duplicate(String explanation, List<INode> duplicates) {
+		super(Category.DUPLICATE_CODE, explanation);
+		this.duplicates = duplicates;
 	}
-
+	
+	public List<INode> getDuplicates() {
+		return duplicates;
+	}
 }
