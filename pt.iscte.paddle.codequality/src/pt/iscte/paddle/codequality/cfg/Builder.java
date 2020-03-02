@@ -45,4 +45,9 @@ public class Builder implements IControlFlowGraphBuilder{
 	public IProcedure getProcedure() {
 		return this.procedure;
 	}
+	
+	@Override
+	public String toString() {
+		return this.getCFG().getProcedure().toString();
+	}
 }

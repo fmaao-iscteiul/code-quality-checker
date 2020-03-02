@@ -2,16 +2,19 @@ package pt.iscte.paddle.codequality.cases;
 
 import java.util.Objects;
 
+import pt.iscte.paddle.codequality.misc.Category;
 import pt.iscte.paddle.javali.translator.ElementLocation;
+import pt.iscte.paddle.model.IBlockElement;
 import pt.iscte.paddle.model.IExpression;
+import pt.iscte.paddle.model.IProgramElement;
 
 public class BooleanCheck extends BadCodeCase {
 
 	
-	private IExpression guard;
+	private IExpression expression;
 	
-	public BooleanCheck(Category category, ElementLocation location, String explanation, IExpression selectionGuard) {
-		super(category, location, explanation);
-		this.guard = Objects.requireNonNull(selectionGuard);
+	public BooleanCheck(String explanation, IExpression selectionGuard) {
+		super(Category.FAULTY_BOOLEAN_CHECK, explanation, selectionGuard);
+		this.expression = Objects.requireNonNull(selectionGuard);
 	}
 }

@@ -5,7 +5,6 @@ import java.util.List;
 import pt.iscte.paddle.codequality.Icfg.IControlFlowGraphBuilder;
 import pt.iscte.paddle.codequality.cases.BadCodeCase;
 import pt.iscte.paddle.codequality.cases.UnreachableCode;
-import pt.iscte.paddle.codequality.cases.BadCodeCase.Category;
 import pt.iscte.paddle.codequality.linter.Linter;
 import pt.iscte.paddle.codequality.misc.BadCodeAnalyser;
 import pt.iscte.paddle.model.cfg.INode;
@@ -24,11 +23,11 @@ public class Unreachable implements BadCodeAnalyser {
 
 	@Override
 	public void analyse() {
-		List<INode> deadNodes = this.cfgBuilder.getCFG().deadNodes();
-		if(!this.cfgBuilder.getCFG().deadNodes().isEmpty()) {
-			String explanation = "bla bla bla";
-			Linter.getInstance().register(new UnreachableCode(Category.DEAD_CODE, null, explanation, deadNodes));
-		}
+//		List<INode> deadNodes = this.cfgBuilder.getCFG().deadNodes();
+//		if(!this.cfgBuilder.getCFG().deadNodes().isEmpty()) {
+//			String explanation = "bla bla bla";
+//			Linter.getInstance().register(new UnreachableCode(Category.DEAD_CODE, explanation, deadNodes));
+//		}
 	}
 
 }

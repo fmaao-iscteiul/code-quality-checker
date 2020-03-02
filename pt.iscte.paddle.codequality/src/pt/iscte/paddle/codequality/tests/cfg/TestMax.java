@@ -1,4 +1,4 @@
-package pt.iscte.paddle.codequality.tests;
+package pt.iscte.paddle.codequality.tests.cfg;
 
 import static org.junit.Assert.assertTrue;
 import static pt.iscte.paddle.model.IOperator.GREATER;
@@ -19,8 +19,9 @@ import pt.iscte.paddle.model.IVariableAssignment;
 import pt.iscte.paddle.model.cfg.IBranchNode;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
 import pt.iscte.paddle.model.cfg.IStatementNode;
+import pt.iscte.paddle.model.tests.BaseTest;
 
-public class TestMax {
+public class TestMax extends BaseTest{
 	
 	IModule module = IModule.create();
 	IProcedure max = module.addProcedure(INT);
@@ -36,8 +37,11 @@ public class TestMax {
 	IVariableAssignment iInc = loop.addIncrement(i);
 	IReturn ret = body.addReturn(m);
 	
+	
 	@Test
 	public void TestMax() {
+		
+		super.setup();
 		
 		IControlFlowGraph cfg = IControlFlowGraph.create(max);
 		IStatementNode s_mAss = cfg.newStatement(mAss);

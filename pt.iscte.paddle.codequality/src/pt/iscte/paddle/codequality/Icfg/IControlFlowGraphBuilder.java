@@ -19,7 +19,6 @@ public interface IControlFlowGraphBuilder {
 	 * @return The instance of the built Control Flow Graph.
 	 */
 	IControlFlowGraph getCFG();
-	
 	/**
 	 * 
 	 * @param procedure The target procedure that will be represented by the new Control Flow Graph. 

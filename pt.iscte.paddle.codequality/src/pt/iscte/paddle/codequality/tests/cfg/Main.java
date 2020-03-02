@@ -1,4 +1,4 @@
-package pt.iscte.paddle.codequality.tests;
+package pt.iscte.paddle.codequality.tests.cfg;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -11,8 +11,7 @@ import org.junit.runners.Suite;
 //	TestBinarySearch.class, // These is an issue in the Statements, i guess.
 //	TestSummation.class,
 	TestMax.class,
-	TestArrayCount.class,
-	TestMax.class,
+//	TestArrayCount.class,
 	TestDeadNodes.class,
 })
 

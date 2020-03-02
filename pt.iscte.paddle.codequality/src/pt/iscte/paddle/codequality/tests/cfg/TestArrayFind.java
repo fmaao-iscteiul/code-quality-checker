@@ -1,4 +1,4 @@
-package pt.iscte.paddle.codequality.tests;
+package pt.iscte.paddle.codequality.tests.cfg;
 
 import static org.junit.Assert.assertTrue;
 import static pt.iscte.paddle.model.IOperator.AND;
@@ -22,8 +22,9 @@ import pt.iscte.paddle.model.IVariableAssignment;
 import pt.iscte.paddle.model.cfg.IBranchNode;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
 import pt.iscte.paddle.model.cfg.IStatementNode;
+import pt.iscte.paddle.model.tests.BaseTest;
 
-public class TestArrayFind {
+public class TestArrayFind extends BaseTest{
 
 	
 	IModule module = IModule.create();
@@ -43,6 +44,8 @@ public class TestArrayFind {
 	
 	@Test
 	public void TestArrayFind() {
+		
+		super.setup();
 		
 		IControlFlowGraph cfg = IControlFlowGraph.create(exists);
 		

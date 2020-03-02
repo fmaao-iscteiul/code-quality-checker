@@ -1,4 +1,4 @@
-package pt.iscte.paddle.codequality.tests;
+package pt.iscte.paddle.codequality.tests.cfg;
 
 import java.io.File;
 

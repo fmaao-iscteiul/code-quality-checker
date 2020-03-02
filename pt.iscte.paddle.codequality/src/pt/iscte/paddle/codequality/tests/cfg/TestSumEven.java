@@ -1,4 +1,4 @@
-package pt.iscte.paddle.codequality.tests;
+package pt.iscte.paddle.codequality.tests.cfg;
 
 import static pt.iscte.paddle.model.IOperator.ADD;
 import static pt.iscte.paddle.model.IOperator.DIFFERENT;

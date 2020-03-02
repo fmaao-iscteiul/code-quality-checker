@@ -1,6 +1,6 @@
 package pt.iscte.paddle.codequality.visitors;
-import pt.iscte.paddle.codequality.cases.BadCodeCase.Category;
 import pt.iscte.paddle.codequality.linter.Linter;
+import pt.iscte.paddle.codequality.misc.Category;
 import pt.iscte.paddle.javali.translator.ElementLocation;
 import pt.iscte.paddle.codequality.cases.BooleanReturnCheck;
 import pt.iscte.paddle.model.IReturn;
@@ -18,11 +18,10 @@ public class Return implements IVisitor{
 
 	@Override
 	public boolean visit(IReturn returnStatement) {
-		ElementLocation location = (ElementLocation) returnStatement.getProperty(ElementLocation.Part.WHOLE);
 		if(returnStatement.getReturnValueType().equals(IType.BOOLEAN) 
 				&& returnStatement.getParent().getParent() instanceof ISelection) {
 			ISelection faultyVerification = (ISelection) returnStatement.getParent().getParent();
-			Linter.getInstance().register(new BooleanReturnCheck(Category.FAULTY_BOOLEAN_CHECK, location, "", faultyVerification));
+			Linter.getInstance().register(new BooleanReturnCheck(Category.FAULTY_BOOLEAN_CHECK, "", faultyVerification));
 		}
 
 		return true;
