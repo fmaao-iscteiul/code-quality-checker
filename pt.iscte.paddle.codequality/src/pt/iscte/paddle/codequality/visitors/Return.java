@@ -1,7 +1,6 @@
 package pt.iscte.paddle.codequality.visitors;
 import pt.iscte.paddle.codequality.linter.Linter;
 import pt.iscte.paddle.codequality.misc.Category;
-import pt.iscte.paddle.javali.translator.ElementLocation;
 import pt.iscte.paddle.codequality.cases.BooleanReturnCheck;
 import pt.iscte.paddle.model.IReturn;
 import pt.iscte.paddle.model.ISelection;

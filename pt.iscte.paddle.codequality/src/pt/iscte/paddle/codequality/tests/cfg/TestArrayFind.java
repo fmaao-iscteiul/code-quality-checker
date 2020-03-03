@@ -17,8 +17,8 @@ import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IReturn;
 import pt.iscte.paddle.model.ISelection;
-import pt.iscte.paddle.model.IVariable;
 import pt.iscte.paddle.model.IVariableAssignment;
+import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.model.cfg.IBranchNode;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
 import pt.iscte.paddle.model.cfg.IStatementNode;
@@ -29,12 +29,12 @@ public class TestArrayFind extends BaseTest{
 	
 	IModule module = IModule.create();
 	IProcedure exists = module.addProcedure(BOOLEAN);
-	IVariable array = exists.addParameter(INT.array().reference());
-	IVariable e = exists.addParameter(INT);
+	IVariableDeclaration array = exists.addParameter(INT.array().reference());
+	IVariableDeclaration e = exists.addParameter(INT);
 	IBlock body = exists.getBody();
-	IVariable found = body.addVariable(BOOLEAN);
+	IVariableDeclaration found = body.addVariable(BOOLEAN);
 	IVariableAssignment foundAss = body.addAssignment(found, BOOLEAN.literal(false));
-	IVariable i = body.addVariable(INT);
+	IVariableDeclaration i = body.addVariable(INT);
 	IVariableAssignment iAss = body.addAssignment(i, INT.literal(0));
 	ILoop loop = body.addLoop(AND.on(NOT.on(found), SMALLER.on(i, array.length())));
 	ISelection ifstat = loop.addSelection(EQUAL.on(array.element(i), e));

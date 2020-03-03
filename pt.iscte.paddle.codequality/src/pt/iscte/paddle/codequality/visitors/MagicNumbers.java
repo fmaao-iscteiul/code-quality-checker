@@ -1,13 +1,14 @@
 package pt.iscte.paddle.codequality.visitors;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import pt.iscte.paddle.codequality.cases.MagicNumber;
+import pt.iscte.paddle.codequality.linter.Linter;
+import pt.iscte.paddle.interpreter.IValue;
 import pt.iscte.paddle.model.IArrayElementAssignment;
 import pt.iscte.paddle.model.IVariableAssignment;
+import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.model.IBlock.IVisitor;
-import pt.iscte.paddle.model.IExpression;
-import pt.iscte.paddle.model.IVariable;
+import pt.iscte.paddle.model.IOperator;
+import pt.iscte.paddle.model.IType;
 
 public class MagicNumbers implements IVisitor{
 
@@ -15,18 +16,26 @@ public class MagicNumbers implements IVisitor{
 		return new MagicNumbers();
 	}
 
-	Map<IVariable, IExpression> variableAssignments = new HashMap<IVariable, IExpression>();
-	Map<IVariable, IExpression> arrayElementAssignments = new HashMap<IVariable, IExpression>();
+	@Override
+	public void visit(IVariableDeclaration variable) {
+		IVisitor.super.visit(variable);
+	}
 
 	@Override
-	public boolean visit(IVariableAssignment assignment) {
+	public boolean visit(IVariableAssignment assignment) {		
+		if(assignment.getExpression().getType().isNumber() && !assignment.getExpression().isDecomposable() && 
+				Integer.parseInt(assignment.getExpression().toString()) > 1){
+			Linter.getInstance().register(new MagicNumber("magic number explanation", assignment));
+		}
 
-		if(variableAssignments.containsKey(assignment.getTarget()) 
-				&& variableAssignments.get(assignment.getTarget()).equals(assignment.getExpression())) {
-			System.out.println("duplicate: " + assignment);
-		} else variableAssignments.put(assignment.getTarget(), assignment.getExpression());
-		return IVisitor.super.visit(assignment);
+		return true;
 	}
+
+	//	@Override
+	//	public void visit(IVariableExpression exp) {
+	//		System.out.println("variable expression: "+ exp);
+	//		IVisitor.super.visit(exp);
+	//	}
 
 	@Override
 	public boolean visit(IArrayElementAssignment assignment) {

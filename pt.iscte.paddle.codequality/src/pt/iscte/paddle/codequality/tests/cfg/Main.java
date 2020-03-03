@@ -8,11 +8,11 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
 	TestMax.class,
 	TestArrayFind.class,
-//	TestBinarySearch.class, // These is an issue in the Statements, i guess.
+	TestBinarySearch.class, // These is an issue in the Statements, i guess.
 //	TestSummation.class,
 	TestMax.class,
-//	TestArrayCount.class,
-	TestDeadNodes.class,
+	TestArrayCount.class,
+//	TestDeadNodes.class,
 })
 
 public class Main {

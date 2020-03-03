@@ -1,18 +1,10 @@
 package pt.iscte.paddle.codequality.visitors;
-import pt.iscte.paddle.codequality.cases.BooleanCheck;
 import pt.iscte.paddle.codequality.cases.EmptyBranch;
 import pt.iscte.paddle.codequality.cases.Nesting;
 import pt.iscte.paddle.codequality.linter.Linter;
-import pt.iscte.paddle.codequality.misc.BranchVerifications;
 import pt.iscte.paddle.codequality.misc.Category;
-import pt.iscte.paddle.javali.translator.ElementLocation;
-import pt.iscte.paddle.model.IBinaryExpression;
-import pt.iscte.paddle.model.IBinaryOperator;
-import pt.iscte.paddle.model.IExpression;
 import pt.iscte.paddle.model.ILoop;
 import pt.iscte.paddle.model.IBlock.IVisitor;
-import pt.iscte.paddle.model.IControlStructure;
-import pt.iscte.paddle.model.IOperator.OperationType;
 
 public class Loop implements IVisitor{
 

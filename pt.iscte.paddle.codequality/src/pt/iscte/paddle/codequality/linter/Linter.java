@@ -13,7 +13,6 @@ import pt.iscte.paddle.codequality.visitors.Return;
 import pt.iscte.paddle.codequality.visitors.Selection;
 import pt.iscte.paddle.codequality.visitors.Unreachable;
 import pt.iscte.paddle.interpreter.ExecutionError;
-import pt.iscte.paddle.javali.translator.Translator;
 import pt.iscte.paddle.model.IBlock.IVisitor;
 import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.IProcedure;
@@ -23,7 +22,7 @@ public enum Linter {
 	INSTANCE;
 	private Linter() {}
 	
-	private Translator translator;
+//	private Translator translator;
 	private IModule module;
 	private IProcedure procedure;
 
@@ -38,14 +37,14 @@ public enum Linter {
 		return INSTANCE;
 	}
 	
-	public Linter init(File file) {
-		this.translator = new Translator(file.getAbsolutePath());
-		this.module = translator.createProgram();
-		this.procedure = module.getProcedures().iterator().next(); // first procedure
-		this.cfg = IControlFlowGraphBuilder.create(procedure);
-		
-		return INSTANCE;
-	}
+//	public Linter init(File file) {
+//		this.translator = new Translator(file.getAbsolutePath());
+//		this.module = translator.createProgram();
+//		this.procedure = module.getProcedures().iterator().next(); // first procedure
+//		this.cfg = IControlFlowGraphBuilder.create(procedure);
+//		
+//		return INSTANCE;
+//	}
 	
 	public Linter init(IModule module) {
 		this.module = module;
@@ -61,7 +60,11 @@ public enum Linter {
 		this.visitors.add(Return.build());
 		this.visitors.add(MagicNumbers.build());
 		this.analysers.add(Unreachable.build(cfg));
-		this.analysers.add(Duplication.build(cfg));
+		
+		Duplication duplication = Duplication.build(cfg);
+		this.analysers.add(duplication);
+		this.visitors.add(duplication);
+		
 		return this;
 	}
 	
@@ -90,14 +93,14 @@ public enum Linter {
 		return cfg;
 	}
 
-	public static void main(String[] args) throws ExecutionError, InstantiationException, IllegalAccessException, ClassNotFoundException{
-		Linter TheLinter = Linter.INSTANCE.init(new File("test3.javali"));
-		
-		TheLinter.loadVisitors().analyse().forEach(caughtCase -> System.out.println(caughtCase.getCaseCategory()));
-		
-		
-		TheLinter.getModule();
-	}
+//	public static void main(String[] args) throws ExecutionError, InstantiationException, IllegalAccessException, ClassNotFoundException{
+//		Linter TheLinter = Linter.INSTANCE.init(new File("test3.javali"));
+//		
+//		TheLinter.loadVisitors().analyse().forEach(caughtCase -> System.out.println(caughtCase.getCaseCategory()));
+//		
+//		
+//		TheLinter.getModule();
+//	}
 }
 
 

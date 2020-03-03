@@ -9,8 +9,6 @@ public class TestDeadNodes extends BaseTest{
 	@Test
 	public void DeadNodes() {
 		
-		super.setup();
-		
 	}
 
 }

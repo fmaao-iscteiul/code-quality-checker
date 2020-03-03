@@ -14,8 +14,8 @@ import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IReturn;
 import pt.iscte.paddle.model.ISelection;
-import pt.iscte.paddle.model.IVariable;
 import pt.iscte.paddle.model.IVariableAssignment;
+import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.model.cfg.IBranchNode;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
 import pt.iscte.paddle.model.cfg.IStatementNode;
@@ -25,12 +25,12 @@ public class TestArrayCount extends BaseTest{
 	
 	IModule module = IModule.create();
 	IProcedure count = module.addProcedure(INT);
-	IVariable array = count.addParameter(INT.array().reference());
-	IVariable e = count.addParameter(INT);
+	IVariableDeclaration array = count.addParameter(INT.array().reference());
+	IVariableDeclaration e = count.addParameter(INT);
 	IBlock body = count.getBody();
-	IVariable c = body.addVariable(INT);
+	IVariableDeclaration c = body.addVariable(INT);
 	IVariableAssignment cAss = body.addAssignment(c, INT.literal(0));
-	IVariable i = body.addVariable(INT);
+	IVariableDeclaration i = body.addVariable(INT);
 	IVariableAssignment iAss = body.addAssignment(i, INT.literal(0));
 	ILoop loop = body.addLoop(SMALLER.on(i, array.length()));
 	ISelection ifstat = loop.addSelection(EQUAL.on(array.element(i), e));
@@ -42,6 +42,8 @@ public class TestArrayCount extends BaseTest{
 	
 	@Test
 	public void TEstArrayCount() {
+		
+		super.setup();
 		
 		IStatementNode s_cAss = cfg.newStatement(cAss);
 		cfg.getEntryNode().setNext(s_cAss);

@@ -16,6 +16,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import pt.iscte.paddle.codequality.cases.Duplicate;
+import pt.iscte.paddle.codequality.cases.MagicNumber;
+import pt.iscte.paddle.codequality.misc.BranchVerifications;
 import pt.iscte.paddle.codequality.tests.linter.DuplicateStatement;
 import pt.iscte.paddle.codequality.tests.linter.EmptySelection;
 import pt.iscte.paddle.codequality.tests.linter.SelectionMisconception;
@@ -32,7 +34,7 @@ public class LinterDemo {
 
 	public static void main(String[] args) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 
-		DuplicateStatement t = new DuplicateStatement();
+		DuplicateStatement t = new DuplicateStatement(); 
 		t.setup();
 		IModule module = t.getModule();
 
@@ -60,11 +62,10 @@ public class LinterDemo {
 			System.out.println(badCase.getElement());
 			if(badCase instanceof Duplicate) 
 				((Duplicate) badCase).getDuplicates().forEach(duplicate -> children.add(duplicate.getElement()));
+			if(badCase instanceof MagicNumber) 
+				((MagicNumber) badCase).getAssignments().forEach(assignment -> children.add(assignment));
 			else children.add(badCase.getElement());
-		});
-		
-		System.out.println(children);
-		
+		});		
 		
 		children.forEach(child -> {
 			Mark mark = MarkerService.mark(new Color (display, 255, 0, 0), child);

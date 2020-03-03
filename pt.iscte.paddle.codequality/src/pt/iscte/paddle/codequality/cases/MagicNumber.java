@@ -7,11 +7,11 @@ import pt.iscte.paddle.codequality.misc.Category;
 import pt.iscte.paddle.model.IProgramElement;
 import pt.iscte.paddle.model.IStatement;
 
-public class MagicNumbers extends BadCodeCase{
+public class MagicNumber extends BadCodeCase{
 
 	List<IStatement> assignments;
 
-	MagicNumbers(Category category, String explanation, IStatement magicNumber) {
+	public MagicNumber(String explanation, IStatement magicNumber) {
 		super(Category.FAULTY_ASSIGNMENT, explanation);
 		this.assignments = new ArrayList<IStatement>();
 		this.assignments.add(magicNumber);
@@ -19,6 +19,10 @@ public class MagicNumbers extends BadCodeCase{
 	
 	public List<IStatement> getAssignments() {
 		return assignments;
+	}
+	
+	public void addAssignment(IStatement statement) {
+		this.assignments.add(statement);
 	}
 
 }

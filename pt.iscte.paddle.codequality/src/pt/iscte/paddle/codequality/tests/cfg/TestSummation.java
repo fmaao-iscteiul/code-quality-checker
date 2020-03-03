@@ -13,19 +13,20 @@ import pt.iscte.paddle.model.ILoop;
 import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IReturn;
-import pt.iscte.paddle.model.IVariable;
 import pt.iscte.paddle.model.IVariableAssignment;
+import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.model.cfg.IBranchNode;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
 import pt.iscte.paddle.model.cfg.IStatementNode;
+import pt.iscte.paddle.model.tests.BaseTest;
 
-public class TestSummation {
+public class TestSummation extends BaseTest{
 	IModule module = IModule.create();
 	IProcedure summation = module.addProcedure(DOUBLE);
-	IVariable array = summation.addParameter(DOUBLE.array().reference());
+	IVariableDeclaration array = summation.addParameter(DOUBLE.array().reference());
 	IBlock sumBody = summation.getBody();
-	IVariable sum = sumBody.addVariable(DOUBLE, DOUBLE.literal(0.0));
-	IVariable i = sumBody.addVariable(INT, INT.literal(0));
+	IVariableDeclaration sum = sumBody.addVariable(DOUBLE, DOUBLE.literal(0.0));
+	IVariableDeclaration i = sumBody.addVariable(INT, INT.literal(0));
 	ILoop loop = sumBody.addLoop(DIFFERENT.on(i, array.dereference().length()));
 	IVariableAssignment ass1 = loop.addAssignment(sum, ADD.on(sum, array.dereference().element(i)));
 	IVariableAssignment ass2 = loop.addIncrement(i);
@@ -33,6 +34,8 @@ public class TestSummation {
 	
 	@Test
 	public void TestSomation() {
+		
+		super.setup();
 		
 		IControlFlowGraph cfg = IControlFlowGraph.create(summation);
 		

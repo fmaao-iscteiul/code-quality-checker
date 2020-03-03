@@ -19,25 +19,29 @@ import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IReturn;
 import pt.iscte.paddle.model.ISelection;
-import pt.iscte.paddle.model.IVariable;
 import pt.iscte.paddle.model.IVariableAssignment;
+import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.model.cfg.IBranchNode;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
 import pt.iscte.paddle.model.cfg.IStatementNode;
+import pt.iscte.paddle.model.tests.BaseTest;
 
-public class TestBinarySearch {
-	
+public class TestBinarySearch extends BaseTest {
+
 	IModule module = IModule.create();
 	IProcedure binarySearch = module.addProcedure(BOOLEAN);
-	IVariable array = binarySearch.addParameter(INT.array().reference());
-	IVariable e = binarySearch.addParameter(INT);
+	IVariableDeclaration array = binarySearch.addParameter(INT.array().reference());
+	IVariableDeclaration e = binarySearch.addParameter(INT);
 	IBlock body = binarySearch.getBody();
 
-	IVariable l = body.addVariable(INT, INT.literal(0));
-	IVariable r = body.addVariable(INT, SUB.on(array.length(), INT.literal(1)));
+	IVariableDeclaration l = body.addVariable(INT);
+	IVariableAssignment ass1 = body.addAssignment(l, INT.literal(0));
+	IVariableDeclaration r = body.addVariable(INT);
+	IVariableAssignment ass2 = body.addAssignment(l, SUB.on(array.length(), INT.literal(1)));
 
 	ILoop loop = body.addLoop(SMALLER_EQ.on(l, r));
-	IVariable m = loop.addVariable(INT, ADD.on(l, IDIV.on(SUB.on(r, l), INT.literal(2)) ));
+	IVariableDeclaration m = loop.addVariable(INT);
+	IVariableAssignment ass3 = body.addAssignment(m, ADD.on(l, IDIV.on(SUB.on(r, l), INT.literal(2))));
 
 	ISelection iffound = loop.addSelection(EQUAL.on(array.element(m), e));
 	IReturn retTrue = iffound.getBlock().addReturn(BOOLEAN.literal(true));
@@ -50,50 +54,53 @@ public class TestBinarySearch {
 
 	@Test
 	public void TestBrinarySearch() {
-		
+
+		super.setup();
+
 		IControlFlowGraph cfg = IControlFlowGraph.create(binarySearch);
-		
-		IStatementNode s_l = cfg.newStatement(l);
+
+		IStatementNode s_l = cfg.newStatement(ass1);
 		cfg.getEntryNode().setNext(s_l);
-		
-		IStatementNode s_r = cfg.newStatement(r);
+
+		IStatementNode s_r = cfg.newStatement(ass2);
 		s_l.setNext(s_r);
-		
+
 		IBranchNode b_loop = cfg.newBranch(loop.getGuard());
 		s_r.setNext(b_loop);
-		
-		IStatementNode s_m = cfg.newStatement(m);
-		b_loop.setBranch(s_m);
-		
+
+		IStatementNode s_m = cfg.newStatement(ass3);
+		b_loop.setNext(s_m);
+
 		IBranchNode b_ifFound = cfg.newBranch(iffound.getGuard());
-		s_m.setNext(b_ifFound);
-		
+		b_loop.setBranch(b_ifFound);
+
 		IStatementNode s_retTrue = cfg.newStatement(retTrue);
 		b_ifFound.setBranch(s_retTrue);
 		s_retTrue.setNext(cfg.getExitNode());
-		
+
 		IBranchNode b_ifNot = cfg.newBranch(ifnot.getGuard());
 		b_ifFound.setNext(b_ifNot);
-		
+
 		IStatementNode s_lAss = cfg.newStatement(lAss);
 		b_ifNot.setBranch(s_lAss);
 		s_lAss.setNext(b_loop);
-		
+
 		IStatementNode s_rAss = cfg.newStatement(rAss);
 		b_ifNot.setNext(s_rAss);
 		s_rAss.setNext(b_loop);
-		
+
 		IStatementNode s_retFalse = cfg.newStatement(ret);
-		b_loop.setNext(s_retFalse);
-		
+		s_m.setNext(s_retFalse);
+
 		s_retFalse.setNext(cfg.getExitNode());
-	
+
 		Builder cfgBuilder = new Builder(binarySearch); 
 		System.out.println("------------------------------");
+		System.out.println(binarySearch);
 		cfg.getNodes().forEach(node -> System.out.println(node));
 		System.out.println("------------------------------");
 		cfgBuilder.display();
-		
+
 		assertTrue("The CFG's are not equal.", cfgBuilder.getCFG().isEquivalentTo(cfg));
 	}
 }

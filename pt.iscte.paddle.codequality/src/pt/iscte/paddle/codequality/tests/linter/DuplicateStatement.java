@@ -12,18 +12,18 @@ import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IReturn;
 import pt.iscte.paddle.model.ISelection;
 import pt.iscte.paddle.model.IType;
-import pt.iscte.paddle.model.IVariable;
 import pt.iscte.paddle.model.IVariableAssignment;
+import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.model.tests.BaseTest;
 
 public class DuplicateStatement extends BaseTest{
 	
 	IProcedure naturals = module.addProcedure(INT.array());
-	IVariable n = naturals.addParameter(INT);
+	IVariableDeclaration n = naturals.addParameter(INT);
 	IBlock body = naturals.getBody();
-	IVariable array = body.addVariable(INT.array());
+	IVariableDeclaration array = body.addVariable(INT.array());
 	IVariableAssignment ass1 = body.addAssignment(array, INT.array().stackAllocation(n));
-	IVariable i = body.addVariable(INT, INT.literal(0));
+	IVariableDeclaration i = body.addVariable(INT, INT.literal(0));
 	ISelection selection = body.addSelectionWithAlternative(IOperator.GREATER.on(i, IType.INT.literal(10)));
 	IVariableAssignment ass4 = selection.addAssignment(i, INT.literal(10));
 	ISelection selection_else = selection.getAlternativeBlock().addSelectionWithAlternative(IOperator.GREATER.on(i, IType.INT.literal(20)));
