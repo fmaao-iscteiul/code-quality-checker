@@ -1,5 +1,9 @@
 package pt.iscte.paddle.codequality.cases;
 
+
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+
 import pt.iscte.paddle.codequality.misc.Category;
 import pt.iscte.paddle.model.IProgramElement;
 
@@ -31,6 +35,8 @@ public abstract class BadCodeCase {
 	public IProgramElement getElement() {
 		return element;
 	}
+	
+	public abstract void generateComponent(Display display, Composite comp, int style);
 	
 
 }

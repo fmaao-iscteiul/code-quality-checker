@@ -1,5 +1,9 @@
 package pt.iscte.paddle.codequality.cases;
 
+import java.awt.Composite;
+
+import org.eclipse.swt.widgets.Display;
+
 import pt.iscte.paddle.codequality.misc.Category;
 import pt.iscte.paddle.model.IControlStructure;
 
@@ -14,5 +18,11 @@ public class EmptyBranch extends BadCodeCase{
 	
 	public IControlStructure getBranch() {
 		return branch;
+	}
+
+	@Override
+	public void generateComponent(Display display, org.eclipse.swt.widgets.Composite comp, int style) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -53,46 +53,15 @@ public class LinterDemo {
 
 		Linter TheLinter = Linter.INSTANCE.init(module);
 		TheLinter.loadVisitors();
-		TheLinter.getModule().setId("test"); 
-
-		List<IProgramElement> children = new ArrayList<IProgramElement>();
-		TheLinter.analyse().forEach(badCase -> {
-			System.out.println(badCase.getExplanation());
-			System.out.println(badCase.getCaseCategory());
-			System.out.println(badCase.getElement());
-			if(badCase instanceof Duplicate) 
-				((Duplicate) badCase).getDuplicates().forEach(duplicate -> children.add(duplicate.getElement()));
-			if(badCase instanceof MagicNumber) 
-				((MagicNumber) badCase).getAssignments().forEach(assignment -> children.add(assignment));
-			else children.add(badCase.getElement());
-		});		
+		TheLinter.getModule().setId("test");
 		
-		children.forEach(child -> {
-			Mark mark = MarkerService.mark(new Color (display, 255, 0, 0), child);
-		});
-
 		Composite comp = new Composite(shell, SWT.BORDER);
 		comp.setLayout(new FillLayout());
 
-		if(children.size() > 0) {
-			Button next = new Button(comp, SWT.PUSH);
-			next.setText("next");
-			next.addSelectionListener(new SelectionAdapter() {
-				Color red = new Color (display, 255, 0, 0);
-				Iterator<IProgramElement> it = children.iterator();	
-
-				IProgramElement element = it.next();
-				Mark mark;
-				public void widgetSelected(SelectionEvent e) {
-					if(mark != null)
-						mark.unmark();
-
-					mark = MarkerService.mark(red, element);
-					if(it.hasNext())
-						element = it.next();
-				}
-			});
-		}
+		List<IProgramElement> children = new ArrayList<IProgramElement>();
+		TheLinter.analyse().forEach(badCase -> {
+			badCase.generateComponent(display, comp, SWT.BORDER_DOT);
+		});
 
 
 		shell.pack();
