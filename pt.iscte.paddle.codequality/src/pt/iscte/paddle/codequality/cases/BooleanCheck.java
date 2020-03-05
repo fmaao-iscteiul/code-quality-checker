@@ -21,9 +21,4 @@ public class BooleanCheck extends BadCodeCase {
 		return expression;
 	}
 
-	@Override
-	public void generateComponent(Display display, org.eclipse.swt.widgets.Composite comp, int style) {
-		// TODO Auto-generated method stub
-		
-	}
 }

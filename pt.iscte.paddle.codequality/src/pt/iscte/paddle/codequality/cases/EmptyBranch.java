@@ -19,10 +19,4 @@ public class EmptyBranch extends BadCodeCase{
 	public IControlStructure getBranch() {
 		return branch;
 	}
-
-	@Override
-	public void generateComponent(Display display, org.eclipse.swt.widgets.Composite comp, int style) {
-		// TODO Auto-generated method stub
-		
-	}
 }

@@ -31,4 +31,5 @@ public abstract class BaseComponent {
 	public Composite getComp() {
 		return comp;
 	}
+	
 }

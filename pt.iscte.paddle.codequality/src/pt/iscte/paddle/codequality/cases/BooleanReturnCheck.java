@@ -15,9 +15,4 @@ public class BooleanReturnCheck extends BadCodeCase{
 		super(category, explanation, selection);
 	}
 
-	@Override
-	public void generateComponent(Display display, org.eclipse.swt.widgets.Composite comp, int style) {
-		// TODO Auto-generated method stub
-		
-	}
 }

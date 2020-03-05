@@ -31,14 +31,12 @@ public class MagicNumber extends BadCodeCase{
 	public void addAssignment(IStatement statement) {
 		this.assignments.add(statement);
 	}
-
+	
 	@Override
-	public void generateComponent(Display display, Composite comp, int style) {
-		this.assignments.forEach(assignment -> {
-			Mark mark = MarkerService.mark(new Color (display, 255, 0, 0), assignment);
-			Decoration d = MarkerService.addDecoration(assignment, "Magic Number", Decoration.Location.RIGHT);
+	public void generateComponent(Display display, org.eclipse.swt.widgets.Composite comp, int style) {
+		assignments.forEach(duplicate -> {
+			super.generateMark(display, comp, style, duplicate);
 		});
-		
 	}
 
 }

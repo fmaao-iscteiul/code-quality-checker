@@ -23,11 +23,12 @@ public class Unreachable implements BadCodeAnalyser {
 
 	@Override
 	public void analyse() {
-//		List<INode> deadNodes = this.cfgBuilder.getCFG().deadNodes();
-//		if(!this.cfgBuilder.getCFG().deadNodes().isEmpty()) {
-//			String explanation = "bla bla bla";
-//			Linter.getInstance().register(new UnreachableCode(Category.DEAD_CODE, explanation, deadNodes));
-//		}
+		
+		List<INode> deadNodes = this.cfgBuilder.getCFG().deadNodes();
+		if(!this.cfgBuilder.getCFG().deadNodes().isEmpty()) {
+			String explanation = "This return statement leads to the non-execution of the highlighted blocks of code. It's placement is most certainly wrong.";
+			Linter.getInstance().register(new UnreachableCode(explanation, deadNodes));
+		}
 	}
 
 }

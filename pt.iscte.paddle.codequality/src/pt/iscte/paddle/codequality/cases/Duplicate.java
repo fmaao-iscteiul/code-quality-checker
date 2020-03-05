@@ -17,13 +17,17 @@ public class Duplicate extends BadCodeCase {
 		this.duplicates = duplicates;
 	}
 	
+	@Override
+	public void generateComponent(Display display, org.eclipse.swt.widgets.Composite comp, int style) {
+		duplicates.forEach(duplicate -> {
+			super.generateMark(display, comp, style, duplicate.getElement());
+		});
+		
+//		super.generateComponent(display, comp, style);
+	}
+	
 	public List<INode> getDuplicates() {
 		return duplicates;
 	}
 
-	@Override
-	public void generateComponent(Display display, org.eclipse.swt.widgets.Composite comp, int style) {
-		// TODO Auto-generated method stub
-		
-	}
 }
