@@ -10,6 +10,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+import pt.iscte.paddle.codequality.tests.linter.DuplicateLoopGuard;
 import pt.iscte.paddle.codequality.tests.linter.SelectionMisconception;
 import pt.iscte.paddle.codequality.tests.linter.UnreachableCode;
 import pt.iscte.paddle.javardise.ClassWidget;
@@ -21,7 +22,7 @@ public class LinterDemo {
 
 	public static void main(String[] args) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 
-		UnreachableCode t = new UnreachableCode(); 
+		DuplicateLoopGuard t = new DuplicateLoopGuard(); 
 		t.setup();
 		IModule module = t.getModule();
 

@@ -1,4 +1,5 @@
 package pt.iscte.paddle.codequality.visitors;
+import pt.iscte.paddle.codequality.cases.DuplicateLoopGuard;
 import pt.iscte.paddle.codequality.cases.EmptyBranch;
 import pt.iscte.paddle.codequality.cases.Nesting;
 import pt.iscte.paddle.codequality.linter.Linter;
@@ -51,7 +52,7 @@ public class Loop implements IVisitor{
 	public boolean visit(ISelection selection) {
 		IExpression loopGuard = this.getParentLoopGuard(selection);
 		if(selection.getBlock().isInLoop() && loopGuard != null && loopGuard.toString().equals(selection.getGuard().toString())) {
-			System.out.println("another one!");
+			Linter.getInstance().register(new DuplicateLoopGuard(selection.getGuard()));
 		}
 		return IVisitor.super.visit(selection);
 	}
