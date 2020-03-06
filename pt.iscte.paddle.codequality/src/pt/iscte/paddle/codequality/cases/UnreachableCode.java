@@ -1,9 +1,11 @@
 package pt.iscte.paddle.codequality.cases;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Text;
 
 import pt.iscte.paddle.codequality.misc.Category;
 import pt.iscte.paddle.model.cfg.IBranchNode;
@@ -21,12 +23,17 @@ public class UnreachableCode extends BadCodeCase {
 	public List<INode> getDeadNodes() {
 		return deadNodes;
 	}
+	
+	public void addDeadNode(INode deadNode) {
+		this.deadNodes.add(deadNode);
+	}
 
 	@Override
 	public void generateComponent(Display display, Composite comp, int style) {
 		deadNodes.forEach(deadNode -> {
 			super.generateMark(display, comp, style, deadNode.getElement());
 		});
+		this.generateExplanation(comp, style);
 	}
 
 }

@@ -48,7 +48,10 @@ public class MagicNumbers implements IVisitor{
 		if(assignment.getExpression().getType().isNumber() && !assignment.getExpression().isDecomposable() && 
 				Integer.parseInt(assignment.getExpression().toString()) > 1){
 			if(magicNumber == null) {
-				magicNumber = new MagicNumber("magic number explanation", assignment);
+				String explanation = "A magic number is a numeric literal that is used in the middle of a block of code without explanation."
+						+ " A number in isolation can be difficult for other programmers to understand. If this value is also duplicated, it becomes"
+						+ "harder to update the code because it needs to be replaces in multiple places.";
+				magicNumber = new MagicNumber(explanation, assignment);
 				Linter.getInstance().register(magicNumber);
 			} else magicNumber.addAssignment(assignment);
 		}
