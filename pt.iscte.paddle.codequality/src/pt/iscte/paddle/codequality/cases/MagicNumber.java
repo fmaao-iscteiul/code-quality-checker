@@ -19,7 +19,7 @@ public class MagicNumber extends BadCodeCase{
 	List<IStatement> assignments;
 
 	public MagicNumber(String explanation, IStatement magicNumber) {
-		super(Category.FAULTY_ASSIGNMENT, explanation);
+		super(Category.MAGIC_NUMBER, explanation);
 		this.assignments = new ArrayList<IStatement>();
 		this.assignments.add(magicNumber);
 	}
@@ -35,6 +35,7 @@ public class MagicNumber extends BadCodeCase{
 	@Override
 	public void generateComponent(Display display, org.eclipse.swt.widgets.Composite comp, int style) {
 		assignments.forEach(duplicate -> {
+			System.out.println(duplicate);
 			super.generateMark(display, comp, style, duplicate);
 		});
 	}

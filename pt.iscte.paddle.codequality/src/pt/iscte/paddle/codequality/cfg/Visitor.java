@@ -13,6 +13,7 @@ import java.util.Queue;
 
 import pt.iscte.paddle.model.IBlock.IVisitor;
 import pt.iscte.paddle.codequality.Icfg.IVisitHandler;
+import pt.iscte.paddle.model.IArrayElementAssignment;
 import pt.iscte.paddle.model.IBlock;
 import pt.iscte.paddle.model.IBreak;
 import pt.iscte.paddle.model.IConditionalExpression;
@@ -68,6 +69,15 @@ public class Visitor implements IVisitor {
 		this.breakNodeStack = new ArrayDeque<>();
 	}
 
+	@Override
+	public boolean visit(IArrayElementAssignment assignment) {
+		IStatementNode assignment_statement = cfg.newStatement(assignment);
+
+		handler.handleStatementVisit(assignment_statement);
+		setLastNode(assignment_statement);
+		return true;
+	}
+	
 	@Override
 	public boolean visit(IVariableAssignment assignment) {
 		IStatementNode assignment_statement = cfg.newStatement(assignment);

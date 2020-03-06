@@ -23,7 +23,6 @@ public class Unreachable implements BadCodeAnalyser {
 
 	@Override
 	public void analyse() {
-		
 		List<INode> deadNodes = this.cfgBuilder.getCFG().deadNodes();
 		if(!this.cfgBuilder.getCFG().deadNodes().isEmpty()) {
 			String explanation = "This return statement leads to the non-execution of the highlighted blocks of code. It's placement is most certainly wrong.";

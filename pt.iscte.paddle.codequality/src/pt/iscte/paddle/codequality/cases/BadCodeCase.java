@@ -1,14 +1,19 @@
 package pt.iscte.paddle.codequality.cases;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Text;
 
 import pt.iscte.paddle.codequality.misc.Category;
 import pt.iscte.paddle.javardise.Decoration;
 import pt.iscte.paddle.javardise.MarkerService;
 import pt.iscte.paddle.javardise.MarkerService.Mark;
+import pt.iscte.paddle.javardise.TextWidget;
 import pt.iscte.paddle.model.IProgramElement;
 
 public abstract class BadCodeCase {
@@ -16,6 +21,9 @@ public abstract class BadCodeCase {
 	public final Category category;
 	public String explanation;
 	public IProgramElement element;
+	
+	private List<Mark> marks = new ArrayList<Mark>();
+	private List<Decoration> decorations = new ArrayList<Decoration>();
 	
 	BadCodeCase(Category category, String explanation, IProgramElement element){
 		this.category = category;
@@ -45,8 +53,27 @@ public abstract class BadCodeCase {
 	}
 	
 	protected void generateMark(Display display, Composite comp, int style, IProgramElement element) {
-		Mark mark = MarkerService.mark(new Color (display, 255, 0, 0), element);
-		Decoration d = MarkerService.addDecoration(element, "Magic Number", Decoration.Location.RIGHT);
+		this.marks.add(MarkerService.mark(new Color (display, 255, 0, 0), element));
+		Decoration d = MarkerService.addDecoration(element, getCaseCategory().toString(), Decoration.Location.RIGHT);
+		this.decorations.add(d);
+		d.show();
+		
+//		Text text =  new Text(comp, style);
+//		text.setText(getExplanation());
+//		TextWidget textWidget = TextWidget.create(text);
+		
+	}
+	
+	public void hideAll() {
+		this.marks.forEach(mark -> mark.unmark());
+		this.decorations.forEach(decoration -> decoration.hide());
+	}
+	
+	public List<Decoration> getDecorations() {
+		return decorations;
+	}
+	public List<Mark> getMarks() {
+		return marks;
 	}
 	
 }

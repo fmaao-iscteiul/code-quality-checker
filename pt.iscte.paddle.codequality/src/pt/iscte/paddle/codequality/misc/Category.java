@@ -9,5 +9,17 @@ public enum Category {
 	DUPLICATE_CODE,
 	DEAD_CODE,
 	NESTED_CODE,
-	FAULTY_BOOLEAN_CHECK 
+	FAULTY_BOOLEAN_CHECK,
+	MAGIC_NUMBER
 }
+
+
+//static String generateCategoryTitle(Category cat) {
+//	switch (cat) {
+//	case FAULTY_ASSIGNMENT: {
+//		return 'FAULTY_ASSIGNMENT'
+//	}
+//	default:
+//		throw new IllegalArgumentException("Unexpected value: " + cat);
+//	}
+//}
