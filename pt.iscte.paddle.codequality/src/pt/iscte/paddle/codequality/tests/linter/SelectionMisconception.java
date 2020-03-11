@@ -19,7 +19,7 @@ public class SelectionMisconception extends BaseTest {
 	IBlock body = naturals.getBody();
 	IVariableDeclaration i = body.addVariable(INT, INT.literal(0));
 	ISelection selection = body.addSelectionWithAlternative(IOperator.EQUAL.on(BOOLEAN.literal(true), BOOLEAN.literal(true)));
-	IVariableAssignment ass4 = selection.addAssignment(i, INT.literal(10));
+//	IVariableAssignment ass4 = selection.addAssignment(i, INT.literal(10));
 	IVariableAssignment ass5 = selection.getAlternativeBlock().addAssignment(i, INT.literal(10));
 	IReturn addReturn = body.addReturn(n);
 

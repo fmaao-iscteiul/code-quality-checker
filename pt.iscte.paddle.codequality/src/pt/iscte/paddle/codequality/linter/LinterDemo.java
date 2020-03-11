@@ -1,17 +1,20 @@
 package pt.iscte.paddle.codequality.linter;
 
 
+import java.util.ArrayList;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
-import pt.iscte.paddle.codequality.tests.linter.DuplicateLoopGuard;
-import pt.iscte.paddle.codequality.tests.linter.SelectionMisconception;
+import pt.iscte.paddle.codequality.cases.BadCodeCase;
+import pt.iscte.paddle.codequality.tests.linter.DuplicateStatement;
 import pt.iscte.paddle.codequality.tests.linter.UnreachableCode;
 import pt.iscte.paddle.javardise.ClassWidget;
 import pt.iscte.paddle.model.IModule;
@@ -22,59 +25,69 @@ public class LinterDemo {
 
 	public static void main(String[] args) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 
-		DuplicateLoopGuard t = new DuplicateLoopGuard(); 
+		UnreachableCode t = new UnreachableCode(); 
 		t.setup();
 		IModule module = t.getModule();
 
 		Display display = new Display();
 		shell = new Shell(display);
 		shell.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
-		GridLayout layout = new GridLayout(2, false);
-		layout.marginTop = 10;
-		layout.marginLeft = 50;
-		layout.marginRight = 150;
-		layout.verticalSpacing = 20;
-
+		
+		FillLayout layout = new FillLayout();
+		layout.marginHeight = 5;
+		layout.marginWidth = 5;
 		shell.setLayout(layout);
+		
+		Composite outer = new Composite(shell, SWT.BORDER);
+		
+		FillLayout outerLayout = new FillLayout();
+		outerLayout.marginHeight = 5;
+		outerLayout.marginWidth = 5;
+		outerLayout.spacing = 5;
+		outer.setLayout(outerLayout);
+		
+		Composite widgetComp = new Composite(outer, SWT.BORDER | SWT.SCROLL_LINE);
+		widgetComp.setLayout(new FillLayout());
 
-		ClassWidget widget = new ClassWidget(shell, t.getModule());
+		ClassWidget widget = new ClassWidget(widgetComp, module);
 		widget.setEnabled(false);
+		
+		Composite rightComp = new Composite(outer, SWT.BORDER);
+		FillLayout rightLayout = new FillLayout(SWT.VERTICAL);
+		
+		rightComp.setLayout(rightLayout);
 
+		final List list = new List(rightComp, SWT.BORDER);
+		list.setSize(300, 300);
+		list.setBackground(new org.eclipse.swt.graphics.Color(display, 255, 255, 255));
+		list.setForeground(new org.eclipse.swt.graphics.Color(display, 0, 0, 0));
+		
+		Text text = new Text(rightComp, SWT.BORDER_DOT);
+		
+		// LINTER INIT
 		Linter TheLinter = Linter.INSTANCE.init(module);
 		TheLinter.loadVisitors();
 		TheLinter.getModule().setId("test");
+		ArrayList<BadCodeCase> badCodeCases = TheLinter.analyse();
 
-		//		IColorScheme ics = new ColorScheme();
-		//		new CFGWindow(TheLinter.cfg.getCFG(), ics);
-		System.out.println("dawdw: " +TheLinter.cfg);
+		for(int i=0; i < badCodeCases.size(); i++) {
+			BadCodeCase badCase = badCodeCases.get(i);
+			if(badCase == null) continue;
+			else list.add(badCase.getCaseCategory().toString());
+		}
+		
+		list.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				BadCodeCase badCodeCase = badCodeCases.get(list.getSelectionIndex());
+				badCodeCases.forEach(badCase -> badCase.hideAll());
+				badCodeCase.generateComponent(display, shell, SWT.BORDER_DOT);
+				text.setText(badCodeCase.getExplanation());
+			}
 
-		Composite comp = new Composite(shell, SWT.BORDER);
-
-		comp.setLayout(new GridLayout());
-
-		TheLinter.analyse().forEach(badCase -> {
-			System.out.println(badCase.getCaseCategory());
-			Button next = new Button(comp, SWT.PUSH);
-			next.setText(badCase.getCaseCategory().toString());
-			next.addSelectionListener(new SelectionListener() {
-				boolean visible = false;
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					TheLinter.getCaughtCases().forEach(badCase -> badCase.hideAll());
-
-					badCase.generateComponent(display, comp, SWT.BORDER_DOT);
-
-
-				}
-
-				@Override
-				public void widgetDefaultSelected(SelectionEvent e) {
-					// TODO Auto-generated method stub
-
-				}
-			});
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {}
 		});
-
 
 		shell.pack();
 		shell.open();

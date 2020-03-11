@@ -52,7 +52,6 @@ public abstract class BadCodeCase {
 	public void generateComponent(Display display, Composite comp, int style) {
 		this.generateMark(display, comp, style, element);
 		this.generateExplanation(comp, style);
-		//		TextWidget textWidget = TextWidget.create(text);
 	}
 
 	protected void generateMark(Display display, Composite comp, int style, IProgramElement element) {
