@@ -3,12 +3,15 @@ package pt.iscte.paddle.codequality.visitors;
 import pt.iscte.paddle.codequality.cases.FaultyAssignment;
 import pt.iscte.paddle.codequality.cases.MagicNumber;
 import pt.iscte.paddle.codequality.linter.Linter;
+import pt.iscte.paddle.codequality.misc.Explanations;
 import pt.iscte.paddle.interpreter.IValue;
+import pt.iscte.paddle.model.IArrayAllocation;
 import pt.iscte.paddle.model.IArrayElementAssignment;
 import pt.iscte.paddle.model.IBinaryExpression;
 import pt.iscte.paddle.model.ILiteral;
 import pt.iscte.paddle.model.IVariableAssignment;
 import pt.iscte.paddle.model.IVariableDeclaration;
+import pt.iscte.paddle.model.IVariableDereference;
 import pt.iscte.paddle.model.IBlock.IVisitor;
 import pt.iscte.paddle.model.IOperator;
 import pt.iscte.paddle.model.IStatement;
@@ -23,25 +26,14 @@ public class MagicNumbers implements IVisitor{
 	}
 
 	@Override
-	public void visit(IVariableDeclaration variable) {
-		IVisitor.super.visit(variable);
-	}
-
-	@Override
-	public void visit(ILiteral exp) {
-		IVisitor.super.visit(exp);
-	}
-
-	@Override
 	public boolean visit(IVariableAssignment assignment) {
-		System.out.println(assignment.getTarget().getDeclaration());
 		if(assignment.getTarget().toString().equals(assignment.getExpression().toString()))
-			Linter.getInstance().register(new FaultyAssignment("", assignment));
+			Linter.getInstance().register(new FaultyAssignment(Explanations.SELF_ASSIGNMENT, assignment));
 		else if(assignment.getExpression().getType().isNumber() 
 				&& !assignment.getExpression().isDecomposable()  
 				&& Integer.parseInt(assignment.getExpression().toString()) > 1){
 			if(magicNumber == null) {
-				magicNumber = new MagicNumber("magic number explanation", assignment);
+				magicNumber = new MagicNumber(Explanations.MAGIC_NUMBER, assignment);
 				Linter.getInstance().register(magicNumber);
 			} else magicNumber.addAssignment(assignment);
 		}
@@ -51,15 +43,9 @@ public class MagicNumbers implements IVisitor{
 	@Override
 	public boolean visit(IArrayElementAssignment assignment) {
 		if(assignment.getExpression().getType().isNumber() && !assignment.getExpression().isDecomposable() && 
-				Integer.parseInt(assignment.getExpression().toString()) > 1){
-			if(magicNumber == null) {
-				String explanation = "A magic number is a numeric literal that is used in the middle of a block of code without explanation."
-						+ " A number in isolation can be difficult for other programmers to understand. If this value is also duplicated, it becomes"
-						+ "harder to update the code because it needs to be replaces in multiple places.";
-				magicNumber = new MagicNumber(explanation, assignment);
-				Linter.getInstance().register(magicNumber);
-			} else magicNumber.addAssignment(assignment);
-		}
+				Integer.parseInt(assignment.getExpression().toString()) > 1)
+			Linter.getInstance().register(new MagicNumber(Explanations.MAGIC_NUMBER, assignment));
+
 		return true;
 	}
 }

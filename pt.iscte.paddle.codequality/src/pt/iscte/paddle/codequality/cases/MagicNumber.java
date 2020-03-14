@@ -35,7 +35,6 @@ public class MagicNumber extends BadCodeCase{
 	@Override
 	public void generateComponent(Display display, org.eclipse.swt.widgets.Composite comp, int style) {
 		assignments.forEach(duplicate -> {
-			System.out.println(duplicate);
 			super.generateMark(display, comp, style, duplicate);
 		});
 	}

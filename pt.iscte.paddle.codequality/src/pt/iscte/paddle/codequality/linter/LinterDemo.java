@@ -14,7 +14,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import pt.iscte.paddle.codequality.cases.BadCodeCase;
+import pt.iscte.paddle.codequality.tests.linter.DuplicateLoopGuard;
 import pt.iscte.paddle.codequality.tests.linter.DuplicateStatement;
+import pt.iscte.paddle.codequality.tests.linter.SelectionMisconception;
 import pt.iscte.paddle.codequality.tests.linter.UnreachableCode;
 import pt.iscte.paddle.javardise.ClassWidget;
 import pt.iscte.paddle.model.IModule;
@@ -46,7 +48,7 @@ public class LinterDemo {
 		outerLayout.spacing = 5;
 		outer.setLayout(outerLayout);
 		
-		Composite widgetComp = new Composite(outer, SWT.BORDER | SWT.SCROLL_LINE);
+		Composite widgetComp = new Composite(outer, SWT.V_SCROLL);
 		widgetComp.setLayout(new FillLayout());
 
 		ClassWidget widget = new ClassWidget(widgetComp, module);
@@ -57,12 +59,13 @@ public class LinterDemo {
 		
 		rightComp.setLayout(rightLayout);
 
-		final List list = new List(rightComp, SWT.BORDER);
+		final List list = new List(rightComp, SWT.V_SCROLL);
 		list.setSize(300, 300);
 		list.setBackground(new org.eclipse.swt.graphics.Color(display, 255, 255, 255));
 		list.setForeground(new org.eclipse.swt.graphics.Color(display, 0, 0, 0));
 		
-		Text text = new Text(rightComp, SWT.BORDER_DOT);
+		Text text = new Text(rightComp, SWT.WRAP | SWT.V_SCROLL);
+		text.setEditable(false);
 		
 		// LINTER INIT
 		Linter TheLinter = Linter.INSTANCE.init(module);
@@ -79,6 +82,8 @@ public class LinterDemo {
 		list.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				if(list.getSelectionIndex() == -1) return;
+
 				BadCodeCase badCodeCase = badCodeCases.get(list.getSelectionIndex());
 				badCodeCases.forEach(badCase -> badCase.hideAll());
 				badCodeCase.generateComponent(display, shell, SWT.BORDER_DOT);

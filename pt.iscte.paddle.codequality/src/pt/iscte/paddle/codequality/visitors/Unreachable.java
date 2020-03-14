@@ -7,6 +7,7 @@ import pt.iscte.paddle.codequality.cases.BadCodeCase;
 import pt.iscte.paddle.codequality.cases.UnreachableCode;
 import pt.iscte.paddle.codequality.linter.Linter;
 import pt.iscte.paddle.codequality.misc.BadCodeAnalyser;
+import pt.iscte.paddle.codequality.misc.Explanations;
 import pt.iscte.paddle.model.cfg.INode;
 
 public class Unreachable implements BadCodeAnalyser {
@@ -25,8 +26,7 @@ public class Unreachable implements BadCodeAnalyser {
 	public void analyse() {
 		List<INode> deadNodes = this.cfgBuilder.getCFG().deadNodes();
 		if(!this.cfgBuilder.getCFG().deadNodes().isEmpty()) {
-			String explanation = "This return statement leads to the non-execution of the highlighted blocks of code. It's placement is most certainly wrong.";
-			Linter.getInstance().register(new UnreachableCode(explanation, deadNodes));
+			Linter.getInstance().register(new UnreachableCode(Explanations.UNREACHABLE_CODE, deadNodes));
 		}
 	}
 

@@ -1,6 +1,7 @@
 package pt.iscte.paddle.codequality.visitors;
 import pt.iscte.paddle.codequality.linter.Linter;
 import pt.iscte.paddle.codequality.misc.Category;
+import pt.iscte.paddle.codequality.misc.Explanations;
 import pt.iscte.paddle.codequality.cases.BooleanReturnCheck;
 import pt.iscte.paddle.model.IReturn;
 import pt.iscte.paddle.model.ISelection;
@@ -20,7 +21,7 @@ public class Return implements IVisitor{
 		if(returnStatement.getReturnValueType().equals(IType.BOOLEAN) 
 				&& returnStatement.getParent().getParent() instanceof ISelection) {
 			ISelection faultyVerification = (ISelection) returnStatement.getParent().getParent();
-			Linter.getInstance().register(new BooleanReturnCheck(Category.FAULTY_BOOLEAN_CHECK, "", faultyVerification));
+			Linter.getInstance().register(new BooleanReturnCheck(Category.FAULTY_RETURN_BOOLEAN_CHECK, Explanations.FAULTY_RETURN_BOOLEAN_CHECK, faultyVerification));
 		}
 
 		return true;

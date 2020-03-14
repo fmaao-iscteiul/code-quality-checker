@@ -6,6 +6,7 @@ import java.util.List;
 import pt.iscte.paddle.codequality.Icfg.IControlFlowGraphBuilder;
 import pt.iscte.paddle.codequality.cases.BadCodeCase;
 import pt.iscte.paddle.codequality.misc.BadCodeAnalyser;
+import pt.iscte.paddle.codequality.visitors.DeadCode;
 import pt.iscte.paddle.codequality.visitors.DuplicateGuard;
 import pt.iscte.paddle.codequality.visitors.DuplicateStatement;
 import pt.iscte.paddle.codequality.visitors.Loop;
@@ -60,6 +61,7 @@ public enum Linter {
 		this.visitors.add(Loop.build());
 		this.visitors.add(Return.build());
 		this.visitors.add(MagicNumbers.build());
+		this.visitors.add(DeadCode.build());
 		this.analysers.add(Unreachable.build(cfg));
 		this.analysers.add(DuplicateGuard.build(cfg));
 		this.analysers.add(DuplicateStatement.build(cfg));

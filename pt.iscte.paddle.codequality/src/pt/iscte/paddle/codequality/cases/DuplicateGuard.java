@@ -7,6 +7,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
 import pt.iscte.paddle.codequality.misc.Category;
+import pt.iscte.paddle.codequality.misc.Explanations;
 import pt.iscte.paddle.model.IProgramElement;
 
 public class DuplicateGuard extends BadCodeCase{
@@ -14,7 +15,7 @@ public class DuplicateGuard extends BadCodeCase{
 	List<IProgramElement> guards;
 
 	public DuplicateGuard(List<IProgramElement> guards) {
-		super(Category.DUPLICATE_SELECTION_GUARD, "Duplicate Loop Guard.");
+		super(Category.DUPLICATE_SELECTION_GUARD, Explanations.DUPLICATE_SELECTION_GUARD);
 		this.guards = guards;
 	}
 	

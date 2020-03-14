@@ -26,10 +26,12 @@ public class UnreachableCode extends BaseTest{
 	IVariableAssignment ass1 = body.addAssignment(array, INT.array().stackAllocation(n));
 	IReturn addReturn1 = body.addReturn(array);
 	ISelection selection_true = body.addSelection(IOperator.EQUAL.on(n, INT.literal(10)));
+	ISelection selection_true2 = body.addSelection(IOperator.EQUAL.on(n, INT.literal(10)));
 	ISelection selection_false = body.addSelection(IOperator.EQUAL.on(b, BOOLEAN.literal(false)));
 	IVariableDeclaration i = body.addVariable(INT, INT.literal(0));
 	ILoop loop = body.addLoop(SMALLER.on(i, n));
 	IArrayElementAssignment ass2 = loop.addArrayElementAssignment(array, INT.literal(10), i);
+	IArrayElementAssignment ass4 = loop.addArrayElementAssignment(array, INT.literal(10), i);
 	
 	IVariableAssignment ass3 = loop.addAssignment(i, ADD.on(i, INT.literal(1)));
 	IReturn addReturn2 = body.addReturn(array);
