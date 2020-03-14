@@ -12,30 +12,37 @@ import pt.iscte.paddle.codequality.misc.Category;
 import pt.iscte.paddle.javardise.Decoration;
 import pt.iscte.paddle.javardise.MarkerService;
 import pt.iscte.paddle.javardise.MarkerService.Mark;
+import pt.iscte.paddle.model.IProgramElement;
 import pt.iscte.paddle.model.IStatement;
 
 public class MagicNumber extends BadCodeCase{
 
-	List<IStatement> assignments;
+	private List<IProgramElement> occurrences = new ArrayList<IProgramElement>();
+	private IProgramElement magicNumber;
 
-	public MagicNumber(String explanation, IStatement magicNumber) {
+	public MagicNumber(String explanation, IProgramElement magicNumber) {
 		super(Category.MAGIC_NUMBER, explanation);
-		this.assignments = new ArrayList<IStatement>();
-		this.assignments.add(magicNumber);
+		this.magicNumber = magicNumber;
+		this.occurrences.add(magicNumber);
 	}
 	
-	public List<IStatement> getAssignments() {
-		return assignments;
+	public IProgramElement getMagicNumber() {
+		return magicNumber;
 	}
 	
-	public void addAssignment(IStatement statement) {
-		this.assignments.add(statement);
+	public List<IProgramElement> getOccurrences() {
+		return occurrences;
+	}
+	
+	public void addAssignment(IProgramElement statement) {
+		this.occurrences.add(statement);
 	}
 	
 	@Override
 	public void generateComponent(Display display, org.eclipse.swt.widgets.Composite comp, int style) {
-		assignments.forEach(duplicate -> {
-			super.generateMark(display, comp, style, duplicate);
+		occurrences.forEach(magicNumber -> {
+			System.out.println(magicNumber);
+			super.generateMark(display, comp, style, magicNumber);
 		});
 	}
 

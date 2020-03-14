@@ -27,7 +27,7 @@ public class LinterDemo {
 
 	public static void main(String[] args) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 
-		UnreachableCode t = new UnreachableCode(); 
+		SelectionMisconception t = new SelectionMisconception(); 
 		t.setup();
 		IModule module = t.getModule();
 
@@ -71,6 +71,7 @@ public class LinterDemo {
 		Linter TheLinter = Linter.INSTANCE.init(module);
 		TheLinter.loadVisitors();
 		TheLinter.getModule().setId("test");
+		TheLinter.cfg.display();
 		ArrayList<BadCodeCase> badCodeCases = TheLinter.analyse();
 
 		for(int i=0; i < badCodeCases.size(); i++) {

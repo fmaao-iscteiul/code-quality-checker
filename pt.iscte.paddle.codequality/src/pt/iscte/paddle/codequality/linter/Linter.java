@@ -14,7 +14,6 @@ import pt.iscte.paddle.codequality.visitors.MagicNumbers;
 import pt.iscte.paddle.codequality.visitors.Return;
 import pt.iscte.paddle.codequality.visitors.Selection;
 import pt.iscte.paddle.codequality.visitors.Unreachable;
-import pt.iscte.paddle.interpreter.ExecutionError;
 import pt.iscte.paddle.model.IBlock.IVisitor;
 import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.IProcedure;

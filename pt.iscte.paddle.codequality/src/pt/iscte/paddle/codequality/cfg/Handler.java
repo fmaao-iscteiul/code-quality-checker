@@ -80,7 +80,7 @@ public class Handler implements IVisitHandler{
 
 	public void setLastSelectionNext(INode node) {
 		if(visitor.getLastSelectionBranch() != null 
-				&& visitor.getLastSelectionBranch().hasBranch() 
+//				&& visitor.getLastSelectionBranch().hasBranch()
 				&& visitor.getLastSelectionBranch().getNext() == null) {
 			visitor.getLastSelectionBranch().setNext(node);
 			visitor.setlastSelectionNode(null);
@@ -119,7 +119,9 @@ public class Handler implements IVisitHandler{
 	
 	public void setReturnStatementNext(INode ret) {
 		INode lastNode = visitor.getLastNode();
-
+		setLastSelectionNext(ret);
+		setLastLoopNext(ret);
+		
 		if(lastNode instanceof IBranchNode && !((IBranchNode) lastNode).hasBranch()) ((IBranchNode) lastNode).setBranch(ret);
 		else if(lastNode != null && lastNode.getNext() == null) lastNode.setNext(ret);
 		else lastNode.getNext().setNext(ret);
