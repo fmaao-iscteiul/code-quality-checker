@@ -27,7 +27,7 @@ public class LinterDemo {
 
 	public static void main(String[] args) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 
-		SelectionMisconception t = new SelectionMisconception(); 
+		DuplicateStatement t = new DuplicateStatement(); 
 		t.setup();
 		IModule module = t.getModule();
 

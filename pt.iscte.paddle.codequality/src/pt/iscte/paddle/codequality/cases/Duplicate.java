@@ -20,7 +20,7 @@ public class Duplicate extends BadCodeCase {
 		this.duplicates.add(duplicate);
 	}
 
-	public Duplicate(String explanation, List<INode> duplicatesList) {
+	public Duplicate(String explanation, List<INode> duplicatesList) { 
 		super(Category.DUPLICATE_CODE, explanation);
 		this.duplicates = new ArrayList<IProgramElement>();
 		duplicatesList.forEach(node -> this.duplicates.add(node.getElement()));
@@ -29,6 +29,7 @@ public class Duplicate extends BadCodeCase {
 
 	@Override
 	public void generateComponent(Display display, org.eclipse.swt.widgets.Composite comp, int style) {
+		System.out.println(duplicates);
 		duplicates.forEach(duplicate -> {
 			super.generateMark(display, comp, style, duplicate);
 		});

@@ -32,5 +32,7 @@ public class DuplicateStatement extends BaseTest{
 	ILoop loop = body.addLoop(SMALLER.on(i, n));
 	IArrayElementAssignment ass2 = loop.addArrayElementAssignment(array, ADD.on(i, INT.literal(1)), i);
 	IVariableAssignment ass3 = loop.addAssignment(i, ADD.on(i, INT.literal(1)));
+	IVariableAssignment ass7 = loop.addAssignment(i, ADD.on(i, INT.literal(1)));
+	IVariableAssignment ass12 = loop.addAssignment(i, ADD.on(i, INT.literal(1)));
 	IReturn addReturn = body.addReturn(array);
 }

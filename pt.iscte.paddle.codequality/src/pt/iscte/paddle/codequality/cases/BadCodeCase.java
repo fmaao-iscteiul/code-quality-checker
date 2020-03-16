@@ -56,9 +56,10 @@ public abstract class BadCodeCase {
 
 	protected void generateMark(Display display, Composite comp, int style, IProgramElement element) {
 		this.marks.add(MarkerService.mark(new Color (display, 255, 0, 0), element));
-//		Decoration d = MarkerService.addDecoration(element, getCaseCategory().toString(), Decoration.Location.RIGHT);
-//		this.decorations.add(d);
-//		d.show();
+	}
+	
+	protected void generateMark(Display display, Composite comp, int style, Iterable<IProgramElement> elements) {
+		this.marks.add(MarkerService.mark(new Color (display, 255, 0, 0), elements));
 	}
 	
 	protected void generateExplanation(Composite comp, int style) {

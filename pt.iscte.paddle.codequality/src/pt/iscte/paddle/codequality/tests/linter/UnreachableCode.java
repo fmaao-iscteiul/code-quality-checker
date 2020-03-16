@@ -30,7 +30,7 @@ public class UnreachableCode extends BaseTest{
 	ISelection selection_false = body.addSelection(IOperator.EQUAL.on(b, BOOLEAN.literal(false)));
 	IVariableDeclaration i = body.addVariable(INT, INT.literal(0));
 	ILoop loop = body.addLoop(SMALLER.on(i, n));
-	IArrayElementAssignment ass2 = loop.addArrayElementAssignment(array, INT.literal(10), i);
+	IArrayElementAssignment ass2 = loop.addArrayElementAssignment(array, INT.literal(20), i);
 	IArrayElementAssignment ass4 = loop.addArrayElementAssignment(array, INT.literal(10), i);
 	
 	IVariableAssignment ass3 = loop.addAssignment(i, ADD.on(i, INT.literal(1)));

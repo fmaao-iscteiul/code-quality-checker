@@ -7,6 +7,7 @@ import pt.iscte.paddle.codequality.cases.MagicNumber;
 import pt.iscte.paddle.codequality.linter.Linter;
 import pt.iscte.paddle.codequality.misc.Explanations;
 import pt.iscte.paddle.model.IArrayElementAssignment;
+import pt.iscte.paddle.model.IExpression;
 import pt.iscte.paddle.model.ILiteral;
 import pt.iscte.paddle.model.IVariableAssignment;
 import pt.iscte.paddle.model.IBlock.IVisitor;
@@ -16,6 +17,8 @@ public class MagicNumbers implements IVisitor{
 	public static MagicNumbers build() {
 		return new MagicNumbers();
 	}
+	
+	private int id = 0;
 
 	private ArrayList<MagicNumber> mNumbers = new ArrayList<MagicNumber>();;
 
@@ -36,7 +39,7 @@ public class MagicNumbers implements IVisitor{
 
 					if(magicNumber.getMagicNumber().isSame(exp)) {
 						exists = true;
-						magicNumber.addAssignment(exp);
+						magicNumber.addAssignment(exp.expression());
 					}
 
 				if(!exists) {
