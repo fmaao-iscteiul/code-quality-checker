@@ -59,7 +59,7 @@ public class DuplicateStatement implements BadCodeAnalyser, IVisitor{
 			Set<INode> duplicates = new HashSet<INode>();
 			for(INode incoming: node.getIncomming()) 
 				for(INode n: node.getIncomming()) 
-					if(!n.equals(incoming) && n.getElement().isSame(incoming.getElement())) 
+					if(n != null && incoming != null && !n.equals(incoming) && n.getElement().isSame(incoming.getElement())) 
 						duplicates.add(n);
 			if(duplicates.size() > 1) Linter.getInstance().register(new Duplicate(Explanations.DUPLICATE_BRANCH_CODE, duplicates));
 		};

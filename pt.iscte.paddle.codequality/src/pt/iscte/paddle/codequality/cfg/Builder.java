@@ -2,6 +2,7 @@ package pt.iscte.paddle.codequality.cfg;
 
 import pt.iscte.paddle.codequality.Icfg.IControlFlowGraphBuilder;
 import pt.iscte.paddle.model.IProcedure;
+import pt.iscte.paddle.model.IType;
 import pt.iscte.paddle.model.IBlock.IVisitor;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
 
@@ -27,6 +28,11 @@ public class Builder implements IControlFlowGraphBuilder{
 	@Override
 	public void build() {
 		this.procedure.accept(visitor);
+		
+		if(this.procedure.getReturnType() == IType.VOID)
+			cfg.getNodes().forEach(node -> {
+			if(node.getNext() == null && !node.isExit()) node.setNext(cfg.getExitNode());
+		});
 	}
 
 	@Override
