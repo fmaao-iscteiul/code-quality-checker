@@ -1,5 +1,6 @@
 package pt.iscte.paddle.codequality.cfg;
 import pt.iscte.paddle.model.ILoop;
+import pt.iscte.paddle.model.IProcedureCall;
 import pt.iscte.paddle.model.IReturn;
 import pt.iscte.paddle.model.ISelection;
 import pt.iscte.paddle.model.IVariableAssignment;
@@ -18,6 +19,7 @@ import pt.iscte.paddle.model.IBlock;
 import pt.iscte.paddle.model.IBreak;
 import pt.iscte.paddle.model.IConditionalExpression;
 import pt.iscte.paddle.model.IContinue;
+import pt.iscte.paddle.model.ILiteral;
 import pt.iscte.paddle.model.cfg.IBranchNode;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
 import pt.iscte.paddle.model.cfg.INode;
@@ -59,7 +61,6 @@ public class Visitor implements IVisitor {
 		}
 	}
 
-
 	public Visitor(IControlFlowGraph cfg) { 
 		this.cfg = cfg;
 		this.handler = IVisitHandler.create(cfg, this);
@@ -72,7 +73,6 @@ public class Visitor implements IVisitor {
 	@Override
 	public boolean visit(IArrayElementAssignment assignment) {
 		IStatementNode assignment_statement = cfg.newStatement(assignment);
-
 		handler.handleStatementVisit(assignment_statement);
 		setLastNode(assignment_statement);
 		return true;
@@ -205,6 +205,12 @@ public class Visitor implements IVisitor {
 		else lastNode.setNext(break_statement);
 
 		breakNodeStack.add(new BreakNode(break_statement, breakStatement.getParent()));
+	}
+	
+	@Override
+	public void endVisit(IBlock block) {
+		System.out.println("omdwaiodwandwandawddawndaw");
+		IVisitor.super.endVisit(block);
 	}
 
 	public IBranchNode getLastLoopNode() {

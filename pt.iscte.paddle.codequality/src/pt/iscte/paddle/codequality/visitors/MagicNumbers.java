@@ -30,7 +30,7 @@ public class MagicNumbers implements IVisitor{
 				&& Integer.parseInt(exp.getStringValue()) > 1) {
 
 			if(mNumbers.isEmpty()) {
-				MagicNumber mNumb = new MagicNumber(Explanations.MAGIC_NUMBER, exp.expression());
+				MagicNumber mNumb = new MagicNumber(Explanations.MAGIC_NUMBER, exp);
 				mNumbers.add(mNumb);
 				Linter.getInstance().register(mNumb);
 			} 
@@ -39,11 +39,11 @@ public class MagicNumbers implements IVisitor{
 
 					if(magicNumber.getMagicNumber().isSame(exp)) {
 						exists = true;
-						magicNumber.addAssignment(exp.expression());
+						magicNumber.addAssignment(exp);
 					}
 
 				if(!exists) {
-					MagicNumber mNumb = new MagicNumber(Explanations.MAGIC_NUMBER, exp.expression());
+					MagicNumber mNumb = new MagicNumber(Explanations.MAGIC_NUMBER, exp);
 					mNumbers.add(mNumb);
 					Linter.getInstance().register(mNumb);
 				}

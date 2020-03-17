@@ -57,11 +57,11 @@ public abstract class BadCodeCase {
 	protected void generateMark(Display display, Composite comp, int style, IProgramElement element) {
 		this.marks.add(MarkerService.mark(new Color (display, 255, 0, 0), element));
 	}
-	
+
 	protected void generateMark(Display display, Composite comp, int style, Iterable<IProgramElement> elements) {
 		this.marks.add(MarkerService.mark(new Color (display, 255, 0, 0), elements));
 	}
-	
+
 	protected void generateExplanation(Composite comp, int style) {
 		text = new Text(comp, style);
 		if(text != null) text.setText(getExplanation());
@@ -69,7 +69,9 @@ public abstract class BadCodeCase {
 
 	public void hideAll() {
 		this.marks.forEach(mark -> mark.unmark());
-		this.decorations.forEach(decoration -> decoration.hide());
+		this.decorations.forEach(decoration -> {
+			if(decoration != null) decoration.hide();
+		});
 		if(this.text != null) this.text.dispose();
 	}
 

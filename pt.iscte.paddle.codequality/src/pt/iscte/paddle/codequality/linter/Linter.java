@@ -6,6 +6,7 @@ import java.util.List;
 import pt.iscte.paddle.codequality.Icfg.IControlFlowGraphBuilder;
 import pt.iscte.paddle.codequality.cases.BadCodeCase;
 import pt.iscte.paddle.codequality.misc.BadCodeAnalyser;
+import pt.iscte.paddle.codequality.misc.ModuleProcedure;
 import pt.iscte.paddle.codequality.visitors.DeadCode;
 import pt.iscte.paddle.codequality.visitors.DuplicateGuard;
 import pt.iscte.paddle.codequality.visitors.DuplicateStatement;
@@ -19,38 +20,28 @@ import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.IProcedure;
 
 public enum Linter {
-
+	
 	INSTANCE;
 	private Linter() {}
 	
 //	private Translator translator;
 	private IModule module;
-	private IProcedure procedure;
+	
+	private List<ModuleProcedure> procedures = new ArrayList<>();
 
 	private ArrayList<IVisitor> visitors = new ArrayList<>();
 	private List<BadCodeAnalyser> analysers = new ArrayList<BadCodeAnalyser>();
 	
 	private ArrayList<BadCodeCase> caughtCases = new ArrayList<>();
 	
-	IControlFlowGraphBuilder cfg;
-
 	public static Linter getInstance() {
 		return INSTANCE;
 	}
-	
-//	public Linter init(File file) {
-//		this.translator = new Translator(file.getAbsolutePath());
-//		this.module = translator.createProgram();
-//		this.procedure = module.getProcedures().iterator().next(); // first procedure
-//		this.cfg = IControlFlowGraphBuilder.create(procedure);
-//		
-//		return INSTANCE;
-//	}
+
 	
 	public Linter init(IModule module) {
 		this.module = module;
-		this.procedure = module.getProcedures().iterator().next(); // first procedure
-		this.cfg = IControlFlowGraphBuilder.create(procedure);
+		module.getProcedures().forEach(procedure -> this.procedures.add(new ModuleProcedure(procedure)));		
 		
 		return INSTANCE;
 	}
@@ -61,18 +52,27 @@ public enum Linter {
 		this.visitors.add(Return.build());
 		this.visitors.add(MagicNumbers.build());
 		this.visitors.add(DeadCode.build());
-		this.analysers.add(Unreachable.build(cfg));
-		this.analysers.add(DuplicateGuard.build(cfg));
-		DuplicateStatement duplication = DuplicateStatement.build(cfg);
-		this.analysers.add(duplication);
+		DuplicateStatement duplication = DuplicateStatement.build(null);
 		this.visitors.add(duplication);
 		
 		return this;
 	}
 	
+	public Linter loadAnalysers() {
+		this.procedures.forEach(mProcedure -> {
+			this.analysers.add(Unreachable.build(mProcedure.getCfgBuilder()));
+			this.analysers.add(DuplicateGuard.build(mProcedure.getCfgBuilder()));
+			this.analysers.add(DuplicateStatement.build(mProcedure.getCfgBuilder()));
+		});
+		
+		return this;
+	}
+	
 	public ArrayList<BadCodeCase> analyse() {
-		this.visitors.forEach(visitor -> this.procedure.accept(visitor));
+		this.visitors.forEach(visitor -> this.procedures.forEach(mProcedure -> mProcedure.getProcedure().accept(visitor)));
 		this.analysers.forEach(analyser -> analyser.analyse());
+		
+		this.procedures.forEach(p -> p.getCfgBuilder().display());
 		return caughtCases;
 	}
 
@@ -88,11 +88,8 @@ public enum Linter {
 	public IModule getModule() {
 		return this.module;
 	}
-	public IProcedure getProcedure() {
-		return this.procedure;
-	}
-	public IControlFlowGraphBuilder getCfgBuilder() {
-		return cfg;
+	public List<ModuleProcedure> getProcedures() {
+		return this.procedures;
 	}
 
 //	public static void main(String[] args) throws ExecutionError, InstantiationException, IllegalAccessException, ClassNotFoundException{

@@ -4,7 +4,10 @@ import pt.iscte.paddle.model.cfg.IBranchNode;
 import pt.iscte.paddle.model.cfg.INode;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import pt.iscte.paddle.codequality.Icfg.IControlFlowGraphBuilder;
 import pt.iscte.paddle.codequality.cases.Duplicate;
@@ -52,23 +55,12 @@ public class DuplicateStatement implements BadCodeAnalyser, IVisitor{
 	@Override
 	public void analyse() {
 		for(INode node : this.cfgBuilder.getCFG().getNodes()) {
-			List<INode> stack = new ArrayList<INode>();
-			List<INode> duplicates = new ArrayList<INode>();
-			System.out.println(node.getIncomming());
-			for (INode incoming : node.getIncomming()) {
-				if((incoming instanceof IBranchNode) || node.isExit() || node.getIncomming().size() == 1) continue;
-				
-				System.out.println(incoming);
-				boolean contains = false;
-				for(INode n: stack) {
-					if(n.isEquivalentTo(incoming)) {
-						if(duplicates.size() == 0) duplicates.add(n);
-						duplicates.add(incoming);
-						contains = true;
-					}
-				}
-				if(!contains) stack.add(incoming);
-			}
+
+			Set<INode> duplicates = new HashSet<INode>();
+			for(INode incoming: node.getIncomming()) 
+				for(INode n: node.getIncomming()) 
+					if(!n.equals(incoming) && n.getElement().isSame(incoming.getElement())) 
+						duplicates.add(n);
 			if(duplicates.size() > 1) Linter.getInstance().register(new Duplicate(Explanations.DUPLICATE_BRANCH_CODE, duplicates));
 		};
 	}
@@ -93,7 +85,7 @@ public class DuplicateStatement implements BadCodeAnalyser, IVisitor{
 		}
 		if(!assExists || assignments.size() == 0) assignments.add(assignment);
 
-		return IVisitor.super.visit(assignment);
+		return true;
 	}
 
 }

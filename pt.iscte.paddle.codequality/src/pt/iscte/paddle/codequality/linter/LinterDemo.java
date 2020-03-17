@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Text;
 import pt.iscte.paddle.codequality.cases.BadCodeCase;
 import pt.iscte.paddle.codequality.tests.linter.DuplicateLoopGuard;
 import pt.iscte.paddle.codequality.tests.linter.DuplicateStatement;
+import pt.iscte.paddle.codequality.tests.linter.NonVoidPureFunction;
 import pt.iscte.paddle.codequality.tests.linter.SelectionMisconception;
 import pt.iscte.paddle.codequality.tests.linter.UnreachableCode;
 import pt.iscte.paddle.javardise.ClassWidget;
@@ -27,7 +28,7 @@ public class LinterDemo {
 
 	public static void main(String[] args) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 
-		DuplicateStatement t = new DuplicateStatement(); 
+		NonVoidPureFunction t = new NonVoidPureFunction(); 
 		t.setup();
 		IModule module = t.getModule();
 
@@ -69,9 +70,9 @@ public class LinterDemo {
 		
 		// LINTER INIT
 		Linter TheLinter = Linter.INSTANCE.init(module);
-		TheLinter.loadVisitors();
+		TheLinter.loadVisitors().loadAnalysers();
 		TheLinter.getModule().setId("test");
-		TheLinter.cfg.display();
+
 		ArrayList<BadCodeCase> badCodeCases = TheLinter.analyse();
 
 		for(int i=0; i < badCodeCases.size(); i++) {

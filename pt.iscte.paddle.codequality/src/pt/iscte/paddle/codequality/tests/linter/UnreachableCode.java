@@ -31,6 +31,7 @@ public class UnreachableCode extends BaseTest{
 	IVariableDeclaration i = body.addVariable(INT, INT.literal(0));
 	ILoop loop = body.addLoop(SMALLER.on(i, n));
 	IArrayElementAssignment ass2 = loop.addArrayElementAssignment(array, INT.literal(20), i);
+	IArrayElementAssignment ass6 = loop.addArrayElementAssignment(array, INT.literal(20), i);
 	IArrayElementAssignment ass4 = loop.addArrayElementAssignment(array, INT.literal(10), i);
 	
 	IVariableAssignment ass3 = loop.addAssignment(i, ADD.on(i, INT.literal(1)));

@@ -40,6 +40,7 @@ public class MagicNumber extends BadCodeCase{
 	
 	@Override
 	public void generateComponent(Display display, org.eclipse.swt.widgets.Composite comp, int style) {
+		System.out.println(occurrences);
 		super.generateMark(display, comp, style, occurrences);
 	}
 

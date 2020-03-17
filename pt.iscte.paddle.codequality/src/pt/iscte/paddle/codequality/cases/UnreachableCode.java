@@ -50,7 +50,7 @@ public class UnreachableCode extends BadCodeCase {
 			l.setImage(img);
 			return l;
 		}, Decoration.Location.TOP);
-		d.show();
+		if(d != null) d.show();
 		super.getDecorations().add(d);
 	}
 
