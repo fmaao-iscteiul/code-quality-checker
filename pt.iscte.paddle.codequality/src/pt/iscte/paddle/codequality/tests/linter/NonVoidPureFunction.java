@@ -40,14 +40,14 @@ public class NonVoidPureFunction extends BaseTest{
 	IVariableDeclaration n2 = body2.addVariable(INT);
 	IVariableAssignment ass4 = body2.addAssignment(n2, INT.literal(19));
 	IVariableAssignment ass5 = body2.addAssignment(n2, INT.literal(19));
-	IProcedureCall call1 = body2.addCall(naturals, INT.literal(10));
+	IProcedureCall proCall = body2.addCall(naturals, INT.literal(10));
+	
 	IVariableDeclaration n3 = body2.addVariable(INT.array());
-	IVariableAssignment ass7 = body2.addAssignment(n3, call1);
+	IVariableAssignment ass7 = body2.addAssignment(n3, proCall);
 	
 	
 	@Case("123")
 	void test(){
-		
 		module.setId("NonVoidPureFunction");
 		
 		System.out.println(nonVoidPureFunctionText);

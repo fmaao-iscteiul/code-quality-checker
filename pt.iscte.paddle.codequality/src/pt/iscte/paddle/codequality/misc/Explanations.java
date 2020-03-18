@@ -17,6 +17,7 @@ public final class Explanations {
 	public static final String SELF_ASSIGNMENT = "The highlighted variable was assigned to itself. This leads to the assignment of a value that"
 			+ "the variable already had. With this being, it is considered an useless assignment.";
 	public static final String DUPLICATE_BRANCH_CODE = "The highlighted statements are duplicated inside both the if and else selections. This"
-			+ "logic could be simplified in order to reduce code duplicated and improve the code base quality."; 
+			+ "logic could be simplified in order to reduce code duplicated and improve the code base quality.";
+	public static final String FAULTY_METHOD_CALL = "faulty ndawjdjawndjawdjwanjdanj"; 
 	
 }

@@ -77,7 +77,21 @@ public class Visitor implements IVisitor {
 		setLastNode(assignment_statement);
 		return true;
 	}
-	
+
+	@Override
+	public boolean visit(IProcedureCall call) {
+		for(INode node: cfg.getNodes()) {
+			if(node.getElement() != null && node.getElement().hashCode() == call.hashCode())
+				return false;
+		}
+
+		IStatementNode assignment_statement = cfg.newStatement(call);
+
+		handler.handleStatementVisit(assignment_statement);
+		setLastNode(assignment_statement);
+		return true;
+	}
+
 	@Override
 	public boolean visit(IVariableAssignment assignment) {
 		IStatementNode assignment_statement = cfg.newStatement(assignment);
@@ -105,10 +119,10 @@ public class Visitor implements IVisitor {
 	@Override
 	public void endVisit(ISelection selection) {
 		setCurrentBranchType(null);
-		
-//		if(getLastSelectionBranch() != null && getLastSelectionBranch().getNext() == null) 
-//			selectionNodeStack.peek().orphans.add(getLastSelectionBranch());
-		
+
+		//		if(getLastSelectionBranch() != null && getLastSelectionBranch().getNext() == null) 
+		//			selectionNodeStack.peek().orphans.add(getLastSelectionBranch());
+
 		setlastSelectionNode(selectionNodeStack.pop());
 	}
 
@@ -177,7 +191,7 @@ public class Visitor implements IVisitor {
 	@Override
 	public boolean visit(IReturn returnStatement) {
 		IStatementNode ret = cfg.newStatement(returnStatement);
-		
+
 		handler.setReturnStatementNext(ret);
 
 		ret.setNext(cfg.getExitNode());
@@ -206,7 +220,7 @@ public class Visitor implements IVisitor {
 
 		breakNodeStack.add(new BreakNode(break_statement, breakStatement.getParent()));
 	}
-	
+
 	@Override
 	public void endVisit(IBlock block) {
 		System.out.println("omdwaiodwandwandawddawndaw");
