@@ -44,7 +44,7 @@ public class NonVoidPureFunction extends BaseTest{
 	
 	IVariableDeclaration n3 = body2.addVariable(INT.array());
 	IVariableAssignment ass7 = body2.addAssignment(n3, proCall);
-	
+	 
 	
 	@Case("123")
 	void test(){
