@@ -17,6 +17,7 @@ import pt.iscte.paddle.model.IVariableAssignment;
 import pt.iscte.paddle.model.IBlock.IVisitor;
 import pt.iscte.paddle.model.IProgramElement;
 import pt.iscte.paddle.codequality.misc.BadCodeAnalyser;
+import pt.iscte.paddle.codequality.misc.Category;
 import pt.iscte.paddle.codequality.misc.Explanations;
 
 public class DuplicateStatement implements BadCodeAnalyser, IVisitor{
@@ -32,7 +33,7 @@ public class DuplicateStatement implements BadCodeAnalyser, IVisitor{
 
 		public DuplicateOccurrence(IStatement assignment) {
 			this.assignment = assignment;
-			this.badcase = new Duplicate("Insert description here!", assignment);
+			this.badcase = new Duplicate(Explanations.DUPLICATE_STATEMENT, assignment);
 		}
 
 		public IStatement getAssignment() {
@@ -61,7 +62,7 @@ public class DuplicateStatement implements BadCodeAnalyser, IVisitor{
 				for(INode n: node.getIncomming()) 
 					if(n != null && incoming != null && !n.equals(incoming) && n.getElement().isSame(incoming.getElement())) 
 						duplicates.add(n);
-			if(duplicates.size() > 1) Linter.getInstance().register(new Duplicate(Explanations.DUPLICATE_BRANCH_CODE, duplicates));
+			if(duplicates.size() > 1) Linter.getInstance().register(new Duplicate(Category.DUPLICATE_CODE, Explanations.DUPLICATE_BRANCH_CODE, duplicates));
 		};
 	}
 
@@ -73,7 +74,7 @@ public class DuplicateStatement implements BadCodeAnalyser, IVisitor{
 			if(ass.isSame(assignment) && assignment.getParent().isSame(ass.getParent())) {
 				assExists = true;
 				boolean caseExists = true;
-				for (DuplicateOccurrence dOcc : duplicateOccurences) 
+				for (DuplicateOccurrence dOcc : duplicateOccurences)
 					if(dOcc.assignment.isSame(assignment)) dOcc.badcase.addAssignment(assignment);
 					else caseExists = false;
 				if(!caseExists || duplicateOccurences.size() == 0) {

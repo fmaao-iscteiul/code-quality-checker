@@ -18,6 +18,7 @@ public final class Explanations {
 			+ "the variable already had. With this being, it is considered an useless assignment.";
 	public static final String DUPLICATE_BRANCH_CODE = "The highlighted statements are duplicated inside both the if and else selections. This"
 			+ "logic could be simplified in order to reduce code duplicated and improve the code base quality.";
-	public static final String FAULTY_METHOD_CALL = "faulty ndawjdjawndjawdjwanjdanj"; 
+	public static final String FAULTY_PROCEDURE_CALL = "This method call is being used as if the method was void. The method that was called returns the type: ";
+	public static final String DUPLICATE_STATEMENT = "This statement is duplicated in this method! In order to avoid this situations, it could be extracted to a new method and called instead.";
 	
 }

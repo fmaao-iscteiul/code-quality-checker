@@ -77,6 +77,8 @@ public class Visitor implements IVisitor {
 		setLastNode(assignment_statement);
 		return true;
 	}
+	
+	
 
 	@Override
 	public boolean visit(IProcedureCall call) {
@@ -89,7 +91,7 @@ public class Visitor implements IVisitor {
 
 		handler.handleStatementVisit(assignment_statement);
 		setLastNode(assignment_statement);
-		return true;
+		return false;
 	}
 
 	@Override
@@ -98,7 +100,7 @@ public class Visitor implements IVisitor {
 
 		handler.handleStatementVisit(assignment_statement);
 		setLastNode(assignment_statement);
-		return true;
+		return false;
 	}
 
 	@Override
@@ -196,7 +198,7 @@ public class Visitor implements IVisitor {
 
 		ret.setNext(cfg.getExitNode());
 		setLastNode(ret);
-		return true;
+		return false;
 	}
 
 	@Override

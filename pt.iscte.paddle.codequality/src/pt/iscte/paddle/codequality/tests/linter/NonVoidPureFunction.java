@@ -42,8 +42,10 @@ public class NonVoidPureFunction extends BaseTest{
 	IVariableAssignment ass5 = body2.addAssignment(n2, INT.literal(19));
 	IProcedureCall proCall = body2.addCall(naturals, INT.literal(10));
 	
+	IProcedureCall proCal2 = body2.addCall(naturals, INT.literal(10));
+	
 	IVariableDeclaration n3 = body2.addVariable(INT.array());
-	IVariableAssignment ass7 = body2.addAssignment(n3, proCall);
+	IVariableAssignment ass7 = body2.addAssignment(n3, naturals.expression(INT.literal(20)));
 	 
 	 
 	@Case("123")

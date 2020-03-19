@@ -6,9 +6,11 @@ import java.util.ArrayList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -20,6 +22,8 @@ import pt.iscte.paddle.codequality.tests.linter.NonVoidPureFunction;
 import pt.iscte.paddle.codequality.tests.linter.SelectionMisconception;
 import pt.iscte.paddle.codequality.tests.linter.UnreachableCode;
 import pt.iscte.paddle.javardise.ClassWidget;
+import pt.iscte.paddle.javardise.MarkerService;
+import pt.iscte.paddle.javardise.util.HyperlinkedText;
 import pt.iscte.paddle.model.IModule;
 
 public class LinterDemo {
@@ -65,8 +69,8 @@ public class LinterDemo {
 		list.setBackground(new org.eclipse.swt.graphics.Color(display, 255, 255, 255));
 		list.setForeground(new org.eclipse.swt.graphics.Color(display, 0, 0, 0));
 		
-		Text text = new Text(rightComp, SWT.WRAP | SWT.V_SCROLL);
-		text.setEditable(false);
+		Color blue = Display.getDefault().getSystemColor(SWT.COLOR_BLUE);
+		Link textWidget = new HyperlinkedText(e -> MarkerService.mark(blue, e)).create(rightComp, SWT.WRAP | SWT.V_SCROLL);
 		
 		// LINTER INIT
 		Linter TheLinter = Linter.INSTANCE.init(module);
@@ -77,8 +81,7 @@ public class LinterDemo {
 
 		for(int i=0; i < badCodeCases.size(); i++) {
 			BadCodeCase badCase = badCodeCases.get(i);
-			if(badCase == null) continue;
-			else list.add(badCase.getCaseCategory().toString());
+			if(badCase != null) list.add(badCase.getCaseCategory().toString());
 		}
 		
 		list.addSelectionListener(new SelectionListener() {
@@ -88,8 +91,7 @@ public class LinterDemo {
 
 				BadCodeCase badCodeCase = badCodeCases.get(list.getSelectionIndex());
 				badCodeCases.forEach(badCase -> badCase.hideAll());
-				badCodeCase.generateComponent(display, shell, SWT.BORDER_DOT);
-				text.setText(badCodeCase.getExplanation());
+				badCodeCase.generateComponent(display, rightComp, textWidget, SWT.BORDER_DOT);
 			}
 
 			@Override

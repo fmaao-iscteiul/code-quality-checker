@@ -12,7 +12,7 @@ import pt.iscte.paddle.codequality.visitors.DuplicateGuard;
 import pt.iscte.paddle.codequality.visitors.DuplicateStatement;
 import pt.iscte.paddle.codequality.visitors.Loop;
 import pt.iscte.paddle.codequality.visitors.MagicNumbers;
-import pt.iscte.paddle.codequality.visitors.MethodCall;
+import pt.iscte.paddle.codequality.visitors.ProcedureCall;
 import pt.iscte.paddle.codequality.visitors.Return;
 import pt.iscte.paddle.codequality.visitors.Selection;
 import pt.iscte.paddle.codequality.visitors.Unreachable;
@@ -53,7 +53,7 @@ public enum Linter {
 		this.visitors.add(Return.build());
 		this.visitors.add(MagicNumbers.build());
 		this.visitors.add(DeadCode.build());
-		this.visitors.add(MethodCall.build());
+		this.visitors.add(ProcedureCall.build());
 		this.visitors.add(DuplicateStatement.build(null));
 				
 		return this;
@@ -64,7 +64,6 @@ public enum Linter {
 			this.analysers.add(Unreachable.build(mProcedure.getCfgBuilder()));
 			this.analysers.add(DuplicateGuard.build(mProcedure.getCfgBuilder()));
 			this.analysers.add(DuplicateStatement.build(mProcedure.getCfgBuilder()));
-			this.analysers.add(MethodCall.build(mProcedure.getCfgBuilder()));
 		});
 		
 		return this;

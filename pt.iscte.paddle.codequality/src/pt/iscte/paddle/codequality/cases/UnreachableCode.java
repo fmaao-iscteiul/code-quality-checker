@@ -16,12 +16,14 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 
 import pt.iscte.paddle.codequality.misc.Category;
 import pt.iscte.paddle.javardise.Decoration;
 import pt.iscte.paddle.javardise.MarkerService;
 import pt.iscte.paddle.model.IExpression;
+import pt.iscte.paddle.model.IProgramElement;
 import pt.iscte.paddle.model.ISelection;
 import pt.iscte.paddle.model.cfg.IBranchNode;
 import pt.iscte.paddle.model.cfg.INode;
@@ -40,10 +42,10 @@ public class UnreachableCode extends BadCodeCase {
 	}
 
 	@Override
-	public void generateComponent(Display display, Composite comp, int style) {
-		deadNodes.forEach(deadNode -> {
-			super.generateMark(display, comp, style, deadNode.getElement());	
-		});
+	public void generateComponent(Display display, Composite comp, Link textWidget, int style) {
+		ArrayList<IProgramElement> elements = new ArrayList<IProgramElement>();
+		deadNodes.forEach(deadNode -> elements.add(deadNode.getElement()));
+		super.generateMark(display, comp, style, elements);
 		Decoration d = MarkerService.addDecoration(deadNodes.get(0).getElement(), p -> {
 			Label l = new Label(p, SWT.NONE);
 			Image img = new Image(display, "2.png");

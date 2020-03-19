@@ -1,10 +1,10 @@
 package pt.iscte.paddle.codequality.cases;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Link;
 
 import pt.iscte.paddle.codequality.misc.Category;
 import pt.iscte.paddle.codequality.misc.Explanations;
@@ -20,8 +20,8 @@ public class DuplicateGuard extends BadCodeCase{
 	}
 	
 	@Override
-	public void generateComponent(Display display, Composite comp, int style) {
-		guards.forEach(guard -> super.generateMark(display, comp, style, guard));
+	public void generateComponent(Display display, Composite comp, Link textWidget, int style) {
+		super.generateMark(display, comp, style, guards);
 	}
 
 }

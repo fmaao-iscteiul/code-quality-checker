@@ -4,15 +4,18 @@ package pt.iscte.paddle.codequality.cases;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 
 import pt.iscte.paddle.codequality.misc.Category;
 import pt.iscte.paddle.javardise.Decoration;
 import pt.iscte.paddle.javardise.MarkerService;
 import pt.iscte.paddle.javardise.MarkerService.Mark;
+import pt.iscte.paddle.javardise.util.HyperlinkedText;
 import pt.iscte.paddle.javardise.TextWidget;
 import pt.iscte.paddle.model.IProgramElement;
 
@@ -40,6 +43,10 @@ public abstract class BadCodeCase {
 	public String getExplanation() {
 		return explanation;
 	}
+	
+	public void setExplanation(String explanation) {
+		this.explanation = explanation;
+	}
 
 	public Category getCaseCategory() {
 		return category;
@@ -49,12 +56,13 @@ public abstract class BadCodeCase {
 		return element;
 	}
 
-	public void generateComponent(Display display, Composite comp, int style) {
-		this.generateMark(display, comp, style, element);
-		this.generateExplanation(comp, style);
+	public void generateComponent(Display display, Composite comp, Link textWidget, int style) {
+		this.generateExplanation(display, comp, textWidget, style);
+		this.generateMark(display, comp, style);
+		this.generateDecoration(display, comp, style);
 	}
 
-	protected void generateMark(Display display, Composite comp, int style, IProgramElement element) {
+	protected void generateMark(Display display, Composite comp, int style) {
 		this.marks.add(MarkerService.mark(new Color (display, 255, 0, 0), element));
 	}
 
@@ -62,9 +70,12 @@ public abstract class BadCodeCase {
 		this.marks.add(MarkerService.mark(new Color (display, 255, 0, 0), elements));
 	}
 
-	protected void generateExplanation(Composite comp, int style) {
-		text = new Text(comp, style);
-		if(text != null) text.setText(getExplanation());
+	protected void generateExplanation(Display display, Composite comp, Link textWidget, int style) {
+		textWidget.setText(getExplanation());
+	}
+	
+	protected void generateDecoration(Display display, Composite comp, int style) {
+		
 	}
 
 	public void hideAll() {
