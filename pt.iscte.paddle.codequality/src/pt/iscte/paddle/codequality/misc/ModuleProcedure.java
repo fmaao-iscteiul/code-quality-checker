@@ -9,7 +9,7 @@ public class ModuleProcedure {
 	
 	public ModuleProcedure(IProcedure procedure) {
 		this.procedure = procedure;
-		this.cfg = IControlFlowGraphBuilder.create(procedure);		
+		this.cfg = IControlFlowGraphBuilder.create(procedure);	
 	}
 	
 	public IControlFlowGraphBuilder getCfgBuilder() {

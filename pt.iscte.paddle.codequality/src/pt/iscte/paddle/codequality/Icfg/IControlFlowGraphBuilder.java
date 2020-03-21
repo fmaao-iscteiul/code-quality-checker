@@ -10,8 +10,6 @@ public interface IControlFlowGraphBuilder {
 	/** This will supply the path to which will be highlighted in the UI. */
 	public void getErrorPath();
 	/** Loads new instances of the Control Flow Graph and the target Procedure's visitor, into the Builder's Object. */
-	void load();
-	/** Builds the Control Flow Graph */
 	void build();
 	/** Displays the Control Flow Graph by printing its nodes and their connections. */
 	void display();

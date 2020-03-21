@@ -71,7 +71,10 @@ public abstract class BadCodeCase {
 	}
 
 	protected void generateExplanation(Display display, Composite comp, Link textWidget, int style) {
-		textWidget.setText(getExplanation());
+		Color blue = Display.getDefault().getSystemColor(SWT.COLOR_BLUE);
+		Link link = new HyperlinkedText(e -> MarkerService.mark(blue, e)).words(getExplanation()).create(comp, SWT.WRAP | SWT.V_SCROLL);
+		
+		link.requestLayout();
 	}
 	
 	protected void generateDecoration(Display display, Composite comp, int style) {

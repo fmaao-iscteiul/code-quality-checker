@@ -9,4 +9,5 @@ Require-Bundle: pt.iscte.paddle.javardise;bundle-version="0.4.0",
  pt.iscte.paddle.model;bundle-version="0.4.0",
  org.junit;bundle-version="4.12.0"
 Import-Package: pt.iscte.paddle.model.tests
-Export-Package: pt.iscte.paddle.codequality.cfg
+Export-Package: pt.iscte.paddle.codequality.Icfg,
+ pt.iscte.paddle.codequality.cfg

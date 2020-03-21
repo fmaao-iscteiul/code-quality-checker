@@ -1,15 +1,12 @@
 package pt.iscte.paddle.codequality.visitors;
 
-import pt.iscte.paddle.model.cfg.IBranchNode;
+import pt.iscte.paddle.model.cfg.IControlFlowGraph;
 import pt.iscte.paddle.model.cfg.INode;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
-import pt.iscte.paddle.codequality.Icfg.IControlFlowGraphBuilder;
 import pt.iscte.paddle.codequality.cases.Duplicate;
 import pt.iscte.paddle.codequality.linter.Linter;
 import pt.iscte.paddle.model.IStatement;
@@ -22,7 +19,7 @@ import pt.iscte.paddle.codequality.misc.Explanations;
 
 public class DuplicateStatement implements BadCodeAnalyser, IVisitor{
 
-	private IControlFlowGraphBuilder cfgBuilder;
+	private IControlFlowGraph cfg;
 
 	private ArrayList<DuplicateOccurrence> duplicateOccurences = new ArrayList<DuplicateOccurrence>();
 	private ArrayList<IStatement> assignments = new ArrayList<IStatement>();
@@ -45,17 +42,17 @@ public class DuplicateStatement implements BadCodeAnalyser, IVisitor{
 
 	}
 
-	private DuplicateStatement(IControlFlowGraphBuilder cfgBuilder) {
-		this.cfgBuilder = cfgBuilder;
+	private DuplicateStatement(IControlFlowGraph cfg) {
+		this.cfg = cfg;
 	}
 
-	public static DuplicateStatement build(IControlFlowGraphBuilder cfgBuilder) {
+	public static DuplicateStatement build(IControlFlowGraph cfgBuilder) {
 		return new DuplicateStatement(cfgBuilder);
 	}
 
 	@Override
 	public void analyse() {
-		for(INode node : this.cfgBuilder.getCFG().getNodes()) {
+		for(INode node : this.cfg.getNodes()) {
 
 			Set<INode> duplicates = new HashSet<INode>();
 			for(INode incoming: node.getIncomming()) 

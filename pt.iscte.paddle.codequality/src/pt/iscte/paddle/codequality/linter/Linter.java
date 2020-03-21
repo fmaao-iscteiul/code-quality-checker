@@ -28,7 +28,7 @@ public enum Linter {
 //	private Translator translator;
 	private IModule module;
 	
-	private List<ModuleProcedure> procedures = new ArrayList<>();
+	private List<IProcedure> procedures = new ArrayList<>();
 
 	private ArrayList<IVisitor> visitors = new ArrayList<>();
 	private List<BadCodeAnalyser> analysers = new ArrayList<BadCodeAnalyser>();
@@ -42,7 +42,7 @@ public enum Linter {
 	
 	public Linter init(IModule module) {
 		this.module = module;
-		module.getProcedures().forEach(procedure -> this.procedures.add(new ModuleProcedure(procedure)));		
+		module.getProcedures().forEach(procedure -> this.procedures.add(procedure));		
 		
 		return INSTANCE;
 	}
@@ -61,9 +61,10 @@ public enum Linter {
 	
 	public Linter loadAnalysers() {
 		this.procedures.forEach(mProcedure -> {
-			this.analysers.add(Unreachable.build(mProcedure.getCfgBuilder()));
-			this.analysers.add(DuplicateGuard.build(mProcedure.getCfgBuilder()));
-			this.analysers.add(DuplicateStatement.build(mProcedure.getCfgBuilder()));
+			
+			this.analysers.add(Unreachable.build(mProcedure.getCFG()));
+			this.analysers.add(DuplicateGuard.build(mProcedure.getCFG()));
+			this.analysers.add(DuplicateStatement.build(mProcedure.getCFG()));
 		});
 		
 		return this;
@@ -71,8 +72,8 @@ public enum Linter {
 	
 	public ArrayList<BadCodeCase> analyse() {
 		this.analysers.forEach(analyser -> analyser.analyse());
-		this.procedures.forEach(p -> p.getCfgBuilder().display());
-		this.visitors.forEach(visitor -> this.procedures.forEach(mProcedure -> mProcedure.getProcedure().accept(visitor)));
+		this.procedures.forEach(p -> p.getCFG().display());
+		this.visitors.forEach(visitor -> this.procedures.forEach(mProcedure -> mProcedure.accept(visitor)));
 		
 		return caughtCases;
 	}
@@ -89,7 +90,7 @@ public enum Linter {
 	public IModule getModule() {
 		return this.module;
 	}
-	public List<ModuleProcedure> getProcedures() {
+	public List<IProcedure> getProcedures() {
 		return this.procedures;
 	}
 

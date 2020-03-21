@@ -9,6 +9,7 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.List;
@@ -32,7 +33,7 @@ public class LinterDemo {
 
 	public static void main(String[] args) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 
-		NonVoidPureFunction t = new NonVoidPureFunction(); 
+		UnreachableCode t = new UnreachableCode(); 
 		t.setup();
 		IModule module = t.getModule();
 
@@ -88,7 +89,9 @@ public class LinterDemo {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if(list.getSelectionIndex() == -1) return;
-
+				
+				rightComp.getChildren()[1].dispose();
+				
 				BadCodeCase badCodeCase = badCodeCases.get(list.getSelectionIndex());
 				badCodeCases.forEach(badCase -> badCase.hideAll());
 				badCodeCase.generateComponent(display, rightComp, textWidget, SWT.BORDER_DOT);

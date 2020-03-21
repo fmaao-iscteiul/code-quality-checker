@@ -1,4 +1,4 @@
-package pt.iscte.paddle.codequality.tests.cfg;
+	package pt.iscte.paddle.codequality.tests.cfg;
 
 import static org.junit.Assert.assertTrue;
 import static pt.iscte.paddle.model.IOperator.EQUAL;

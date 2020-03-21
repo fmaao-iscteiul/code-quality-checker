@@ -15,14 +15,10 @@ public class Builder implements IControlFlowGraphBuilder{
 	public Builder(IProcedure procedure){
 		this.procedure = procedure;
 
-		this.load();
-		build();
-	}
-
-	@Override
-	public void load(){
 		this.cfg = IControlFlowGraph.create(procedure);
 		this.visitor = new Visitor(this.cfg);
+		
+		this.build();
 	}
 
 	@Override

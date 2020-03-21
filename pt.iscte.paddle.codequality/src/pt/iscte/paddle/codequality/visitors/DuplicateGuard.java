@@ -13,23 +13,24 @@ import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IProgramElement;
 import pt.iscte.paddle.model.ISelection;
 import pt.iscte.paddle.model.cfg.IBranchNode;
+import pt.iscte.paddle.model.cfg.IControlFlowGraph;
 
 public class DuplicateGuard implements BadCodeAnalyser {
 
-	private IControlFlowGraphBuilder cfgBuilder;
+	private IControlFlowGraph cfg;
 
-	private DuplicateGuard(IControlFlowGraphBuilder cfgBuilder) {
-		this.cfgBuilder = cfgBuilder;
+	private DuplicateGuard(IControlFlowGraph cfg) {
+		this.cfg = cfg;
 	}
 
-	public static DuplicateGuard build(IControlFlowGraphBuilder cfgBuilder) {
+	public static DuplicateGuard build(IControlFlowGraph cfgBuilder) {
 		return new DuplicateGuard(cfgBuilder);
 	}
 
 	@Override
 	public void analyse() {
 		ArrayList<IProgramElement> duplicatedGuards = new ArrayList<IProgramElement>();
-		this.cfgBuilder.getCFG().getNodes().forEach(node -> {
+		this.cfg.getNodes().forEach(node -> {
 			if(node != null && node instanceof IBranchNode 
 					&& ((IBranchNode) node).hasBranch() 
 					&& ((IBranchNode) node).getAlternative() instanceof IBranchNode
