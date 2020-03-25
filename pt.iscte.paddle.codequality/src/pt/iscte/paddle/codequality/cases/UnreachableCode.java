@@ -1,31 +1,19 @@
 package pt.iscte.paddle.codequality.cases;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.LineAttributes;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Link;
-import org.eclipse.swt.widgets.Text;
 
 import pt.iscte.paddle.codequality.misc.Category;
-import pt.iscte.paddle.javardise.Decoration;
-import pt.iscte.paddle.javardise.MarkerService;
-import pt.iscte.paddle.model.IExpression;
-import pt.iscte.paddle.model.IProgramElement;
-import pt.iscte.paddle.model.ISelection;
-import pt.iscte.paddle.model.cfg.IBranchNode;
+import pt.iscte.paddle.javardise.service.ICodeDecoration;
+import pt.iscte.paddle.javardise.service.IJavardiseService;
+import pt.iscte.paddle.javardise.service.IWidget;
+import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.cfg.INode;
 
 public class UnreachableCode extends BadCodeCase {
@@ -42,18 +30,20 @@ public class UnreachableCode extends BadCodeCase {
 	}
 
 	@Override
-	public void generateComponent(Display display, Composite comp, Link textWidget, int style) {
-		ArrayList<IProgramElement> elements = new ArrayList<IProgramElement>();
-		deadNodes.forEach(deadNode -> elements.add(deadNode.getElement()));
-		super.generateMark(display, comp, style, elements);
-		Decoration d = MarkerService.addDecoration(deadNodes.get(0).getElement(), p -> {
-			Label l = new Label(p, SWT.NONE);
-			Image img = new Image(display, "2.png");
-			l.setImage(img);
-			return l;
-		}, Decoration.Location.TOP);
-		if(d != null) d.show();
-		super.getDecorations().add(d);
+	public void generateComponent(Display display, Composite comp, int style) {
+		IWidget w = IJavardiseService.getWidget(deadNodes.get(0).getElement());
+		IWidget[] elements = new IWidget[deadNodes.size()];
+		
+		for (int i = 0; i < elements.length; i++) {
+			elements[i] = IJavardiseService.getWidget(deadNodes.get(i).getElement());
+			
+		}
+		
+		Color cyan = Display.getDefault().getSystemColor(SWT.COLOR_CYAN);
+		ICodeDecoration dec = w.addRegionMark(cyan, elements);
+		super.addDecoration(dec);
+		dec.show();
+		
 	}
 
 }

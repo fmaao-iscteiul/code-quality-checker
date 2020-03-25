@@ -1,6 +1,5 @@
 package pt.iscte.paddle.codequality.visitors;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 

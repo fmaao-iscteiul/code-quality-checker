@@ -6,26 +6,21 @@ import java.util.ArrayList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 
 import pt.iscte.paddle.codequality.cases.BadCodeCase;
 import pt.iscte.paddle.codequality.tests.linter.DuplicateLoopGuard;
-import pt.iscte.paddle.codequality.tests.linter.DuplicateStatement;
 import pt.iscte.paddle.codequality.tests.linter.NonVoidPureFunction;
-import pt.iscte.paddle.codequality.tests.linter.SelectionMisconception;
-import pt.iscte.paddle.codequality.tests.linter.UnreachableCode;
-import pt.iscte.paddle.javardise.ClassWidget;
-import pt.iscte.paddle.javardise.MarkerService;
-import pt.iscte.paddle.javardise.util.HyperlinkedText;
+import pt.iscte.paddle.javardise.service.IClassWidget;
+import pt.iscte.paddle.javardise.service.IJavardiseService;
 import pt.iscte.paddle.model.IModule;
+import pt.iscte.pidesco.cfgviewer.ext.CFGViewer;
 
 public class LinterDemo {
 
@@ -33,7 +28,7 @@ public class LinterDemo {
 
 	public static void main(String[] args) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 
-		UnreachableCode t = new UnreachableCode(); 
+		DuplicateLoopGuard t = new DuplicateLoopGuard(); 
 		t.setup();
 		IModule module = t.getModule();
 
@@ -54,11 +49,17 @@ public class LinterDemo {
 		outerLayout.spacing = 5;
 		outer.setLayout(outerLayout);
 		
-		Composite widgetComp = new Composite(outer, SWT.V_SCROLL);
-		widgetComp.setLayout(new FillLayout());
+//		Composite widgetComp = new Composite(outer, SWT.V_SCROLL);
+//		widgetComp.setLayout(new FillLayout());
+		
+		Composite codeAndCFG = new Composite(outer, SWT.NONE);
+		codeAndCFG.setLayout(new GridLayout(2, true));
+		
+		IClassWidget widget = IJavardiseService.createClassWidget(codeAndCFG, module);
+		widget.setReadOnly(true);
 
-		ClassWidget widget = new ClassWidget(widgetComp, module);
-		widget.setEnabled(false);
+		CFGViewer cfg = new CFGViewer(codeAndCFG);
+		
 		
 		Composite rightComp = new Composite(outer, SWT.BORDER);
 		FillLayout rightLayout = new FillLayout(SWT.VERTICAL);
@@ -70,13 +71,16 @@ public class LinterDemo {
 		list.setBackground(new org.eclipse.swt.graphics.Color(display, 255, 255, 255));
 		list.setForeground(new org.eclipse.swt.graphics.Color(display, 0, 0, 0));
 		
-		Color blue = Display.getDefault().getSystemColor(SWT.COLOR_BLUE);
-		Link textWidget = new HyperlinkedText(e -> MarkerService.mark(blue, e)).create(rightComp, SWT.WRAP | SWT.V_SCROLL);
+//		Color blue = Display.getDefault().getSystemColor(SWT.COLOR_BLUE);
+//		Link textWidget = new HyperlinkedText(null).create(rightComp, SWT.WRAP | SWT.V_SCROLL);
 		
 		// LINTER INIT
 		Linter TheLinter = Linter.INSTANCE.init(module);
 		TheLinter.loadVisitors().loadAnalysers();
 		TheLinter.getModule().setId("test");
+		
+		cfg.setInput(TheLinter.getProcedures().get(0).getCFG().getNodes());
+		cfg.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		ArrayList<BadCodeCase> badCodeCases = TheLinter.analyse();
 
@@ -90,11 +94,11 @@ public class LinterDemo {
 			public void widgetSelected(SelectionEvent e) {
 				if(list.getSelectionIndex() == -1) return;
 				
-				rightComp.getChildren()[1].dispose();
+				if(rightComp.getChildren().length > 1) rightComp.getChildren()[1].dispose();
 				
 				BadCodeCase badCodeCase = badCodeCases.get(list.getSelectionIndex());
 				badCodeCases.forEach(badCase -> badCase.hideAll());
-				badCodeCase.generateComponent(display, rightComp, textWidget, SWT.BORDER_DOT);
+				badCodeCase.generateComponent(display, rightComp, SWT.BORDER_DOT);
 			}
 
 			@Override

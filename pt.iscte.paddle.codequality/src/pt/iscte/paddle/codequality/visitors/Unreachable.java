@@ -2,8 +2,6 @@ package pt.iscte.paddle.codequality.visitors;
 
 import java.util.List;
 
-import pt.iscte.paddle.codequality.Icfg.IControlFlowGraphBuilder;
-import pt.iscte.paddle.codequality.cases.BadCodeCase;
 import pt.iscte.paddle.codequality.cases.UnreachableCode;
 import pt.iscte.paddle.codequality.linter.Linter;
 import pt.iscte.paddle.codequality.misc.BadCodeAnalyser;

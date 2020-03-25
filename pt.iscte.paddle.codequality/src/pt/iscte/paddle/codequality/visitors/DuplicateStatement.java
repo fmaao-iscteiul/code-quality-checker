@@ -12,7 +12,6 @@ import pt.iscte.paddle.codequality.linter.Linter;
 import pt.iscte.paddle.model.IStatement;
 import pt.iscte.paddle.model.IVariableAssignment;
 import pt.iscte.paddle.model.IBlock.IVisitor;
-import pt.iscte.paddle.model.IProgramElement;
 import pt.iscte.paddle.codequality.misc.BadCodeAnalyser;
 import pt.iscte.paddle.codequality.misc.Category;
 import pt.iscte.paddle.codequality.misc.Explanations;
@@ -33,13 +32,6 @@ public class DuplicateStatement implements BadCodeAnalyser, IVisitor{
 			this.badcase = new Duplicate(Explanations.DUPLICATE_STATEMENT, assignment);
 		}
 
-		public IStatement getAssignment() {
-			return assignment;
-		}
-		public void addOccurrence(IProgramElement assingment) {
-			this.badcase.addAssignment(assignment);
-		}
-
 	}
 
 	private DuplicateStatement(IControlFlowGraph cfg) {
@@ -57,7 +49,7 @@ public class DuplicateStatement implements BadCodeAnalyser, IVisitor{
 			Set<INode> duplicates = new HashSet<INode>();
 			for(INode incoming: node.getIncomming()) 
 				for(INode n: node.getIncomming()) 
-					if(n != null && incoming != null && !n.equals(incoming) && n.getElement().isSame(incoming.getElement())) 
+					if(n != null && incoming != null && !node.isExit() && !n.equals(incoming) && n.getElement().isSame(incoming.getElement())) 
 						duplicates.add(n);
 			if(duplicates.size() > 1) Linter.getInstance().register(new Duplicate(Category.DUPLICATE_CODE, Explanations.DUPLICATE_BRANCH_CODE, duplicates));
 		};

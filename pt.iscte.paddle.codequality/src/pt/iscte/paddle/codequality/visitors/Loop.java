@@ -1,7 +1,5 @@
 package pt.iscte.paddle.codequality.visitors;
-import pt.iscte.paddle.codequality.cases.DuplicateGuard;
 import pt.iscte.paddle.codequality.cases.EmptyBranch;
-import pt.iscte.paddle.codequality.cases.Nesting;
 import pt.iscte.paddle.codequality.linter.Linter;
 import pt.iscte.paddle.codequality.misc.Category;
 import pt.iscte.paddle.codequality.misc.Explanations;
@@ -11,7 +9,6 @@ import pt.iscte.paddle.model.IProgramElement;
 import pt.iscte.paddle.model.ISelection;
 import pt.iscte.paddle.model.IBlock.IVisitor;
 import pt.iscte.paddle.model.IBlockElement;
-import pt.iscte.paddle.model.IControlStructure;
 import pt.iscte.paddle.model.IExpression;
 
 public class Loop implements IVisitor{

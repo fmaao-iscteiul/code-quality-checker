@@ -10,9 +10,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Link;
 
 import pt.iscte.paddle.codequality.misc.Category;
-import pt.iscte.paddle.javardise.Decoration;
-import pt.iscte.paddle.javardise.MarkerService;
-import pt.iscte.paddle.javardise.MarkerService.Mark;
 import pt.iscte.paddle.model.IProgramElement;
 import pt.iscte.paddle.model.IStatement;
 
@@ -40,9 +37,9 @@ public class MagicNumber extends BadCodeCase{
 	}
 
 	@Override
-	public void generateComponent(Display display, org.eclipse.swt.widgets.Composite comp, Link textWidget, int style) {
+	public void generateComponent(Display display, org.eclipse.swt.widgets.Composite comp, int style) {
 		super.generateMark(display, comp, style, occurrences);
-		super.generateExplanation(display, comp, textWidget, style);
+		super.generateExplanation(display, comp, style);
 	}
 
 }

@@ -25,12 +25,15 @@ public class DuplicateLoopGuard extends BaseTest {
 	IVariableDeclaration array = body.addVariable(INT.array());
 	IVariableAssignment ass1 = body.addAssignment(array, INT.array().stackAllocation(n));
 	IVariableDeclaration i = body.addVariable(INT, INT.literal(0));
+	IVariableAssignment i1 = body.addAssignment(i, INT.literal(1));
 	IVariableAssignment ass5 = body.addAssignment(i, i);
 	ILoop loop = body.addLoop(SMALLER.on(i, n));
 //	IVariableAssignment ass5 = loop.addAssignment(i, IOperator.ADD.on(i, INT.literal(1)));
 //	IVariableAssignment ass6 = loop.addAssignment(i, INT.literal(10));
 	ISelection selection_true = loop.addSelection(SMALLER.on(i, n));
+	IVariableAssignment i2 = loop.addAssignment(i, INT.literal(10));
 	ISelection selection_false = loop.addSelection(IOperator.EQUAL.on(b, BOOLEAN.literal(false)));
+	ISelection selection_true2 = loop.addSelection(SMALLER.on(i, n));
 	IArrayElementAssignment ass2 = loop.addArrayElementAssignment(array, ADD.on(i, INT.literal(1)), i);
 	IVariableAssignment ass3 = loop.addAssignment(i, ADD.on(i, INT.literal(1)));
 	IReturn addReturn = body.addReturn(array);

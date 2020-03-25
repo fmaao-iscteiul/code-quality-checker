@@ -4,10 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Link;
 
 import pt.iscte.paddle.codequality.misc.Category;
+import pt.iscte.paddle.javardise.service.ICodeDecoration;
+import pt.iscte.paddle.javardise.service.IJavardiseService;
+import pt.iscte.paddle.javardise.service.IWidget;
+import pt.iscte.paddle.javardise.util.HyperlinkedText;
 import pt.iscte.paddle.model.IProgramElement;
 import pt.iscte.paddle.model.IStatement;
 import pt.iscte.paddle.model.cfg.INode;
@@ -35,9 +42,19 @@ public class Duplicate extends BadCodeCase {
 	}
 
 	@Override
-	public void generateComponent(Display display, org.eclipse.swt.widgets.Composite comp, Link textWidget, int style) {
+	public void generateComponent(Display display, org.eclipse.swt.widgets.Composite comp, int style) {
 		super.generateMark(display, comp, style, duplicates);
-		super.generateExplanation(display, comp, textWidget, style);
+		this.generateExplanation(display, comp, style);
+	}
+	
+	@Override
+	protected void generateExplanation(Display display, Composite comp, int style) {
+		Color blue = Display.getDefault().getSystemColor(SWT.COLOR_BLUE);
+		IWidget w = IJavardiseService.getWidget(duplicates.get(0));
+		ICodeDecoration dec = w.addMark(blue);
+		dec.show();
+		Link link = new HyperlinkedText(e -> w.addMark(blue)).words(getExplanation()).create(comp, SWT.WRAP | SWT.V_SCROLL);
+		link.requestLayout();
 	}
 
 	public List<IProgramElement> getDuplicates() {

@@ -12,11 +12,10 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 
 import pt.iscte.paddle.codequality.misc.Category;
-import pt.iscte.paddle.javardise.Decoration;
-import pt.iscte.paddle.javardise.MarkerService;
-import pt.iscte.paddle.javardise.MarkerService.Mark;
+import pt.iscte.paddle.javardise.service.ICodeDecoration;
+import pt.iscte.paddle.javardise.service.IJavardiseService;
+import pt.iscte.paddle.javardise.service.IWidget;
 import pt.iscte.paddle.javardise.util.HyperlinkedText;
-import pt.iscte.paddle.javardise.TextWidget;
 import pt.iscte.paddle.model.IProgramElement;
 
 public abstract class BadCodeCase {
@@ -25,8 +24,7 @@ public abstract class BadCodeCase {
 	public String explanation;
 	public IProgramElement element;
 
-	private List<Mark> marks = new ArrayList<Mark>();
-	private List<Decoration> decorations = new ArrayList<Decoration>();
+	private List<ICodeDecoration> codeDecorations = new ArrayList<ICodeDecoration>();
 	private Text text;
 
 	BadCodeCase(Category category, String explanation, IProgramElement element){
@@ -56,24 +54,35 @@ public abstract class BadCodeCase {
 		return element;
 	}
 
-	public void generateComponent(Display display, Composite comp, Link textWidget, int style) {
-		this.generateExplanation(display, comp, textWidget, style);
+	public void generateComponent(Display display, Composite comp, int style) {
 		this.generateMark(display, comp, style);
 		this.generateDecoration(display, comp, style);
+		this.generateExplanation(display, comp, style);
 	}
 
 	protected void generateMark(Display display, Composite comp, int style) {
-		this.marks.add(MarkerService.mark(new Color (display, 255, 0, 0), element));
+		IWidget w = IJavardiseService.getWidget(element);
+		if(w != null) {
+			ICodeDecoration d = w.addMark(new Color (display, 255, 0, 0));
+			this.codeDecorations.add(d);
+			d.show();
+		}
 	}
 
 	protected void generateMark(Display display, Composite comp, int style, Iterable<IProgramElement> elements) {
-		this.marks.add(MarkerService.mark(new Color (display, 255, 0, 0), elements));
+		elements.forEach(el -> {
+			IWidget w = IJavardiseService.getWidget(el);
+			if(w != null) {
+				ICodeDecoration d = w.addMark(new Color (display, 255, 0, 0));
+				this.codeDecorations.add(d);
+				d.show();
+			}
+		});		
 	}
 
-	protected void generateExplanation(Display display, Composite comp, Link textWidget, int style) {
+	protected void generateExplanation(Display display, Composite comp, int style) {
 		Color blue = Display.getDefault().getSystemColor(SWT.COLOR_BLUE);
-		Link link = new HyperlinkedText(e -> MarkerService.mark(blue, e)).words(getExplanation()).create(comp, SWT.WRAP | SWT.V_SCROLL);
-		
+		Link link = new HyperlinkedText(null).words(getExplanation()).create(comp, SWT.WRAP | SWT.V_SCROLL);
 		link.requestLayout();
 	}
 	
@@ -82,18 +91,16 @@ public abstract class BadCodeCase {
 	}
 
 	public void hideAll() {
-		this.marks.forEach(mark -> mark.unmark());
-		this.decorations.forEach(decoration -> {
-			if(decoration != null) decoration.hide();
-		});
+		this.codeDecorations.forEach(mark -> mark.hide());
 		if(this.text != null) this.text.dispose();
 	}
 
-	public List<Decoration> getDecorations() {
-		return decorations;
+	public List<ICodeDecoration> getDecorations() {
+		return codeDecorations;
 	}
-	public List<Mark> getMarks() {
-		return marks;
+	
+	public void addDecoration(ICodeDecoration d) {
+		this.codeDecorations.add(d);
 	}
 
 }

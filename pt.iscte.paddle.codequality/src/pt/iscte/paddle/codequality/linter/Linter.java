@@ -1,12 +1,9 @@
 package pt.iscte.paddle.codequality.linter;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import pt.iscte.paddle.codequality.Icfg.IControlFlowGraphBuilder;
 import pt.iscte.paddle.codequality.cases.BadCodeCase;
 import pt.iscte.paddle.codequality.misc.BadCodeAnalyser;
-import pt.iscte.paddle.codequality.misc.ModuleProcedure;
 import pt.iscte.paddle.codequality.visitors.DeadCode;
 import pt.iscte.paddle.codequality.visitors.DuplicateGuard;
 import pt.iscte.paddle.codequality.visitors.DuplicateStatement;
