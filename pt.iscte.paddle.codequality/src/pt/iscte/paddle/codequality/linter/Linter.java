@@ -16,6 +16,7 @@ import pt.iscte.paddle.codequality.visitors.Unreachable;
 import pt.iscte.paddle.model.IBlock.IVisitor;
 import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.IProcedure;
+import pt.iscte.paddle.model.cfg.IControlFlowGraph;
 
 public enum Linter {
 	
@@ -58,10 +59,10 @@ public enum Linter {
 	
 	public Linter loadAnalysers() {
 		this.procedures.forEach(mProcedure -> {
-			
-			this.analysers.add(Unreachable.build(mProcedure.getCFG()));
-			this.analysers.add(DuplicateGuard.build(mProcedure.getCFG()));
-			this.analysers.add(DuplicateStatement.build(mProcedure.getCFG()));
+			IControlFlowGraph cfg = mProcedure.getCFG();
+			this.analysers.add(Unreachable.build(cfg));
+			this.analysers.add(DuplicateGuard.build(cfg));
+			this.analysers.add(DuplicateStatement.build(cfg));
 		});
 		
 		return this;

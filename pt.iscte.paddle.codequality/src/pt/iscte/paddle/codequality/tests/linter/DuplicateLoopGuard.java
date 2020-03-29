@@ -34,6 +34,8 @@ public class DuplicateLoopGuard extends BaseTest {
 	IVariableAssignment i2 = loop.addAssignment(i, INT.literal(10));
 	ISelection selection_false = loop.addSelection(IOperator.EQUAL.on(b, BOOLEAN.literal(false)));
 	ISelection selection_true2 = loop.addSelection(SMALLER.on(i, n));
+//	IVariableAssignment i4 = loop.addAssignment(n, INT.literal(10));
+	ISelection selection_true3 = loop.addSelection(SMALLER.on(i, n));
 	IArrayElementAssignment ass2 = loop.addArrayElementAssignment(array, ADD.on(i, INT.literal(1)), i);
 	IVariableAssignment ass3 = loop.addAssignment(i, ADD.on(i, INT.literal(1)));
 	IReturn addReturn = body.addReturn(array);

@@ -43,7 +43,7 @@ public class Duplicate extends BadCodeCase {
 
 	@Override
 	public void generateComponent(Display display, org.eclipse.swt.widgets.Composite comp, int style) {
-		super.generateMark(display, comp, style, duplicates);
+		this.generateMark(display, comp, style, duplicates);
 		this.generateExplanation(display, comp, style);
 	}
 	

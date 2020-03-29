@@ -13,7 +13,8 @@ public final class Explanations {
 			+ "In order to improve the quality of the written code, this comparision could be replaced with a simpler operation.";
 	public final static String FAULTY_RETURN_BOOLEAN_CHECK = "";
 	public final static String SELECTION_MISCONCEPTION = "";
-	public static final String DUPLICATE_SELECTION_GUARD = "";
+	public static final String DUPLICATE_SELECTION_GUARD = "The highlighted selections are duplicates! The state of the veriables used in the selection hasn't change in between them. With this being, these multiple"
+			+ "selection guards server no porpuse.";
 	public static final String SELF_ASSIGNMENT = "The highlighted variable was assigned to itself. This leads to the assignment of a value that"
 			+ "the variable already had. With this being, it is considered an useless assignment.";
 	public static final String DUPLICATE_BRANCH_CODE = "The highlighted statements are duplicated inside both the if and else selections. This"

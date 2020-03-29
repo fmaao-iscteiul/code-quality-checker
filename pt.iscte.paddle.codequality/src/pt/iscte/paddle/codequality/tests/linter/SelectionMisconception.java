@@ -21,6 +21,7 @@ public class SelectionMisconception extends BaseTest {
 	ISelection selection = body.addSelectionWithAlternative(IOperator.EQUAL.on(BOOLEAN.literal(true), BOOLEAN.literal(true)));
 //	IVariableAssignment ass4 = selection.addAssignment(i, INT.literal(10));
 	IVariableAssignment ass5 = selection.getAlternativeBlock().addAssignment(i, INT.literal(10));
+	IVariableAssignment ass4 = body.addAssignment(i, INT.literal(30));
 	IReturn addReturn = body.addReturn(n);
 
 	

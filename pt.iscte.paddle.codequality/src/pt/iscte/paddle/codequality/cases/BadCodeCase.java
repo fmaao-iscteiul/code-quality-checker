@@ -73,7 +73,7 @@ public abstract class BadCodeCase {
 		elements.forEach(el -> {
 			IWidget w = IJavardiseService.getWidget(el);
 			if(w != null) {
-				ICodeDecoration d = w.addMark(new Color (display, 255, 0, 0));
+				ICodeDecoration d = w.addMark(new Color (display, 155, 0, 0));
 				this.codeDecorations.add(d);
 				d.show();
 			}
@@ -86,12 +86,12 @@ public abstract class BadCodeCase {
 		link.requestLayout();
 	}
 	
-	protected void generateDecoration(Display display, Composite comp, int style) {
-		
-	}
+	protected void generateDecoration(Display display, Composite comp, int style) {}
 
 	public void hideAll() {
-		this.codeDecorations.forEach(mark -> mark.hide());
+		this.codeDecorations.forEach(mark -> {
+			mark.hide();
+		});
 		if(this.text != null) this.text.dispose();
 	}
 

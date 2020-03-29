@@ -22,6 +22,7 @@ public class DuplicateGuard extends BadCodeCase{
 	@Override
 	public void generateComponent(Display display, Composite comp, int style) {
 		super.generateMark(display, comp, style, guards);
+		super.generateExplanation(display, comp, style);
 	}
 
 }
