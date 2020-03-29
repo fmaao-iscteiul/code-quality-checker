@@ -1,20 +1,15 @@
 package pt.iscte.paddle.codequality.cases;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Link;
 
 import pt.iscte.paddle.codequality.misc.Category;
-import pt.iscte.paddle.javardise.service.ICodeDecoration;
-import pt.iscte.paddle.javardise.service.IJavardiseService;
-import pt.iscte.paddle.javardise.service.IWidget;
 import pt.iscte.paddle.javardise.util.HyperlinkedText;
 import pt.iscte.paddle.model.IProgramElement;
 import pt.iscte.paddle.model.IStatement;
@@ -36,7 +31,7 @@ public class Duplicate extends BadCodeCase {
 		this.duplicates.add(duplicate);
 	}
 
-	public Duplicate(Category category, String explanation, Set<INode> duplicatesList) { 
+	public Duplicate(Category category, String explanation, Collection<INode> duplicatesList) {
 		super(category, explanation);
 		this.duplicates = new ArrayList<IProgramElement>();
 		duplicatesList.forEach(node -> this.duplicates.add(node.getElement()));

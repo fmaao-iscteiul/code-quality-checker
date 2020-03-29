@@ -9,6 +9,7 @@ import pt.iscte.paddle.codequality.misc.BadCodeAnalyser;
 import pt.iscte.paddle.codequality.visitors.DuplicateGuard.GuardPair;
 import pt.iscte.paddle.model.IBinaryExpression;
 import pt.iscte.paddle.model.IExpression;
+import pt.iscte.paddle.model.IProcedureCall;
 import pt.iscte.paddle.model.IProgramElement;
 import pt.iscte.paddle.model.IVariableAssignment;
 import pt.iscte.paddle.model.IVariableExpression;

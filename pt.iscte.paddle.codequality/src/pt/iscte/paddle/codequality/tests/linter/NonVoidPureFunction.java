@@ -29,8 +29,8 @@ public class NonVoidPureFunction extends BaseTest{
 	IVariableAssignment ass1 = body.addAssignment(array, INT.array().stackAllocation(n));
 	IVariableDeclaration i = body.addVariable(INT, INT.literal(0));
 	
-	IVariableAssignment ass8 = body.addAssignment(n, ADD.on(n, INT.literal(1)));
-	IVariableAssignment ass12 = body.addAssignment(n, ADD.on(n, INT.literal(1)));
+//	IVariableAssignment ass8 = body.addAssignment(n, ADD.on(n, INT.literal(1)));
+//	IVariableAssignment ass12 = body.addAssignment(n, ADD.on(n, INT.literal(1)));
 	
 	
 	IVariableAssignment i2 = body.addAssignment(i, INT.literal(0));
@@ -44,12 +44,19 @@ public class NonVoidPureFunction extends BaseTest{
 	IVariableDeclaration n2 = body2.addVariable(INT);
 	IVariableAssignment ass4 = body2.addAssignment(n2, INT.literal(19));
 	IVariableAssignment ass5 = body2.addAssignment(n2, INT.literal(19));
-	IProcedureCall proCall = body2.addCall(naturals, INT.literal(10));
 	
-	IProcedureCall proCal2 = body2.addCall(naturals, INT.literal(10));
+	IProcedureCall proCall = body2.addCall(naturals, n2);
+	IVariableAssignment ass8 = body2.addAssignment(n2, ADD.on(n, INT.literal(1)));
+	IProcedureCall proCal2 = body2.addCall(naturals, n2);
+	IVariableAssignment ass9 = body2.addAssignment(n2, ADD.on(n, INT.literal(1)));
+	IProcedureCall proCall3 = body2.addCall(naturals, n2);
+	
+	IProcedureCall proCall4 = body2.addCall(naturals, INT.literal(40));
+	IProcedureCall proCall5 = body2.addCall(naturals, INT.literal(40));
 	
 	IVariableDeclaration n3 = body2.addVariable(INT.array());
 	IVariableAssignment ass7 = body2.addAssignment(n3, naturals.expression(INT.literal(20)));
+	IVariableAssignment ass10 = body2.addAssignment(n3, naturals.expression(INT.literal(20)));
 	 
 	 
 	@Case("123")

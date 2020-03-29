@@ -51,7 +51,6 @@ public enum Linter {
 		this.visitors.add(Return.build());
 		this.visitors.add(MagicNumbers.build());
 		this.visitors.add(DeadCode.build());
-		this.visitors.add(ProcedureCall.build());
 		this.visitors.add(DuplicateStatement.build(null));
 				
 		return this;
@@ -63,6 +62,7 @@ public enum Linter {
 			this.analysers.add(Unreachable.build(cfg));
 			this.analysers.add(DuplicateGuard.build(cfg));
 			this.analysers.add(DuplicateStatement.build(cfg));
+			this.analysers.add(ProcedureCall.build(cfg));
 		});
 		
 		return this;

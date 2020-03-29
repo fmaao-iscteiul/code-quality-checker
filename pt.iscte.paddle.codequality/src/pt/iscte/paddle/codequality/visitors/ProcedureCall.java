@@ -1,66 +1,154 @@
 package pt.iscte.paddle.codequality.visitors;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import pt.iscte.paddle.codequality.cases.Duplicate;
 import pt.iscte.paddle.codequality.cases.FaultyProcedureCall;
 import pt.iscte.paddle.codequality.linter.Linter;
+import pt.iscte.paddle.codequality.misc.BadCodeAnalyser;
 import pt.iscte.paddle.codequality.misc.Category;
 import pt.iscte.paddle.codequality.misc.Explanations;
-import pt.iscte.paddle.model.IBlock.IVisitor;
+import pt.iscte.paddle.codequality.visitors.DuplicateGuard.DuplicateBranchGuard;
+import pt.iscte.paddle.codequality.visitors.DuplicateGuard.GuardPair;
+import pt.iscte.paddle.model.IBinaryExpression;
+import pt.iscte.paddle.model.IExpression;
 import pt.iscte.paddle.model.IProcedureCall;
 import pt.iscte.paddle.model.IType;
 import pt.iscte.paddle.model.IVariableAssignment;
 import pt.iscte.paddle.model.IVariableDeclaration;
+import pt.iscte.paddle.model.IVariableExpression;
+import pt.iscte.paddle.model.cfg.IControlFlowGraph;
+import pt.iscte.paddle.model.cfg.INode;
+import pt.iscte.paddle.model.cfg.IControlFlowGraph.Path;
 import pt.iscte.paddle.model.roles.impl.FixedValue;
 
-public class ProcedureCall implements IVisitor {
+public class ProcedureCall implements BadCodeAnalyser {
 
-	private Set<IProcedureCall> procedureCalls;
-	private Duplicate duplicateProcedures;
-	
-	public ProcedureCall() {
-		this.procedureCalls = new HashSet<IProcedureCall>();
+	private ArrayList<INode> calls;
+	private ArrayList<DuplicateProcedureCall> duplicates;
+	private ArrayList<GuardPair> pairs = new ArrayList<GuardPair>();
+
+	private IControlFlowGraph cfg;
+
+	public ProcedureCall(IControlFlowGraph cfg) {
+		this.calls = new ArrayList<INode>();
+		this.duplicates = new ArrayList<DuplicateProcedureCall>();
+		this.cfg = cfg;
 	}
-	
-	public static ProcedureCall build() {
-		return new ProcedureCall();
+
+	public static ProcedureCall build(IControlFlowGraph cfg) {
+		return new ProcedureCall(cfg);
 	}
-		
-	@Override
-	public boolean visit(IVariableAssignment assignment) {
-//		System.out.println("IVariableAssignment: " + (assignment.getExpression() instanceof IProcedureCall));
-		return IVisitor.super.visit(assignment);
-	}
-	
-	@Override
-	public boolean visit(IProcedureCall call) {
-		
-		if(!call.getProcedure().getReturnType().equals(IType.VOID)) {
-			String explanation = "This method call is being used as if the method was void. The " + call.getProcedure().longSignature() + " method that was called returns the type: " 
-					+ call.getProcedure().getReturnType() + ". Non void methods should not be called as void ones because it's return value can be relevant.";
-			Linter.getInstance().register(new FaultyProcedureCall(explanation, call));
+
+	class DuplicateProcedureCall {
+		private ArrayList<INode> occurences;
+		private Set<INode> realDuplicates;
+		private INode occ;
+
+		public DuplicateProcedureCall(INode node) {
+			this.occurences = new ArrayList<INode>();
+			this.realDuplicates= new HashSet<INode>();
+			this.occurences.add(node);
+			this.occ = node;
 		}
-		
-		for (IVariableDeclaration var : call.getProcedure().getParameters()) {
-			FixedValue v = new FixedValue(var);
-			if(v.isModified()) return false;
+		@Override
+		public String toString() {
+			return occ.toString();
 		}
-		boolean exists = false;
-		for(IProcedureCall proc: procedureCalls) {
-			if(call.isSame(proc)) {
-				if(duplicateProcedures == null) {
-					duplicateProcedures = new Duplicate(Category.DUPLICATE_PROCEDURE_CALL, Explanations.DUPLICATE_STATEMENT, call);
-					duplicateProcedures.addAssignment(proc);
-					Linter.getInstance().register(duplicateProcedures);
-				} else duplicateProcedures.addAssignment(call);
-				exists = true;
+	}
+
+	@Override
+	public void analyse() {
+		this.gatherProcedureCallDuplicates();
+		this.pairGatheredDuplicates();
+
+	}
+
+	private void pairGatheredDuplicates() {
+		for (DuplicateProcedureCall duplicateBranchGuard : duplicates) {
+			System.out.println(duplicateBranchGuard.occurences);
+			for(int i = 1; i < duplicateBranchGuard.occurences.size(); i++) {
+				INode start = duplicateBranchGuard.occurences.get(i - 1);
+				INode end = duplicateBranchGuard.occurences.get(i);
+				
+				duplicateBranchGuard.realDuplicates.add(start);
+				duplicateBranchGuard.realDuplicates.add(end);
+				
+				if(hasBeenChanged(cfg, start, end)) duplicateBranchGuard.realDuplicates.remove(start);
+				
+			}
+			if(duplicateBranchGuard.realDuplicates.size() > 1)
+				Linter.getInstance().register(new Duplicate(Category.DUPLICATE_PROCEDURE_CALL, "yes", duplicateBranchGuard.realDuplicates));			
+		}
+	}
+
+	public static boolean hasBeenChanged(IControlFlowGraph cfg, INode start, INode end) {
+		IProcedureCall call = (IProcedureCall) start.getElement();
+		List<Path> paths = cfg.pathsBetweenNodes(start, end);
+
+		for (Path path : paths) {
+			List<INode> pathNodes = path.getNodes();
+			if(pathNodes.size() > 2) {
+				pathNodes.remove(0);
+				pathNodes.remove(pathNodes.size() - 1);
+				for (INode node : pathNodes) {
+					if(node.getElement() != null && node.getElement() instanceof IVariableAssignment) {
+						System.out.println();
+						for (IExpression argument : call.getArguments()) {
+							if(((IVariableAssignment) node.getElement()).getTarget().expression().isSame(argument))
+								return true;
+						}
+					}
+				}
 			}
 		}
-		if(!exists) procedureCalls.add(call);
-			
 		return false;
+	}
+
+	private void gatherProcedureCallDuplicates() {
+		for (INode node : cfg.getNodes()) {
+			if(node.getElement() != null && node.getElement() instanceof IProcedureCall) {
+				IProcedureCall call = (IProcedureCall) node.getElement();
+
+				if(!call.getProcedure().getReturnType().equals(IType.VOID)) {
+					String explanation = "This method call is being used as if the method was void. The " + call.getProcedure().longSignature() + " method that was called returns the type: " 
+							+ call.getProcedure().getReturnType() + ". Non void methods should not be called as void ones because it's return value can be relevant.";
+					Linter.getInstance().register(new FaultyProcedureCall(explanation, call));
+				}
+
+				for (IVariableDeclaration var : call.getProcedure().getParameters()) {
+					if(!FixedValue.isFixedValue(var)) continue;
+
+				}
+
+				boolean exists = false;
+				for(INode proc: calls) {
+					if(call.isSame(proc.getElement())) {
+
+						boolean occExists = false;
+						for (DuplicateProcedureCall dup : duplicates) {
+							if(dup.occ.getElement().isSame(call)) {
+								dup.occurences.add(node);
+								occExists = true;
+								break;
+							}
+						}
+						if(!occExists) {
+							DuplicateProcedureCall dup = new DuplicateProcedureCall(proc);
+							dup.occurences.add(node);
+							duplicates.add(dup);
+						}	
+
+						break;
+					}
+				}
+				calls.add(node);			
+
+			}
+		}
 	}
 
 }
