@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Link;
@@ -24,7 +25,7 @@ public abstract class BadCodeCase {
 	public String explanation;
 	public IProgramElement element;
 
-	private List<ICodeDecoration> codeDecorations = new ArrayList<ICodeDecoration>();
+	private List<ICodeDecoration<Canvas>> codeDecorations = new ArrayList<ICodeDecoration<Canvas>>();
 	private Text text;
 
 	BadCodeCase(Category category, String explanation, IProgramElement element){
@@ -63,25 +64,24 @@ public abstract class BadCodeCase {
 	protected void generateMark(Display display, Composite comp, int style) {
 		IWidget w = IJavardiseService.getWidget(element);
 		if(w != null) {
-			ICodeDecoration d = w.addMark(new Color (display, 255, 0, 0));
+			ICodeDecoration<Canvas> d = w.addMark(new Color (display, 255, 0, 0));
 			this.codeDecorations.add(d);
 			d.show();
 		}
 	}
 
-	protected void generateMark(Display display, Composite comp, int style, Iterable<IProgramElement> elements) {
-		elements.forEach(el -> {
+	protected void generateMark(Display display, Composite comp, int style, List<IProgramElement> elements) {
+		for (IProgramElement el : elements) {
 			IWidget w = IJavardiseService.getWidget(el);
 			if(w != null) {
-				ICodeDecoration d = w.addMark(new Color (display, 155, 0, 0));
+				ICodeDecoration<Canvas> d = w.addMark(new Color (display, 155, 0, 0));
 				this.codeDecorations.add(d);
 				d.show();
 			}
-		});		
+		}
 	}
 
 	protected void generateExplanation(Display display, Composite comp, int style) {
-		Color blue = Display.getDefault().getSystemColor(SWT.COLOR_BLUE);
 		Link link = new HyperlinkedText(null).words(getExplanation()).create(comp, SWT.WRAP | SWT.V_SCROLL);
 		link.requestLayout();
 	}
@@ -95,11 +95,11 @@ public abstract class BadCodeCase {
 		if(this.text != null) this.text.dispose();
 	}
 
-	public List<ICodeDecoration> getDecorations() {
+	public List<ICodeDecoration<Canvas>> getDecorations() {
 		return codeDecorations;
 	}
 	
-	public void addDecoration(ICodeDecoration d) {
+	public void addDecoration(ICodeDecoration<Canvas> d) {
 		this.codeDecorations.add(d);
 	}
 

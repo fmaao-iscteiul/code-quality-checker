@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Link;
@@ -49,11 +50,7 @@ public class Duplicate extends BadCodeCase {
 	
 	@Override
 	protected void generateExplanation(Display display, Composite comp, int style) {
-		Color blue = Display.getDefault().getSystemColor(SWT.COLOR_BLUE);
-		IWidget w = IJavardiseService.getWidget(duplicates.get(0));
-		ICodeDecoration dec = w.addMark(blue);
-		dec.show();
-		Link link = new HyperlinkedText(e -> w.addMark(blue)).words(getExplanation()).create(comp, SWT.WRAP | SWT.V_SCROLL);
+		Link link = new HyperlinkedText(null).words(getExplanation()).create(comp, SWT.WRAP | SWT.V_SCROLL);
 		link.requestLayout();
 	}
 

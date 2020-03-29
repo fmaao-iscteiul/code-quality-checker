@@ -29,6 +29,10 @@ public class NonVoidPureFunction extends BaseTest{
 	IVariableAssignment ass1 = body.addAssignment(array, INT.array().stackAllocation(n));
 	IVariableDeclaration i = body.addVariable(INT, INT.literal(0));
 	
+	IVariableAssignment ass8 = body.addAssignment(n, ADD.on(n, INT.literal(1)));
+	IVariableAssignment ass12 = body.addAssignment(n, ADD.on(n, INT.literal(1)));
+	
+	
 	IVariableAssignment i2 = body.addAssignment(i, INT.literal(0));
 	ILoop loop = body.addLoop(SMALLER.on(i, n));
 	IArrayElementAssignment ass2 = loop.addArrayElementAssignment(array, ADD.on(i, INT.literal(1)), i);

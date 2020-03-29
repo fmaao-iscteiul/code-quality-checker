@@ -12,6 +12,8 @@ import pt.iscte.paddle.model.IBlock.IVisitor;
 import pt.iscte.paddle.model.IProcedureCall;
 import pt.iscte.paddle.model.IType;
 import pt.iscte.paddle.model.IVariableAssignment;
+import pt.iscte.paddle.model.IVariableDeclaration;
+import pt.iscte.paddle.model.roles.impl.FixedValue;
 
 public class ProcedureCall implements IVisitor {
 
@@ -34,6 +36,17 @@ public class ProcedureCall implements IVisitor {
 	
 	@Override
 	public boolean visit(IProcedureCall call) {
+		
+		if(!call.getProcedure().getReturnType().equals(IType.VOID)) {
+			String explanation = "This method call is being used as if the method was void. The " + call.getProcedure().longSignature() + " method that was called returns the type: " 
+					+ call.getProcedure().getReturnType() + ". Non void methods should not be called as void ones because it's return value can be relevant.";
+			Linter.getInstance().register(new FaultyProcedureCall(explanation, call));
+		}
+		
+		for (IVariableDeclaration var : call.getProcedure().getParameters()) {
+			FixedValue v = new FixedValue(var);
+			if(v.isModified()) return false;
+		}
 		boolean exists = false;
 		for(IProcedureCall proc: procedureCalls) {
 			if(call.isSame(proc)) {
@@ -46,12 +59,6 @@ public class ProcedureCall implements IVisitor {
 			}
 		}
 		if(!exists) procedureCalls.add(call);
-		
-		if(!call.getProcedure().getReturnType().equals(IType.VOID)) {
-			String explanation = "This method call is being used as if the method was void. The " + call.getProcedure().longSignature() + " method that was called returns the type: " 
-					+ call.getProcedure().getReturnType() + ". Non void methods should not be called as void ones because it's return value can be relevant.";
-			Linter.getInstance().register(new FaultyProcedureCall(explanation, call));
-		}
 			
 		return false;
 	}

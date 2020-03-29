@@ -6,6 +6,7 @@ import java.util.List;
 
 import pt.iscte.paddle.codequality.linter.Linter;
 import pt.iscte.paddle.codequality.misc.BadCodeAnalyser;
+import pt.iscte.paddle.codequality.visitors.DuplicateGuard.GuardPair;
 import pt.iscte.paddle.model.IBinaryExpression;
 import pt.iscte.paddle.model.IExpression;
 import pt.iscte.paddle.model.IProgramElement;
@@ -28,31 +29,98 @@ public class DuplicateGuard implements BadCodeAnalyser {
 		return new DuplicateGuard(cfgBuilder);
 	}
 
-	class DuplicateBranchGuard{
+	class DuplicateBranchGuard {
 		private ArrayList<INode> occurences;
-		private ArrayList<INode> duplicates;
 		private INode occ;
 
 		public DuplicateBranchGuard(INode node) {
 			this.occurences = new ArrayList<INode>();
-			this.duplicates = new ArrayList<INode>();
-			this.occ = node;
 			this.occurences.add(node);
-			this.duplicates.add(node);
+			this.occ = node;
 		}
 		@Override
 		public String toString() {
 			return occ.toString();
 		}
-
+	}
+	
+	class GuardPair {
+		private INode start;
+		private INode end;
+		
+		public GuardPair(INode start, INode end) {
+			this.start = start; 
+			this.end = end;
+		}
+		
+		public INode getEnd() {
+			return end;
+		}
+		public INode getStart() {
+			return start;
+		}
 	}
 
 	private ArrayList<INode> branchConditions = new ArrayList<INode>();
-	ArrayList<DuplicateBranchGuard> duplicatedGuards = new ArrayList<DuplicateBranchGuard>();
+	private ArrayList<DuplicateBranchGuard> duplicatedGuards = new ArrayList<DuplicateBranchGuard>();
+	// Paired duplicates
+	private ArrayList<GuardPair> pairs = new ArrayList<GuardPair>();
 
 	@Override
 	public void analyse() {
 
+		this.gatherGuardDuplicates();
+		this.pairGatheredDuplicates();
+		
+		if(!pairs.isEmpty()) {
+			pairs.forEach(d -> {
+				List<IProgramElement> elements = new ArrayList<IProgramElement>();
+				elements.add(d.getStart().getElement());
+				elements.add(d.getEnd().getElement());
+				Linter.getInstance().register(new pt.iscte.paddle.codequality.cases.DuplicateGuard(elements));
+			});
+		}
+
+	}
+	
+	public static boolean hasBeenChanged(IControlFlowGraph cfg, INode start, INode end) {
+		List<Path> paths = cfg.pathsBetweenNodes(start, end);
+		for (Path path : paths) {
+			List<INode> pathNodes = path.getNodes();
+			if(pathNodes.size() > 2) {
+				pathNodes.remove(0);
+				pathNodes.remove(pathNodes.size() - 1);
+				for (INode node : pathNodes) {
+					if(node.getElement() != null && node.getElement() instanceof IVariableAssignment) {
+						if(start.getElement() != null && start.getElement() instanceof IBinaryExpression) {
+							IVariableExpression vExp_l = (IVariableExpression) ((IBinaryExpression) start.getElement()).getLeftOperand();
+							IVariableExpression vExp_r = (IVariableExpression) ((IBinaryExpression) start.getElement()).getRightOperand();
+							if(vExp_l.getVariable().equals(((IVariableAssignment) node.getElement()).getTarget()) 
+								|| vExp_r.getVariable().equals(((IVariableAssignment) node.getElement()).getTarget())){
+								return true;
+							}
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
+	private void pairGatheredDuplicates() {
+
+		for (DuplicateBranchGuard duplicateBranchGuard : duplicatedGuards) {
+			for(int i = 1; i < duplicateBranchGuard.occurences.size(); i++) {
+				INode start = duplicateBranchGuard.occurences.get(i - 1);
+				INode end= duplicateBranchGuard.occurences.get(i);
+				
+				if(!hasBeenChanged(cfg, start, end)) pairs.add(new GuardPair(start, end));
+			}
+		}
+		
+	}
+	
+	private void gatherGuardDuplicates() {
 		this.cfg.getNodes().forEach(node -> {
 			boolean existsInBranchConditions = false;
 			if(node != null && node instanceof IBranchNode ) {
@@ -62,7 +130,6 @@ public class DuplicateGuard implements BadCodeAnalyser {
 						if(duplicatedGuards.size() == 0) {
 							DuplicateBranchGuard dup = new DuplicateBranchGuard(c);
 							dup.occurences.add(node);
-							dup.duplicates.add(node);
 							duplicatedGuards.add(dup);
 						}
 						else {
@@ -70,14 +137,12 @@ public class DuplicateGuard implements BadCodeAnalyser {
 							for(DuplicateBranchGuard g: duplicatedGuards) {
 								if(g.occ.getElement().isSame(node.getElement())) {
 									g.occurences.add(node);
-									g.duplicates.add(node);
 									exists = true;
 								}
 							}
 							if(!exists) {
 								DuplicateBranchGuard dup = new DuplicateBranchGuard(c);
 								dup.occurences.add(node);
-								dup.duplicates.add(node);
 								duplicatedGuards.add(dup);
 							}
 						}
@@ -88,43 +153,6 @@ public class DuplicateGuard implements BadCodeAnalyser {
 			}
 
 		});
-		for(DuplicateBranchGuard c: duplicatedGuards) {
-			for (int i = 0; i < c.occurences.size() - 1; i++) {
-				INode n1 = c.occurences.get(i);
-				INode n2 = c.occurences.get(i + 1);
-				
-				if(n1.isEquivalentTo(n2)) continue;
-				
-				List<Path> paths = this.cfg.pathsBetweenNodes(n1, n2);
-				paths.forEach(path -> {
-
-					List<INode> pathNodes = path.getNodes();
-					if(pathNodes.size() > 2) {
-						pathNodes.remove(0);
-						pathNodes.remove(pathNodes.size() - 1);
-						pathNodes.forEach(node -> {
-							if(node.getElement() != null && node.getElement() instanceof IVariableAssignment) {
-								if(c.occ.getElement() != null && c.occ.getElement() instanceof IBinaryExpression) {
-									IVariableExpression vExp_l = (IVariableExpression) ((IBinaryExpression) c.occ.getElement()).getLeftOperand();
-									IVariableExpression vExp_r = (IVariableExpression) ((IBinaryExpression) c.occ.getElement()).getRightOperand();
-									if(vExp_l.getVariable().isSame(((IVariableAssignment) node.getElement()).getTarget()) 
-										|| vExp_r.getVariable().isSame(((IVariableAssignment) node.getElement()).getTarget())){
-										c.duplicates.remove(n2);
-									}
-								}
-							}
-						});
-					}
-				});
-			}
-		}
-
-		if(!duplicatedGuards.isEmpty()) {
-			List<IProgramElement> elements = new ArrayList<IProgramElement>();
-			duplicatedGuards.forEach(d -> d.duplicates.forEach(o -> elements.add(o.getElement())));
-			Linter.getInstance().register(new pt.iscte.paddle.codequality.cases.DuplicateGuard(elements));
-		}
-
 	}
 
 }

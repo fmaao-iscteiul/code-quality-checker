@@ -21,18 +21,7 @@ public class DuplicateStatement implements BadCodeAnalyser, IVisitor{
 	private IControlFlowGraph cfg;
 
 	private ArrayList<DuplicateOccurrence> duplicateOccurences = new ArrayList<DuplicateOccurrence>();
-	private ArrayList<IStatement> assignments = new ArrayList<IStatement>();
-
-	private class DuplicateOccurrence {
-		private IStatement assignment;
-		private Duplicate badcase;
-
-		public DuplicateOccurrence(IStatement assignment) {
-			this.assignment = assignment;
-			this.badcase = new Duplicate(Explanations.DUPLICATE_STATEMENT, assignment);
-		}
-
-	}
+	private ArrayList<IVariableAssignment> assignments = new ArrayList<IVariableAssignment>();
 
 	private DuplicateStatement(IControlFlowGraph cfg) {
 		this.cfg = cfg;
@@ -51,30 +40,55 @@ public class DuplicateStatement implements BadCodeAnalyser, IVisitor{
 				for(INode n: node.getIncomming()) 
 					if(n != null && incoming != null && !node.isExit() && !n.equals(incoming) && n.getElement().isSame(incoming.getElement())) 
 						duplicates.add(n);
-			if(duplicates.size() > 1) Linter.getInstance().register(new Duplicate(Category.DUPLICATE_CODE, Explanations.DUPLICATE_BRANCH_CODE, duplicates));
+			if(duplicates.size() > 1) {
+				Linter.getInstance().register(new Duplicate(Category.DUPLICATE_CODE, Explanations.DUPLICATE_BRANCH_CODE, duplicates));
+			}
 		};
+	}
+
+	private class DuplicateOccurrence {
+		private IVariableAssignment assignment;
+		private Duplicate badcase;
+
+		public DuplicateOccurrence(IVariableAssignment assignment) {
+			this.assignment = assignment;
+			this.badcase = new Duplicate(Explanations.DUPLICATE_STATEMENT, assignment);
+		}
+
+		@Override
+		public String toString() {
+			return assignment.toString();
+		}
 	}
 
 	@Override
 	public boolean visit(IVariableAssignment assignment) {
-		boolean assExists = false;
-
-		for(IStatement ass: assignments) {
-			if(ass.isSame(assignment) && assignment.getParent().isSame(ass.getParent())) {
-				assExists = true;
-				boolean caseExists = true;
-				for (DuplicateOccurrence dOcc : duplicateOccurences)
-					if(dOcc.assignment.isSame(assignment)) dOcc.badcase.addAssignment(assignment);
-					else caseExists = false;
-				if(!caseExists || duplicateOccurences.size() == 0) {
-					DuplicateOccurrence occurence = new DuplicateOccurrence(assignment);
-					duplicateOccurences.add(occurence);
-					Linter.getInstance().register(occurence.badcase);
+		boolean duplicate = false;
+		IVariableAssignment a = null;
+		for(IVariableAssignment ass: assignments) {
+			if(ass.isSame(assignment) && ass.getTarget().equals(assignment.getTarget()) && assignment.getParent().isSame(ass.getParent())) {
+				duplicate = true;
+				a = ass;
+				break;
+			}
+								
+		}
+		if(duplicate) {
+			boolean alreadyExists = false;
+			for (DuplicateOccurrence dOcc : duplicateOccurences) {
+				if(dOcc.assignment.getTarget().equals(assignment.getTarget()) && dOcc.assignment.isSame(assignment)) {
+					dOcc.badcase.addAssignment(assignment);
+					alreadyExists = true;
 				}
 			}
+			if(!alreadyExists) {
+				DuplicateOccurrence occurence = new DuplicateOccurrence(assignment);
+				occurence.badcase.addAssignment(a);
+				duplicateOccurences.add(occurence);
+				Linter.getInstance().register(occurence.badcase);
+			}
 		}
-		if(!assExists || assignments.size() == 0) assignments.add(assignment);
-
+		assignments.add(assignment);
 		return true;
 	}
 

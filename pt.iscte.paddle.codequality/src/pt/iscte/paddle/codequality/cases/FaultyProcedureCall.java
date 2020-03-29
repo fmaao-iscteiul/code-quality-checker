@@ -3,14 +3,13 @@ package pt.iscte.paddle.codequality.cases;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 
 import pt.iscte.paddle.codequality.misc.Category;
 import pt.iscte.paddle.javardise.service.ICodeDecoration;
-import pt.iscte.paddle.javardise.service.IDeclarationWidget;
 import pt.iscte.paddle.javardise.service.IJavardiseService;
 import pt.iscte.paddle.javardise.service.IWidget;
 import pt.iscte.paddle.javardise.util.HyperlinkedText;
@@ -27,13 +26,11 @@ public class FaultyProcedureCall extends BadCodeCase {
 		IProcedureCall call = (IProcedureCall) element;
 		Color blue = Display.getDefault().getSystemColor(SWT.COLOR_BLUE);
 		IWidget w = IJavardiseService.getWidget(super.element);
-		ICodeDecoration dec = w.addMark(blue);
-		dec.show();
 		if(w != null) {
 			Link link = new HyperlinkedText(null).words("dwladawdwa")
 					.link(call.getProcedure().getReturnType().toString(), () -> {
 						IWidget w2 = IJavardiseService.getWidget(call.getProcedure().getReturnType());
-						ICodeDecoration dec2 = w2.addMark(blue);
+						ICodeDecoration<Canvas> dec2 = w2.addMark(blue);
 						dec2.show();
 						
 

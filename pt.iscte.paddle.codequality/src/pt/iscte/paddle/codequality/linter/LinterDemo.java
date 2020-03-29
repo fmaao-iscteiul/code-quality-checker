@@ -31,7 +31,7 @@ public class LinterDemo {
 
 	public static void main(String[] args) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 
-		DuplicateStatement t = new DuplicateStatement(); 
+		NonVoidPureFunction t = new NonVoidPureFunction(); 
 		t.setup();
 		IModule module = t.getModule();
 
