@@ -1,20 +1,19 @@
 package pt.iscte.paddle.codequality.visitors;
 
-import pt.iscte.paddle.model.cfg.IControlFlowGraph;
-import pt.iscte.paddle.model.cfg.INode;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
 import pt.iscte.paddle.codequality.cases.Duplicate;
 import pt.iscte.paddle.codequality.linter.Linter;
-import pt.iscte.paddle.model.IStatement;
-import pt.iscte.paddle.model.IVariableAssignment;
-import pt.iscte.paddle.model.IBlock.IVisitor;
 import pt.iscte.paddle.codequality.misc.BadCodeAnalyser;
 import pt.iscte.paddle.codequality.misc.Category;
 import pt.iscte.paddle.codequality.misc.Explanations;
+import pt.iscte.paddle.model.IBlock.IVisitor;
+import pt.iscte.paddle.model.IVariableAssignment;
+import pt.iscte.paddle.model.cfg.IBranchNode;
+import pt.iscte.paddle.model.cfg.IControlFlowGraph;
+import pt.iscte.paddle.model.cfg.INode;
 
 public class DuplicateStatement implements BadCodeAnalyser, IVisitor{
 
@@ -34,7 +33,6 @@ public class DuplicateStatement implements BadCodeAnalyser, IVisitor{
 	@Override
 	public void analyse() {
 		for(INode node : this.cfg.getNodes()) {
-
 			Set<INode> duplicates = new HashSet<INode>();
 			for(INode incoming: node.getIncomming()) 
 				for(INode n: node.getIncomming()) 
@@ -66,12 +64,17 @@ public class DuplicateStatement implements BadCodeAnalyser, IVisitor{
 		boolean duplicate = false;
 		IVariableAssignment a = null;
 		for(IVariableAssignment ass: assignments) {
-			if(ass.isSame(assignment) && ass.getTarget().equals(assignment.getTarget()) && assignment.getParent().isSame(ass.getParent())) {
+			if(ass.getParent().isSame(assignment.getParent()) 
+					&& ass.isSame(assignment) 
+					&& ass.getTarget().equals(assignment.getTarget()) 
+					&& assignment.getParent().isSame(ass.getParent())) {
+				System.out.println("ass: " + assignment.getParent());
+				System.out.println("ass: " + ass.getParent());
 				duplicate = true;
 				a = ass;
 				break;
 			}
-								
+
 		}
 		if(duplicate) {
 			boolean alreadyExists = false;

@@ -46,9 +46,9 @@ public class NonVoidPureFunction extends BaseTest{
 	IVariableAssignment ass5 = body2.addAssignment(n2, INT.literal(19));
 	
 	IProcedureCall proCall = body2.addCall(naturals, n2);
-	IVariableAssignment ass8 = body2.addAssignment(n2, ADD.on(n, INT.literal(1)));
+//	IVariableAssignment ass8 = body2.addAssignment(n2, ADD.on(n, INT.literal(1)));
 	IProcedureCall proCal2 = body2.addCall(naturals, n2);
-	IVariableAssignment ass9 = body2.addAssignment(n2, ADD.on(n, INT.literal(1)));
+//	IVariableAssignment ass9 = body2.addAssignment(n2, ADD.on(n, INT.literal(1)));
 	IProcedureCall proCall3 = body2.addCall(naturals, n2);
 	
 	IProcedureCall proCall4 = body2.addCall(naturals, INT.literal(40));

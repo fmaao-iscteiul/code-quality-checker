@@ -1,5 +1,10 @@
 package pt.iscte.paddle.codequality.visitors;
+import static pt.iscte.paddle.model.IType.BOOLEAN;
+
+import pt.iscte.paddle.codequality.cases.Contradiction;
 import pt.iscte.paddle.codequality.cases.EmptyBranch;
+import pt.iscte.paddle.codequality.cases.EmptyLoop;
+import pt.iscte.paddle.codequality.cases.Tautology;
 import pt.iscte.paddle.codequality.linter.Linter;
 import pt.iscte.paddle.codequality.misc.Category;
 import pt.iscte.paddle.codequality.misc.Explanations;
@@ -20,8 +25,11 @@ public class Loop implements IVisitor{
 	@Override
 	public boolean visit(ILoop loop) {
 
+		if(!loop.getGuard().isNull() && loop.getGuard().isSame(BOOLEAN.literal(false)))
+			Linter.getInstance().register(new Contradiction(Explanations.CONTRADICTION, loop.getGuard()));
+
 		if(loop.isEmpty())
-			Linter.getInstance().register(new EmptyBranch(Category.EMPTY_LOOP, Explanations.EMPTY_LOOP, loop));
+			Linter.getInstance().register(new EmptyLoop(Category.EMPTY_LOOP, Explanations.EMPTY_LOOP, loop));
 
 		return true;
 	}
@@ -37,13 +45,4 @@ public class Loop implements IVisitor{
 		return null;
 	}
 
-	@Override
-	public boolean visit(ISelection selection) {
-		//		IExpression loopGuard = this.getParentLoopGuard(selection);
-		//		if(selection.getBlock().isInLoop() && loopGuard != null && loopGuard.toString().equals(selection.getGuard().toString())) {
-		//			Linter.getInstance().register(new DuplicateLoopGuard(selection.getGuard()));
-		//		}
-		//		return IVisitor.super.visit(selection);
-		return true;
-	}
 }

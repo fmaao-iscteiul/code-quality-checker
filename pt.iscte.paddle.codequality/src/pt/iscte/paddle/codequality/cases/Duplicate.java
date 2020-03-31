@@ -10,6 +10,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Link;
 
 import pt.iscte.paddle.codequality.misc.Category;
+import pt.iscte.paddle.javardise.service.IClassWidget;
 import pt.iscte.paddle.javardise.util.HyperlinkedText;
 import pt.iscte.paddle.model.IProgramElement;
 import pt.iscte.paddle.model.IStatement;
@@ -38,13 +39,13 @@ public class Duplicate extends BadCodeCase {
 	}
 
 	@Override
-	public void generateComponent(Display display, org.eclipse.swt.widgets.Composite comp, int style) {
-		this.generateMark(display, comp, style, duplicates);
-		this.generateExplanation(display, comp, style);
+	public void generateComponent(IClassWidget widget, org.eclipse.swt.widgets.Composite comp, int style) {
+		this.generateMark(widget, comp, style, duplicates);
+		this.generateExplanation(widget, comp, style);
 	}
 	
 	@Override
-	protected void generateExplanation(Display display, Composite comp, int style) {
+	protected void generateExplanation(IClassWidget widget, Composite comp, int style) {
 		Link link = new HyperlinkedText(null).words(getExplanation()).create(comp, SWT.WRAP | SWT.V_SCROLL);
 		link.requestLayout();
 	}

@@ -12,34 +12,25 @@ import pt.iscte.paddle.javardise.service.IClassWidget;
 import pt.iscte.paddle.javardise.service.ICodeDecoration;
 import pt.iscte.paddle.javardise.service.IJavardiseService;
 import pt.iscte.paddle.javardise.service.IWidget;
-import pt.iscte.paddle.model.IControlStructure;
 import pt.iscte.paddle.model.IProgramElement;
-import pt.iscte.paddle.model.ISelection;
 
-public class EmptySelection extends EmptyBranch {
+public class Tautology extends BadCodeCase {
 
-	public EmptySelection(String explanation, IProgramElement branch) {
-		super(Category.EMPTY_SELECTION, explanation, branch);
+	public Tautology(String explanation, IProgramElement element) {
+		super(Category.TALTOLOGY, explanation, element);
 	}
-
-	@Override
-	public void generateComponent(IClassWidget widget, Composite comp, int style) {
-		generateMark(widget, comp, style);
-		generateExplanation(widget, comp, style);
-	}
-
+	
 	@Override
 	protected void generateMark(IClassWidget widget, Composite comp, int style) {
-		Color cyan = Display.getDefault().getSystemColor(SWT.COLOR_DARK_MAGENTA);
+		Color cyan = Display.getDefault().getSystemColor(SWT.COLOR_CYAN);
 		IWidget w = IJavardiseService.getWidget(element);
 		if(w != null) {
 			ICodeDecoration<Canvas> d = w.addMark(cyan);
+			ICodeDecoration<Text> d2 = w.addNote("Won't this execute everytime?", ICodeDecoration.Location.RIGHT);
 			d.show();
-			getDecorations().add(d);
-			ICodeDecoration<Text> d2 = w.addNote("No actions inside \n this block.", ICodeDecoration.Location.RIGHT);
 			d2.show();
+			getDecorations().add(d);
 			getDecorations().add(d2);
 		}
 	}
-
 }

@@ -8,11 +8,13 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 
 import pt.iscte.paddle.codequality.misc.Category;
+import pt.iscte.paddle.javardise.service.IClassWidget;
 import pt.iscte.paddle.javardise.service.ICodeDecoration;
 import pt.iscte.paddle.javardise.service.IJavardiseService;
 import pt.iscte.paddle.javardise.service.IWidget;
@@ -25,7 +27,7 @@ public abstract class BadCodeCase {
 	public String explanation;
 	public IProgramElement element;
 
-	private List<ICodeDecoration<Canvas>> codeDecorations = new ArrayList<ICodeDecoration<Canvas>>();
+	private List<ICodeDecoration> codeDecorations = new ArrayList<ICodeDecoration>();
 	private Text text;
 
 	BadCodeCase(Category category, String explanation, IProgramElement element){
@@ -55,39 +57,37 @@ public abstract class BadCodeCase {
 		return element;
 	}
 
-	public void generateComponent(Display display, Composite comp, int style) {
-		this.generateMark(display, comp, style);
-		this.generateDecoration(display, comp, style);
-		this.generateExplanation(display, comp, style);
+	public void generateComponent(IClassWidget widget, Composite comp, int style) {
+		this.generateMark(widget, comp, style);
+		this.generateExplanation(widget, comp, style);
 	}
 
-	protected void generateMark(Display display, Composite comp, int style) {
+	protected void generateMark(IClassWidget widget, Composite comp, int style) {
 		IWidget w = IJavardiseService.getWidget(element);
 		if(w != null) {
-			ICodeDecoration<Canvas> d = w.addMark(new Color (display, 255, 0, 0));
+			ICodeDecoration d = w.addMark(new Color (Display.getDefault(), 255, 0, 0));
 			this.codeDecorations.add(d);
 			d.show();
 		}
 	}
 
-	protected void generateMark(Display display, Composite comp, int style, List<IProgramElement> elements) {
+	protected void generateMark(IClassWidget widget, Composite comp, int style, List<IProgramElement> elements) {
 		for (IProgramElement el : elements) {
+			System.out.println(el);
 			IWidget w = IJavardiseService.getWidget(el);
 			if(w != null) {
-				ICodeDecoration<Canvas> d = w.addMark(new Color (display, 155, 0, 0));
+				ICodeDecoration<Canvas> d = w.addMark(new Color (Display.getDefault(), 155, 0, 0));
 				this.codeDecorations.add(d);
 				d.show();
 			}
 		}
 	}
 
-	protected void generateExplanation(Display display, Composite comp, int style) {
+	protected void generateExplanation(IClassWidget widget, Composite comp, int style) {
 		Link link = new HyperlinkedText(null).words(getExplanation()).create(comp, SWT.WRAP | SWT.V_SCROLL);
 		link.requestLayout();
 	}
 	
-	protected void generateDecoration(Display display, Composite comp, int style) {}
-
 	public void hideAll() {
 		this.codeDecorations.forEach(mark -> {
 			mark.hide();
@@ -95,7 +95,7 @@ public abstract class BadCodeCase {
 		if(this.text != null) this.text.dispose();
 	}
 
-	public List<ICodeDecoration<Canvas>> getDecorations() {
+	public List<ICodeDecoration> getDecorations() {
 		return codeDecorations;
 	}
 	

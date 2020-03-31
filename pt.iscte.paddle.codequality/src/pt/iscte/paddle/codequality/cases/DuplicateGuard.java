@@ -8,6 +8,7 @@ import org.eclipse.swt.widgets.Link;
 
 import pt.iscte.paddle.codequality.misc.Category;
 import pt.iscte.paddle.codequality.misc.Explanations;
+import pt.iscte.paddle.javardise.service.IClassWidget;
 import pt.iscte.paddle.model.IProgramElement;
 
 public class DuplicateGuard extends BadCodeCase{
@@ -20,9 +21,9 @@ public class DuplicateGuard extends BadCodeCase{
 	}
 	
 	@Override
-	public void generateComponent(Display display, Composite comp, int style) {
-		super.generateMark(display, comp, style, guards);
-		super.generateExplanation(display, comp, style);
+	public void generateComponent(IClassWidget widget, Composite comp, int style) {
+		super.generateMark(widget, comp, style, guards);
+		super.generateExplanation(widget, comp, style);
 	}
 
 }

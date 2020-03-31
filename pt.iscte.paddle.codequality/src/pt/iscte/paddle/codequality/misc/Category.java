@@ -14,16 +14,7 @@ public enum Category {
 	MAGIC_NUMBER,
 	DUPLICATE_SELECTION_GUARD, 
 	FAULTY_METHOD_CALL, 
-	DUPLICATE_PROCEDURE_CALL
+	DUPLICATE_PROCEDURE_CALL,
+	TALTOLOGY, 
+	CONTRADICTION
 }
-
-
-//static String generateCategoryTitle(Category cat) {
-//	switch (cat) {
-//	case FAULTY_ASSIGNMENT: {
-//		return 'FAULTY_ASSIGNMENT'
-//	}
-//	default:
-//		throw new IllegalArgumentException("Unexpected value: " + cat);
-//	}
-//}
