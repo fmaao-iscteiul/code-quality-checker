@@ -2,19 +2,18 @@ package pt.iscte.paddle.codequality.visitors;
 import static pt.iscte.paddle.model.IType.BOOLEAN;
 
 import pt.iscte.paddle.codequality.cases.Contradiction;
-import pt.iscte.paddle.codequality.cases.EmptyBranch;
 import pt.iscte.paddle.codequality.cases.EmptyLoop;
-import pt.iscte.paddle.codequality.cases.Tautology;
 import pt.iscte.paddle.codequality.linter.Linter;
 import pt.iscte.paddle.codequality.misc.Category;
+import pt.iscte.paddle.codequality.misc.Compability;
 import pt.iscte.paddle.codequality.misc.Explanations;
+import pt.iscte.paddle.model.IBlock.IVisitor;
+import pt.iscte.paddle.model.IBlockElement;
+import pt.iscte.paddle.model.IExpression;
 import pt.iscte.paddle.model.ILoop;
 import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IProgramElement;
 import pt.iscte.paddle.model.ISelection;
-import pt.iscte.paddle.model.IBlock.IVisitor;
-import pt.iscte.paddle.model.IBlockElement;
-import pt.iscte.paddle.model.IExpression;
 
 public class Loop implements IVisitor{
 
@@ -24,7 +23,6 @@ public class Loop implements IVisitor{
 
 	@Override
 	public boolean visit(ILoop loop) {
-
 		if(!loop.getGuard().isNull() && loop.getGuard().isSame(BOOLEAN.literal(false)))
 			Linter.getInstance().register(new Contradiction(Explanations.CONTRADICTION, loop.getGuard()));
 

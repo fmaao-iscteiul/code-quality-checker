@@ -1,18 +1,16 @@
 package pt.iscte.paddle.codequality.visitors;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import pt.iscte.paddle.codequality.linter.Linter;
 import pt.iscte.paddle.codequality.misc.BadCodeAnalyser;
-import pt.iscte.paddle.codequality.visitors.DuplicateGuard.GuardPair;
+import pt.iscte.paddle.codequality.misc.Compability;
 import pt.iscte.paddle.model.IBinaryExpression;
 import pt.iscte.paddle.model.IExpression;
-import pt.iscte.paddle.model.IProcedureCall;
 import pt.iscte.paddle.model.IProgramElement;
 import pt.iscte.paddle.model.IVariableAssignment;
-import pt.iscte.paddle.model.IVariableExpression;
 import pt.iscte.paddle.model.cfg.IBranchNode;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph.Path;
@@ -44,16 +42,16 @@ public class DuplicateGuard implements BadCodeAnalyser {
 			return occ.toString();
 		}
 	}
-	
+
 	class GuardPair {
 		private INode start;
 		private INode end;
-		
+
 		public GuardPair(INode start, INode end) {
 			this.start = start; 
 			this.end = end;
 		}
-		
+
 		public INode getEnd() {
 			return end;
 		}
@@ -72,7 +70,7 @@ public class DuplicateGuard implements BadCodeAnalyser {
 
 		this.gatherGuardDuplicates();
 		this.pairGatheredDuplicates();
-		
+
 		if(!pairs.isEmpty()) {
 			pairs.forEach(d -> {
 				List<IProgramElement> elements = new ArrayList<IProgramElement>();
@@ -83,9 +81,10 @@ public class DuplicateGuard implements BadCodeAnalyser {
 		}
 
 	}
-	
+
 	public static boolean hasBeenChanged(IControlFlowGraph cfg, INode start, INode end) {
 		List<Path> paths = cfg.pathsBetweenNodes(start, end);
+		Set<IExpression> guardParts = Compability.extractVariables(((IExpression) start.getElement()).getParts());
 		for (Path path : paths) {
 			List<INode> pathNodes = path.getNodes();
 			if(pathNodes.size() > 2) {
@@ -94,11 +93,11 @@ public class DuplicateGuard implements BadCodeAnalyser {
 				for (INode node : pathNodes) {
 					if(node.getElement() != null && node.getElement() instanceof IVariableAssignment) {
 						if(start.getElement() != null && start.getElement() instanceof IBinaryExpression) {
-							IVariableExpression vExp_l = (IVariableExpression) ((IBinaryExpression) start.getElement()).getLeftOperand();
-							IVariableExpression vExp_r = (IVariableExpression) ((IBinaryExpression) start.getElement()).getRightOperand();
-							if(vExp_l.getVariable().equals(((IVariableAssignment) node.getElement()).getTarget()) 
-								|| vExp_r.getVariable().equals(((IVariableAssignment) node.getElement()).getTarget())){
-								return true;
+							System.out.println(guardParts + " - " + ((IVariableAssignment) node.getElement()).getTarget().expression());
+							for (IExpression guardVar : guardParts) {
+								
+								if(guardVar.isSame(((IVariableAssignment) node.getElement()).getTarget().expression())) 
+									return true;
 							}
 						}
 					}
@@ -107,20 +106,20 @@ public class DuplicateGuard implements BadCodeAnalyser {
 		}
 		return false;
 	}
-	
+
 	private void pairGatheredDuplicates() {
 
 		for (DuplicateBranchGuard duplicateBranchGuard : duplicatedGuards) {
 			for(int i = 1; i < duplicateBranchGuard.occurences.size(); i++) {
 				INode start = duplicateBranchGuard.occurences.get(i - 1);
 				INode end= duplicateBranchGuard.occurences.get(i);
-				
+
 				if(!hasBeenChanged(cfg, start, end)) pairs.add(new GuardPair(start, end));
 			}
 		}
-		
+
 	}
-	
+
 	private void gatherGuardDuplicates() {
 		this.cfg.getNodes().forEach(node -> {
 			boolean existsInBranchConditions = false;

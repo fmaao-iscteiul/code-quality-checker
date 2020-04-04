@@ -28,6 +28,7 @@ public class Selection implements IVisitor {
 			Linter.getInstance().register(new BooleanCheck(Explanations.FAULTY_BOOLEAN_CHECK, exp));
 		return true;
 	}
+	
 	@Override
 	public boolean visit(ISelection selection) {
 		if(!selection.getGuard().isNull()) {

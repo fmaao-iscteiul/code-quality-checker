@@ -5,11 +5,11 @@ public class CaseNames {
 	public static String getCaseName(Category category) {
 		switch (category) {
 		case DUPLICATE_CODE:
-			return "Duplicate usage of code";
+			return "Duplicated statement";
 		case DUPLICATE_PROCEDURE_CALL:
-			return "Duplication of method call";
+			return "Duplicated method call";
 		case DUPLICATE_SELECTION_GUARD:
-			return "Duplication of an if condition";
+			return "Duplicated condition";
 		case EMPTY_ALTERNATIVE:
 			return "Empty else block";
 		case EMPTY_LOOP:
@@ -19,21 +19,23 @@ public class CaseNames {
 		case FAULTY_ASSIGNMENT:
 			return "Useless code";
 		case FAULTY_BOOLEAN_CHECK:
-			return "Boolean condition misconception";
+			return "Boolean condition verbose";
 		case FAULTY_METHOD_CALL:
 			return "Method call issue";
 		case FAULTY_RETURN_BOOLEAN_CHECK:
 			return "Boolean condition misconception";
 		case MAGIC_NUMBER:
-			return "Magic number usage";
+			return "Magic number";
 		case NESTED_CODE:
 			return "Nested code";
 		case SELECTION_MISCONCEPTION:
 			return "If condition misconception";
 		case UNREACHABLE_CODE:
-			return "Dead code";
+			return "Unreachable code";
 		case TALTOLOGY:
-			return "Taltology";
+			return "Tautology";
+		case CONTRADICTION:
+			return "Dead Code";
 		default:
 			return category.toString();
 		}

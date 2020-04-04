@@ -11,18 +11,16 @@ import pt.iscte.paddle.codequality.linter.Linter;
 import pt.iscte.paddle.codequality.misc.BadCodeAnalyser;
 import pt.iscte.paddle.codequality.misc.Category;
 import pt.iscte.paddle.codequality.misc.Explanations;
-import pt.iscte.paddle.codequality.visitors.DuplicateGuard.DuplicateBranchGuard;
 import pt.iscte.paddle.codequality.visitors.DuplicateGuard.GuardPair;
-import pt.iscte.paddle.model.IBinaryExpression;
 import pt.iscte.paddle.model.IExpression;
 import pt.iscte.paddle.model.IProcedureCall;
 import pt.iscte.paddle.model.IType;
 import pt.iscte.paddle.model.IVariableAssignment;
 import pt.iscte.paddle.model.IVariableDeclaration;
-import pt.iscte.paddle.model.IVariableExpression;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
 import pt.iscte.paddle.model.cfg.INode;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph.Path;
+import pt.iscte.paddle.model.roles.IFixedValue;
 import pt.iscte.paddle.model.roles.impl.FixedValue;
 
 public class ProcedureCall implements BadCodeAnalyser {
@@ -81,7 +79,7 @@ public class ProcedureCall implements BadCodeAnalyser {
 				
 			}
 			if(duplicateBranchGuard.realDuplicates.size() > 1)
-				Linter.getInstance().register(new Duplicate(Category.DUPLICATE_PROCEDURE_CALL, "yes", duplicateBranchGuard.realDuplicates));			
+				Linter.getInstance().register(new Duplicate(Category.DUPLICATE_PROCEDURE_CALL, Explanations.DUPLICATE_METHOD_CALL, duplicateBranchGuard.realDuplicates));			
 		}
 	}
 
@@ -96,7 +94,6 @@ public class ProcedureCall implements BadCodeAnalyser {
 				pathNodes.remove(pathNodes.size() - 1);
 				for (INode node : pathNodes) {
 					if(node.getElement() != null && node.getElement() instanceof IVariableAssignment) {
-						System.out.println();
 						for (IExpression argument : call.getArguments()) {
 							if(((IVariableAssignment) node.getElement()).getTarget().expression().isSame(argument))
 								return true;
@@ -121,7 +118,6 @@ public class ProcedureCall implements BadCodeAnalyser {
 
 				for (IVariableDeclaration var : call.getProcedure().getParameters()) {
 					if(!FixedValue.isFixedValue(var)) continue;
-
 				}
 
 				boolean exists = false;

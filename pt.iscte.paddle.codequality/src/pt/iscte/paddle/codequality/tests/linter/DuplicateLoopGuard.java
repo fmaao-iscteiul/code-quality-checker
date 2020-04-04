@@ -7,6 +7,7 @@ import static pt.iscte.paddle.model.IType.INT;
 
 import pt.iscte.paddle.model.IArrayElementAssignment;
 import pt.iscte.paddle.model.IBlock;
+import pt.iscte.paddle.model.ILiteral;
 import pt.iscte.paddle.model.ILoop;
 import pt.iscte.paddle.model.IOperator;
 import pt.iscte.paddle.model.IProcedure;
@@ -29,18 +30,18 @@ public class DuplicateLoopGuard extends BaseTest {
 	IVariableAssignment i1 = body.addAssignment(i, INT.literal(1));
 	IVariableAssignment ass5 = body.addAssignment(i, i);
 	IVariableAssignment askskksks6 = body.addAssignment(i, ADD.on(i, INT.literal(1)));
-	ILoop loop = body.addLoop(SMALLER.on(i, n));
+	ILoop loop = body.addLoop(IOperator.AND.on(IOperator.AND.on(b, SMALLER.on(n, ADD.on(i, INT.literal(1)))), IOperator.AND.on(IOperator.OR.on(b, IOperator.NOT.on(b)), b)));
 //	IVariableAssignment ass10 = loop.addAssignment(i, IOperator.ADD.on(INT.literal(0), INT.literal(1)));
 //	IVariableAssignment ass6 = loop.addAssignment(i, INT.literal(10));
-	ISelection selection_true = loop.addSelection(SMALLER.on(i, n));
-	IVariableAssignment i2 = loop.addAssignment(i, INT.literal(10));
+	ISelection selection_true = loop.addSelection(IOperator.AND.on(IOperator.AND.on(b, SMALLER.on(n, ADD.on(i, INT.literal(1)))), IOperator.AND.on(IOperator.OR.on(b, IOperator.NOT.on(b)), b)));
+//	IVariableAssignment i2 = loop.addAssignment(i, INT.literal(10));
 	ISelection selection_false = loop.addSelection(IOperator.EQUAL.on(b, BOOLEAN.literal(false)));
 	ISelection selection_true2 = loop.addSelection(SMALLER.on(i, n));
 	IVariableAssignment i4 = loop.addAssignment(n, INT.literal(10));
 	ISelection selection_true3 = loop.addSelection(SMALLER.on(i, n));
 	IArrayElementAssignment ass2 = loop.addArrayElementAssignment(array, ADD.on(i, INT.literal(1)), i);
-	IVariableAssignment dawwadaw = loop.addAssignment(i, ADD.on(i, INT.literal(1)));
-	IVariableAssignment dawdwdfff = loop.addAssignment(i, ADD.on(i, INT.literal(1)));
+	IVariableAssignment dawwadaw = selection_true.addAssignment(i, ADD.on(i, INT.literal(1)));
+	IVariableAssignment dawdwdfff = selection_false.addAssignment(i, ADD.on(i, INT.literal(1)));
 	IReturn addReturn = body.addReturn(array);
 
 }

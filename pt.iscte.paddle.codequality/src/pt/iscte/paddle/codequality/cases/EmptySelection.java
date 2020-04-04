@@ -36,7 +36,7 @@ public class EmptySelection extends EmptyBranch {
 			ICodeDecoration<Canvas> d = w.addMark(cyan);
 			d.show();
 			getDecorations().add(d);
-			ICodeDecoration<Text> d2 = w.addNote("No actions inside \n this block.", ICodeDecoration.Location.RIGHT);
+			ICodeDecoration<Text> d2 = w.addNote("No actions inside \n this block", ICodeDecoration.Location.RIGHT);
 			d2.show();
 			getDecorations().add(d2);
 		}

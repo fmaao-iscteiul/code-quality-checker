@@ -68,8 +68,6 @@ public class DuplicateStatement implements BadCodeAnalyser, IVisitor{
 					&& ass.isSame(assignment) 
 					&& ass.getTarget().equals(assignment.getTarget()) 
 					&& assignment.getParent().isSame(ass.getParent())) {
-				System.out.println("ass: " + assignment.getParent());
-				System.out.println("ass: " + ass.getParent());
 				duplicate = true;
 				a = ass;
 				break;

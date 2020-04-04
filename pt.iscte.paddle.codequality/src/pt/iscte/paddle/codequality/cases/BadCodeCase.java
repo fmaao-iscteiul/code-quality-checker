@@ -99,7 +99,7 @@ public abstract class BadCodeCase {
 		return codeDecorations;
 	}
 	
-	public void addDecoration(ICodeDecoration<Canvas> d) {
+	public void addDecoration(ICodeDecoration d) {
 		this.codeDecorations.add(d);
 	}
 

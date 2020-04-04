@@ -58,7 +58,7 @@ public enum Linter {
 	
 	public Linter loadAnalysers() {
 		this.procedures.forEach(mProcedure -> {
-			IControlFlowGraph cfg = mProcedure.getCFG();
+			IControlFlowGraph cfg = mProcedure.generateCFG();
 			this.analysers.add(Unreachable.build(cfg));
 			this.analysers.add(DuplicateGuard.build(cfg));
 			this.analysers.add(DuplicateStatement.build(cfg));
@@ -70,7 +70,7 @@ public enum Linter {
 	
 	public ArrayList<BadCodeCase> analyse() {
 		this.analysers.forEach(analyser -> analyser.analyse());
-		this.procedures.forEach(p -> p.getCFG().display());
+		this.procedures.forEach(p -> p.generateCFG().display());
 		this.visitors.forEach(visitor -> this.procedures.forEach(mProcedure -> mProcedure.accept(visitor)));
 		
 		return caughtCases;

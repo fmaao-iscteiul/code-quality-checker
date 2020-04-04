@@ -16,7 +16,12 @@ import org.eclipse.swt.widgets.Shell;
 
 import pt.iscte.paddle.codequality.cases.BadCodeCase;
 import pt.iscte.paddle.codequality.misc.CaseNames;
+import pt.iscte.paddle.codequality.tests.linter.DuplicateLoopGuard;
+import pt.iscte.paddle.codequality.tests.linter.DuplicateStatement;
+import pt.iscte.paddle.codequality.tests.linter.EmptySelection;
+import pt.iscte.paddle.codequality.tests.linter.NonVoidPureFunction;
 import pt.iscte.paddle.codequality.tests.linter.SelectionMisconception;
+import pt.iscte.paddle.codequality.tests.linter.UnreachableCode;
 import pt.iscte.paddle.javardise.service.IClassWidget;
 import pt.iscte.paddle.javardise.service.IJavardiseService;
 import pt.iscte.paddle.model.IModule;
@@ -28,7 +33,12 @@ public class LinterDemo {
 
 	public static void main(String[] args) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 
-		SelectionMisconception t = new SelectionMisconception(); 
+//		UnreachableCode t = new UnreachableCode();
+//		NonVoidPureFunction t = new NonVoidPureFunction();
+//		SelectionMisconception t = new SelectionMisconception();
+		DuplicateLoopGuard t = new DuplicateLoopGuard();
+//		DuplicateStatement t = new DuplicateStatement();
+		
 		t.setup();
 		IModule module = t.getModule();
 
@@ -74,7 +84,7 @@ public class LinterDemo {
 		TheLinter.getModule().setId("test");
 
 		CFGViewer cfg = new CFGViewer(codeAndCFG);
-		cfg.setInput(TheLinter.getProcedures().get(0).getCFG().getNodes());
+		cfg.setInput(TheLinter.getProcedures().get(0).generateCFG().getNodes());
 		cfg.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		ArrayList<BadCodeCase> badCodeCases = TheLinter.analyse();

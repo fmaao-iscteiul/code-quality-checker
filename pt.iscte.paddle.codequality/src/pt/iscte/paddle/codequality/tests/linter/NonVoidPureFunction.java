@@ -33,7 +33,7 @@ public class NonVoidPureFunction extends BaseTest{
 //	IVariableAssignment ass12 = body.addAssignment(n, ADD.on(n, INT.literal(1)));
 	
 	
-	IVariableAssignment i2 = body.addAssignment(i, INT.literal(0));
+	IVariableAssignment i2 = body.addAssignment(i, i);
 	ILoop loop = body.addLoop(SMALLER.on(i, n));
 	IArrayElementAssignment ass2 = loop.addArrayElementAssignment(array, ADD.on(i, INT.literal(1)), i);
 	IVariableAssignment ass3 = loop.addAssignment(i, ADD.on(i, INT.literal(1)));
@@ -46,7 +46,7 @@ public class NonVoidPureFunction extends BaseTest{
 	IVariableAssignment ass5 = body2.addAssignment(n2, INT.literal(19));
 	
 	IProcedureCall proCall = body2.addCall(naturals, n2);
-//	IVariableAssignment ass8 = body2.addAssignment(n2, ADD.on(n, INT.literal(1)));
+	IVariableAssignment ass8 = body2.addAssignment(n2, ADD.on(n, INT.literal(1)));
 	IProcedureCall proCal2 = body2.addCall(naturals, n2);
 //	IVariableAssignment ass9 = body2.addAssignment(n2, ADD.on(n, INT.literal(1)));
 	IProcedureCall proCall3 = body2.addCall(naturals, n2);
