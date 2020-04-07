@@ -5,12 +5,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import pt.iscte.paddle.codequality.cases.Duplicate;
+import pt.iscte.paddle.codequality.cases.DuplicateMethodCall;
 import pt.iscte.paddle.codequality.cases.FaultyProcedureCall;
 import pt.iscte.paddle.codequality.linter.Linter;
 import pt.iscte.paddle.codequality.misc.BadCodeAnalyser;
 import pt.iscte.paddle.codequality.misc.Category;
-import pt.iscte.paddle.codequality.misc.Explanations;
 import pt.iscte.paddle.codequality.visitors.DuplicateGuard.GuardPair;
 import pt.iscte.paddle.model.IExpression;
 import pt.iscte.paddle.model.IProcedureCall;
@@ -18,9 +17,8 @@ import pt.iscte.paddle.model.IType;
 import pt.iscte.paddle.model.IVariableAssignment;
 import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
-import pt.iscte.paddle.model.cfg.INode;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph.Path;
-import pt.iscte.paddle.model.roles.IFixedValue;
+import pt.iscte.paddle.model.cfg.INode;
 import pt.iscte.paddle.model.roles.impl.FixedValue;
 
 public class ProcedureCall implements BadCodeAnalyser {
@@ -67,7 +65,6 @@ public class ProcedureCall implements BadCodeAnalyser {
 
 	private void pairGatheredDuplicates() {
 		for (DuplicateProcedureCall duplicateBranchGuard : duplicates) {
-			System.out.println(duplicateBranchGuard.occurences);
 			for(int i = 1; i < duplicateBranchGuard.occurences.size(); i++) {
 				INode start = duplicateBranchGuard.occurences.get(i - 1);
 				INode end = duplicateBranchGuard.occurences.get(i);
@@ -79,7 +76,7 @@ public class ProcedureCall implements BadCodeAnalyser {
 				
 			}
 			if(duplicateBranchGuard.realDuplicates.size() > 1)
-				Linter.getInstance().register(new Duplicate(Category.DUPLICATE_PROCEDURE_CALL, Explanations.DUPLICATE_METHOD_CALL, duplicateBranchGuard.realDuplicates));			
+				Linter.getInstance().register(new DuplicateMethodCall(Category.DUPLICATE_PROCEDURE_CALL, duplicateBranchGuard.realDuplicates));			
 		}
 	}
 

@@ -47,14 +47,10 @@ public class FaultyProcedureCall extends BadCodeCase {
 
 						ICodeDecoration<Canvas> d2 = widget.getProcedure((IProcedure) call.getProcedure()).getReturnType().addMark(blue);
 						ICodeDecoration<Text> d3 = widget.getProcedure((IProcedure) call.getProcedure()).getReturnType().addNote("Not void!", ICodeDecoration.Location.TOP);
-						ICodeDecoration<Label> d4 = widget.getProcedure((IProcedure) call.getProcedure()).getReturnType().addImage(img,  ICodeDecoration.Location.LEFT);
 						d2.show();
 						d3.show();
-						d4.show();
 						super.getDecorations().add(d2);
 						super.getDecorations().add(d3);
-						super.getDecorations().add(d4);
-
 					})
 					.words(". With this being, you should consider if this method should return anything at all, or investigate if it is being used the right way.")
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);

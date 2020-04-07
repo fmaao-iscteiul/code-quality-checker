@@ -46,12 +46,12 @@ public class UnreachableCode extends BadCodeCase {
 		IWidget[] elements = new IWidget[deadNodes.size()];
 
 		for (int i = 0; i < elements.length; i++) {
-			IControlStructure s = deadNodes.get(i).getElement().getProperty(IControlStructure.class);
-			if(s != null) {
-				elements[i] = IJavardiseService.getWidget(s);
-			}
-			else 
-				elements[i] = IJavardiseService.getWidget(deadNodes.get(i).getElement());
+			//			IControlStructure s = deadNodes.get(i).getElement().getProperty(IControlStructure.class);
+			//			if(s != null) {
+			//				elements[i] = IJavardiseService.getWidget(s);
+			//			}
+			//			else 
+			elements[i] = IJavardiseService.getWidget(deadNodes.get(i).getElement());
 		}
 
 		Color cyan = Display.getDefault().getSystemColor(SWT.COLOR_CYAN);
@@ -82,7 +82,8 @@ public class UnreachableCode extends BadCodeCase {
 					getDecorations().add(d0);
 					getDecorations().add(d1);
 				})
-				.words("that causes the non-execution of the highlighted blocks of code. Such code will never "
+				.words("that causes the non-execution of "+ deadNodes.size() + " of your code instructions.") 
+				.words(" Such code will never "
 						+ "be executed and becomes obsolete, unnecessary and therefore should be avoided at all cost")
 				.create(comp, SWT.WRAP | SWT.V_SCROLL);
 		link.requestLayout();

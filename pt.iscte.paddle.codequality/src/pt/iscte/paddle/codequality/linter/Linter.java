@@ -48,7 +48,6 @@ public enum Linter {
 	public Linter loadVisitors() throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 		this.visitors.add(Selection.build());
 		this.visitors.add(Loop.build());
-		this.visitors.add(Return.build());
 		this.visitors.add(MagicNumbers.build());
 		this.visitors.add(DeadCode.build());
 		this.visitors.add(DuplicateStatement.build(null));
@@ -59,10 +58,12 @@ public enum Linter {
 	public Linter loadAnalysers() {
 		this.procedures.forEach(mProcedure -> {
 			IControlFlowGraph cfg = mProcedure.generateCFG();
+			cfg.display();			
 			this.analysers.add(Unreachable.build(cfg));
 			this.analysers.add(DuplicateGuard.build(cfg));
 			this.analysers.add(DuplicateStatement.build(cfg));
 			this.analysers.add(ProcedureCall.build(cfg));
+			this.analysers.add(Return.build(cfg));
 		});
 		
 		return this;
@@ -70,7 +71,6 @@ public enum Linter {
 	
 	public ArrayList<BadCodeCase> analyse() {
 		this.analysers.forEach(analyser -> analyser.analyse());
-		this.procedures.forEach(p -> p.generateCFG().display());
 		this.visitors.forEach(visitor -> this.procedures.forEach(mProcedure -> mProcedure.accept(visitor)));
 		
 		return caughtCases;

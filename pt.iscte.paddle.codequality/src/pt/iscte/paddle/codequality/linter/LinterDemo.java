@@ -11,19 +11,20 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 
 import pt.iscte.paddle.codequality.cases.BadCodeCase;
 import pt.iscte.paddle.codequality.misc.CaseNames;
 import pt.iscte.paddle.codequality.tests.linter.DuplicateLoopGuard;
-import pt.iscte.paddle.codequality.tests.linter.DuplicateStatement;
-import pt.iscte.paddle.codequality.tests.linter.EmptySelection;
+import pt.iscte.paddle.codequality.tests.linter.FaultyReturns;
 import pt.iscte.paddle.codequality.tests.linter.NonVoidPureFunction;
-import pt.iscte.paddle.codequality.tests.linter.SelectionMisconception;
 import pt.iscte.paddle.codequality.tests.linter.UnreachableCode;
 import pt.iscte.paddle.javardise.service.IClassWidget;
 import pt.iscte.paddle.javardise.service.IJavardiseService;
+import pt.iscte.paddle.javardise.util.HyperlinkedText;
 import pt.iscte.paddle.model.IModule;
 import pt.iscte.pidesco.cfgviewer.ext.CFGViewer;
 
@@ -33,12 +34,13 @@ public class LinterDemo {
 
 	public static void main(String[] args) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 
-//		UnreachableCode t = new UnreachableCode();
-//		NonVoidPureFunction t = new NonVoidPureFunction();
-//		SelectionMisconception t = new SelectionMisconception();
+		//				UnreachableCode t = new UnreachableCode();
+		//		NonVoidPureFunction t = new NonVoidPureFunction();
+		//		SelectionMisconception t = new SelectionMisconception();
 		DuplicateLoopGuard t = new DuplicateLoopGuard();
-//		DuplicateStatement t = new DuplicateStatement();
-		
+		//		DuplicateStatement t = new DuplicateStatement();
+		//		FaultyReturns t = new FaultyReturns();
+
 		t.setup();
 		IModule module = t.getModule();
 
@@ -73,10 +75,16 @@ public class LinterDemo {
 		rightLayout.marginWidth = 5;
 		rightLayout.spacing = 5;
 		rightComp.setLayout(rightLayout);
-	
+
+		//		Label label = new Label(rightComp, SWT.TOP);
+		//		label.setText("The bad practises caught in your code were:");
+
 		final List list = new List(rightComp, SWT.V_SCROLL);
 		list.setBackground(new org.eclipse.swt.graphics.Color(display, 255, 255, 255));
 		list.setForeground(new org.eclipse.swt.graphics.Color(display, 0, 0, 0));
+
+		Link link = new HyperlinkedText(null).words("").create(rightComp, SWT.WRAP | SWT.V_SCROLL);
+		link.requestLayout();
 
 		// LINTER INIT
 		Linter TheLinter = Linter.INSTANCE.init(module);
@@ -98,7 +106,6 @@ public class LinterDemo {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if(list.getSelectionIndex() == -1) return;
-
 				if(rightComp.getChildren().length > 1) rightComp.getChildren()[1].dispose();
 
 				BadCodeCase badCodeCase = badCodeCases.get(list.getSelectionIndex());

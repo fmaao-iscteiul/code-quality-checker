@@ -23,7 +23,7 @@ public class CaseNames {
 		case FAULTY_METHOD_CALL:
 			return "Method call issue";
 		case FAULTY_RETURN_BOOLEAN_CHECK:
-			return "Boolean condition misconception";
+			return "Unnecessary boolean condition";
 		case MAGIC_NUMBER:
 			return "Magic number";
 		case NESTED_CODE:

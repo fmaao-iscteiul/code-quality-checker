@@ -93,9 +93,7 @@ public class DuplicateGuard implements BadCodeAnalyser {
 				for (INode node : pathNodes) {
 					if(node.getElement() != null && node.getElement() instanceof IVariableAssignment) {
 						if(start.getElement() != null && start.getElement() instanceof IBinaryExpression) {
-							System.out.println(guardParts + " - " + ((IVariableAssignment) node.getElement()).getTarget().expression());
 							for (IExpression guardVar : guardParts) {
-								
 								if(guardVar.isSame(((IVariableAssignment) node.getElement()).getTarget().expression())) 
 									return true;
 							}
@@ -119,13 +117,38 @@ public class DuplicateGuard implements BadCodeAnalyser {
 		}
 
 	}
+	
+	private boolean duplicateGuard(IExpression guard, IExpression listGuard) { 
+		if(guard.isSame(listGuard)) return true;
+		
+		for (IExpression part : guard.getParts()) {
+			if(equalPartExpressions(part, listGuard)) return true;;
+		}
+		return false;
+	}
+	
+	private boolean equalPartExpressions(IExpression guard, IExpression listGuard) {
+		if(guard.isSame(listGuard)) return true;
+		
+		List<IExpression> guardParts = listGuard.getParts(); 
+		for (IExpression part : guardParts) {
+			if(part.isSame(guard)) return true;
+			else if(part instanceof IBinaryExpression) {
+				duplicateGuard(guard, ((IBinaryExpression) part).getLeftOperand());
+				duplicateGuard(guard, ((IBinaryExpression) part).getRightOperand());
+			}
+		}
+		return false;
+	}
 
 	private void gatherGuardDuplicates() {
 		this.cfg.getNodes().forEach(node -> {
 			boolean existsInBranchConditions = false;
 			if(node != null && node instanceof IBranchNode ) {
 				for(INode c: branchConditions) {
-					if(node.getElement().isSame(c.getElement())) {
+					IExpression guard = (IExpression) node.getElement();
+					IExpression listGuard = (IExpression) c.getElement();
+					if(duplicateGuard(guard, listGuard)) { // TODO see if guard is conjunction and check it's parts for duplicates.
 						existsInBranchConditions = true;
 						if(duplicatedGuards.size() == 0) {
 							DuplicateBranchGuard dup = new DuplicateBranchGuard(c);
