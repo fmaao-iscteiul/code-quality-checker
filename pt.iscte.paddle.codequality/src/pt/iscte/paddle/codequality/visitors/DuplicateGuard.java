@@ -10,6 +10,7 @@ import pt.iscte.paddle.codequality.misc.Compability;
 import pt.iscte.paddle.model.IBinaryExpression;
 import pt.iscte.paddle.model.IExpression;
 import pt.iscte.paddle.model.IProgramElement;
+import pt.iscte.paddle.model.IType;
 import pt.iscte.paddle.model.IVariableAssignment;
 import pt.iscte.paddle.model.cfg.IBranchNode;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
@@ -118,11 +119,14 @@ public class DuplicateGuard implements BadCodeAnalyser {
 
 	}
 	
-	private boolean duplicateGuard(IExpression guard, IExpression listGuard) { 
+	private boolean duplicateGuard(IExpression guard, IExpression listGuard) {
 		if(guard.isSame(listGuard)) return true;
 		
 		for (IExpression part : guard.getParts()) {
-			if(equalPartExpressions(part, listGuard)) return true;;
+			if(!part.isSame(IType.BOOLEAN.literal(true)) 
+					&& !part.isSame(IType.BOOLEAN.literal(false)) 
+					&& equalPartExpressions(part, listGuard)) 
+						return true;
 		}
 		return false;
 	}
@@ -132,6 +136,7 @@ public class DuplicateGuard implements BadCodeAnalyser {
 		
 		List<IExpression> guardParts = listGuard.getParts(); 
 		for (IExpression part : guardParts) {
+			
 			if(part.isSame(guard)) return true;
 			else if(part instanceof IBinaryExpression) {
 				duplicateGuard(guard, ((IBinaryExpression) part).getLeftOperand());

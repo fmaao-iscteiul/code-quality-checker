@@ -48,15 +48,16 @@ public class DuplicateMethodCall extends BadCodeCase {
 		Link link = new HyperlinkedText(null)
 				.words("The method call ")
 				.link(call.toString(), () -> {
-					ICodeDecoration<Canvas> d0 = widget.getProcedure((IProcedure) call.getProcedure()).getMethodName().addMark(blue);
-					d0.show();
-					super.getDecorations().add(d0);
+					ICodeDecoration<Canvas> d = IJavardiseService.getWidget(call.getProcedure()).addMark(blue);
+					d.show();
+					getDecorations().add(d);
 				})
-				.words(" was called more than once, without changing the value of any of it's parameters. It is being called as a ")
-				.link("void", () -> {})
+				.words(" was called more than once. \n\n  - It's parameters values dind't change between calls, which means that the result will be the same. \n - It is also being called as a ")
+				.link("void", () -> {
+					
+				})
 				.words(" method, but it's return is of the type ")
 				.link(call.getProcedure().getReturnType().toString(), () -> {
-					IJavardiseService.getWidget(call.getProcedure()).addMark(blue).show();
 					ICodeDecoration<Text> d0 = widget.getProcedure((IProcedure) call.getProcedure()).getReturnType().addNote("Not void!", ICodeDecoration.Location.TOP);
 					ICodeDecoration<Label> d1 = widget.getProcedure((IProcedure) call.getProcedure()).getReturnType()
 							.addImage(new Image(Display.getDefault(), "arrow.png"), ICodeDecoration.Location.LEFT);

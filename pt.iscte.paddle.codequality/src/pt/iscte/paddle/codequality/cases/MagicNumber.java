@@ -59,7 +59,7 @@ public class MagicNumber extends BadCodeCase{
 					d2.show();
 					getDecorations().add(d2);
 				})
-				.words(" represents a magic number. \n - It doesn't provide any context about what it does."
+				.words(" represents a magic number. \n\n - It doesn't provide any context about what it does."
 						+ " \n - This can make the code difficult to understand for other programmers as well as making it harder since"
 						+ " this number will have to be changed in in all the places that it's used.")
 				.create(comp, SWT.WRAP | SWT.V_SCROLL);

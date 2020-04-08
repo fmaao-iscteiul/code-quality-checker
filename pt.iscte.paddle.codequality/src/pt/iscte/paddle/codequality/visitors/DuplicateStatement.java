@@ -59,38 +59,38 @@ public class DuplicateStatement implements BadCodeAnalyser, IVisitor{
 		}
 	}
 
-	@Override
-	public boolean visit(IVariableAssignment assignment) {
-		boolean duplicate = false;
-		IVariableAssignment a = null;
-		for(IVariableAssignment ass: assignments) {
-			if(ass.getParent().isSame(assignment.getParent()) 
-					&& ass.isSame(assignment) 
-					&& ass.getTarget().equals(assignment.getTarget()) 
-					&& assignment.getParent().isSame(ass.getParent())) {
-				duplicate = true;
-				a = ass;
-				break;
-			}
-
-		}
-		if(duplicate) {
-			boolean alreadyExists = false;
-			for (DuplicateOccurrence dOcc : duplicateOccurences) {
-				if(dOcc.assignment.getTarget().equals(assignment.getTarget()) && dOcc.assignment.isSame(assignment)) {
-					dOcc.badcase.addAssignment(assignment);
-					alreadyExists = true;
-				}
-			}
-			if(!alreadyExists) {
-				DuplicateOccurrence occurence = new DuplicateOccurrence(assignment);
-				occurence.badcase.addAssignment(a);
-				duplicateOccurences.add(occurence);
-				Linter.getInstance().register(occurence.badcase);
-			}
-		}
-		assignments.add(assignment);
-		return true;
-	}
+//	@Override
+//	public boolean visit(IVariableAssignment assignment) {
+//		boolean duplicate = false;
+//		IVariableAssignment a = null;
+//		for(IVariableAssignment ass: assignments) {
+//			if(ass.getParent().isSame(assignment.getParent()) 
+//					&& ass.isSame(assignment) 
+//					&& ass.getTarget().equals(assignment.getTarget()) 
+//					&& assignment.getParent().isSame(ass.getParent())) {
+//				duplicate = true;
+//				a = ass;
+//				break;
+//			}
+//
+//		}
+//		if(duplicate) {
+//			boolean alreadyExists = false;
+//			for (DuplicateOccurrence dOcc : duplicateOccurences) {
+//				if(dOcc.assignment.getTarget().equals(assignment.getTarget()) && dOcc.assignment.isSame(assignment)) {
+//					dOcc.badcase.addAssignment(assignment);
+//					alreadyExists = true;
+//				}
+//			}
+//			if(!alreadyExists) {
+//				DuplicateOccurrence occurence = new DuplicateOccurrence(assignment);
+//				occurence.badcase.addAssignment(a);
+//				duplicateOccurences.add(occurence);
+//				Linter.getInstance().register(occurence.badcase);
+//			}
+//		}
+//		assignments.add(assignment);
+//		return true;
+//	}
 
 }

@@ -53,8 +53,8 @@ public class BooleanCheck extends BadCodeCase {
 						d2.show();
 						getDecorations().add(d2);
 					}) 
-					.words(" represents the comparision between a boolean variable and one of it's binary possible values (true or false). "
-							+ "The operator == isn't necessary and can be replaced with something that improves readability!")
+					.words(" is unecessary large! \n\n - It represents the comparision between a boolean variable and one of it's binary possible values (true or false). "
+							+ "\n - The operator == isn't necessary and can be replaced with an operator in order to improve readability!")
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 
 			link.requestLayout();

@@ -1,6 +1,7 @@
 package pt.iscte.paddle.codequality.cases;
 
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -9,12 +10,14 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 
 import pt.iscte.paddle.codequality.misc.Category;
+import pt.iscte.paddle.codequality.misc.Compability;
 import pt.iscte.paddle.codequality.misc.Explanations;
 import pt.iscte.paddle.javardise.service.IClassWidget;
 import pt.iscte.paddle.javardise.service.ICodeDecoration;
 import pt.iscte.paddle.javardise.service.IJavardiseService;
 import pt.iscte.paddle.javardise.service.IWidget;
 import pt.iscte.paddle.javardise.util.HyperlinkedText;
+import pt.iscte.paddle.model.IExpression;
 import pt.iscte.paddle.model.IProgramElement;
 
 public class DuplicateGuard extends BadCodeCase{
@@ -35,6 +38,8 @@ public class DuplicateGuard extends BadCodeCase{
 	@Override
 	protected void generateExplanation(IClassWidget widget, Composite comp, int style) {
 		IWidget w = IJavardiseService.getWidget(guards.get(0));
+		Set<IExpression> vars = Compability.extractVariables(((IExpression) guards.get(0)).getParts());
+		System.out.println(vars);
 		if(w != null) {
 			Link link = new HyperlinkedText(null)
 					.words("The condition ").link(guards.get(1).toString(), () -> {
@@ -43,7 +48,8 @@ public class DuplicateGuard extends BadCodeCase{
 						getDecorations().add(d2);
 					})
 					.words(" was found duplicated inside the code block.")
-					.words("\n\n - The variables used in the condition don't change values.")
+					.words("\n\n - Neither of the variables " + vars + " used in the condition have their values changed in between calls.")
+					.words("\n - Double checking a condition wich parts don't change in between checks, is not necessary.")
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 
 			link.requestLayout();

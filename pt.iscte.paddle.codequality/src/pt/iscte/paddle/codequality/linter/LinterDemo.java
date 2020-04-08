@@ -21,6 +21,7 @@ import pt.iscte.paddle.codequality.misc.CaseNames;
 import pt.iscte.paddle.codequality.tests.linter.DuplicateLoopGuard;
 import pt.iscte.paddle.codequality.tests.linter.FaultyReturns;
 import pt.iscte.paddle.codequality.tests.linter.NonVoidPureFunction;
+import pt.iscte.paddle.codequality.tests.linter.SelectionMisconception;
 import pt.iscte.paddle.codequality.tests.linter.UnreachableCode;
 import pt.iscte.paddle.javardise.service.IClassWidget;
 import pt.iscte.paddle.javardise.service.IJavardiseService;
@@ -36,10 +37,10 @@ public class LinterDemo {
 
 		//				UnreachableCode t = new UnreachableCode();
 		//		NonVoidPureFunction t = new NonVoidPureFunction();
-		//		SelectionMisconception t = new SelectionMisconception();
-		DuplicateLoopGuard t = new DuplicateLoopGuard();
+		SelectionMisconception t = new SelectionMisconception();
+//				DuplicateLoopGuard t = new DuplicateLoopGuard();
 		//		DuplicateStatement t = new DuplicateStatement();
-		//		FaultyReturns t = new FaultyReturns();
+//						FaultyReturns t = new FaultyReturns();
 
 		t.setup();
 		IModule module = t.getModule();
@@ -64,7 +65,7 @@ public class LinterDemo {
 		//		widgetComp.setLayout(new FillLayout());
 
 		Composite codeAndCFG = new Composite(outer, SWT.NONE);
-		codeAndCFG.setLayout(new GridLayout(2, true));
+		codeAndCFG.setLayout(new GridLayout(1, true));
 
 		IClassWidget widget = IJavardiseService.createClassWidget(codeAndCFG, module);
 		widget.setReadOnly(true);
@@ -76,8 +77,14 @@ public class LinterDemo {
 		rightLayout.spacing = 5;
 		rightComp.setLayout(rightLayout);
 
-		//		Label label = new Label(rightComp, SWT.TOP);
-		//		label.setText("The bad practises caught in your code were:");
+		Label label = new Label(rightComp, SWT.WRAP | SWT.CENTER);
+		label.setText("CODE QUALITY CHECKER \n\n\n"
+				+ "This tool was designed to help you improve your code base, when it comes code quality!"
+				+ " It will detect and highlight many code quality related issues and alert you about them, including a brief explanation"
+				+ "regarding the reason why they should be avoid. With this being, this tool will help you in eliminating bad practises in an "
+				+ "autonomous way. \n\n"
+				+ "The issue caught in your code were:"
+				);
 
 		final List list = new List(rightComp, SWT.V_SCROLL);
 		list.setBackground(new org.eclipse.swt.graphics.Color(display, 255, 255, 255));
@@ -91,9 +98,9 @@ public class LinterDemo {
 		TheLinter.loadVisitors().loadAnalysers();
 		TheLinter.getModule().setId("test");
 
-		CFGViewer cfg = new CFGViewer(codeAndCFG);
-		cfg.setInput(TheLinter.getProcedures().get(0).generateCFG().getNodes());
-		cfg.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+//		CFGViewer cfg = new CFGViewer(codeAndCFG);
+//		cfg.setInput(TheLinter.getProcedures().get(0).generateCFG().getNodes());
+//		cfg.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		ArrayList<BadCodeCase> badCodeCases = TheLinter.analyse();
 
@@ -106,7 +113,7 @@ public class LinterDemo {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if(list.getSelectionIndex() == -1) return;
-				if(rightComp.getChildren().length > 1) rightComp.getChildren()[1].dispose();
+				if(rightComp.getChildren().length > 1) rightComp.getChildren()[2].dispose();
 
 				BadCodeCase badCodeCase = badCodeCases.get(list.getSelectionIndex());
 				badCodeCases.forEach(badCase -> badCase.hideAll());

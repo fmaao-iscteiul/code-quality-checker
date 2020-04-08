@@ -31,12 +31,11 @@ public class FaultyProcedureCall extends BadCodeCase {
 		Color blue = Display.getDefault().getSystemColor(SWT.COLOR_BLUE);
 		IWidget w = IJavardiseService.getWidget(super.element);
 		if(w != null) {
-			Image img = new Image(Display.getDefault(), "arrow.png");
 			ICodeDecoration<Text> t = w.addNote("Doesn't this return \n something?", ICodeDecoration.Location.RIGHT);
 			t.show();
 			getDecorations().add(t);
 			Link link = new HyperlinkedText(null)
-					.words("A non void method was called has a void one should be. The method ")
+					.words("A non void method was called has a void one should be. \n\n  - The method ")
 					.link(call.toString(), () -> {
 						ICodeDecoration<Canvas> d0 = widget.getProcedure((IProcedure) call.getProcedure()).getMethodName().addMark(blue);
 						d0.show();
@@ -52,7 +51,7 @@ public class FaultyProcedureCall extends BadCodeCase {
 						super.getDecorations().add(d2);
 						super.getDecorations().add(d3);
 					})
-					.words(". With this being, you should consider if this method should return anything at all, or investigate if it is being used the right way.")
+					.words(". \n  - Consider if this method should return anything at all, or investigate if it is being used the right way.")
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 
 			link.requestLayout();

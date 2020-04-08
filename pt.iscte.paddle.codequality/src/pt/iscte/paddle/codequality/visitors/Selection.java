@@ -39,7 +39,7 @@ public class Selection implements IVisitor {
 		}
 
 		if(selection.isEmpty()) {
-
+			
 			Linter.getInstance().register(new EmptySelection(Explanations.EMPTY_SELECTION, selection));
 
 			if(selection.hasAlternativeBlock() && !selection.getAlternativeBlock().isEmpty()) {
