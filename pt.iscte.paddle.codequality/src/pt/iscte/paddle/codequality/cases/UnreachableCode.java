@@ -82,9 +82,10 @@ public class UnreachableCode extends BadCodeCase {
 					getDecorations().add(d0);
 					getDecorations().add(d1);
 				})
-				.words("that causes the non-execution of "+ deadNodes.size() + " of your code instructions.") 
-				.words(" Such code will never "
-						+ "be executed and becomes obsolete, unnecessary and therefore should be avoided at all cost")
+				.words("that causes the non-execution of "+ deadNodes.size() + " of your code instructions.")
+				.words("\n\n - The return will stop the method execution.")
+				.words("\n - Any code after will never be executed.")
+				.words("\n - This means that the unreachable code becomes obsolete, unnecessary and therefore should be avoided at all cost.")
 				.create(comp, SWT.WRAP | SWT.V_SCROLL);
 		link.requestLayout();
 	}

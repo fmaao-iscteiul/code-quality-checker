@@ -38,7 +38,7 @@ public class BooleanReturnCheck extends BadCodeCase{
 					.words("- There is no need to check the value of a boolean variable"
 							+ " before returning true or false.")
 					.words("\n - The condition itself already represents the value meant to be returned.")
-					.create(comp, SWT.WRAP | SWT.V_SCROLL);
+					.create(comp, SWT.WRAP | SWT.SCROLL_LINE | SWT.V_SCROLL);
 
 			link.requestLayout();
 		}

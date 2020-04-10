@@ -7,8 +7,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
@@ -19,15 +17,10 @@ import org.eclipse.swt.widgets.Shell;
 import pt.iscte.paddle.codequality.cases.BadCodeCase;
 import pt.iscte.paddle.codequality.misc.CaseNames;
 import pt.iscte.paddle.codequality.tests.linter.DuplicateLoopGuard;
-import pt.iscte.paddle.codequality.tests.linter.FaultyReturns;
-import pt.iscte.paddle.codequality.tests.linter.NonVoidPureFunction;
-import pt.iscte.paddle.codequality.tests.linter.SelectionMisconception;
-import pt.iscte.paddle.codequality.tests.linter.UnreachableCode;
 import pt.iscte.paddle.javardise.service.IClassWidget;
 import pt.iscte.paddle.javardise.service.IJavardiseService;
 import pt.iscte.paddle.javardise.util.HyperlinkedText;
 import pt.iscte.paddle.model.IModule;
-import pt.iscte.pidesco.cfgviewer.ext.CFGViewer;
 
 public class LinterDemo {
 
@@ -35,11 +28,11 @@ public class LinterDemo {
 
 	public static void main(String[] args) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 
-		//				UnreachableCode t = new UnreachableCode();
-		//		NonVoidPureFunction t = new NonVoidPureFunction();
-		SelectionMisconception t = new SelectionMisconception();
-//				DuplicateLoopGuard t = new DuplicateLoopGuard();
-		//		DuplicateStatement t = new DuplicateStatement();
+//		UnreachableCode t = new UnreachableCode();
+//		NonVoidPureFunction t = new NonVoidPureFunction();
+//		SelectionMisconception t = new SelectionMisconception();
+		DuplicateLoopGuard t = new DuplicateLoopGuard();
+//				DuplicateStatement t = new DuplicateStatement();
 //						FaultyReturns t = new FaultyReturns();
 
 		t.setup();
@@ -47,6 +40,7 @@ public class LinterDemo {
 
 		Display display = new Display();
 		shell = new Shell(display);
+		shell.setText("ISTCHECKER - CODE QUALITY CHECKER");
 		shell.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
 
 		FillLayout layout = new FillLayout();
@@ -65,7 +59,7 @@ public class LinterDemo {
 		//		widgetComp.setLayout(new FillLayout());
 
 		Composite codeAndCFG = new Composite(outer, SWT.NONE);
-		codeAndCFG.setLayout(new GridLayout(1, true));
+		codeAndCFG.setLayout(new FillLayout());
 
 		IClassWidget widget = IJavardiseService.createClassWidget(codeAndCFG, module);
 		widget.setReadOnly(true);

@@ -42,14 +42,14 @@ public class DuplicateGuard extends BadCodeCase{
 		System.out.println(vars);
 		if(w != null) {
 			Link link = new HyperlinkedText(null)
-					.words("The condition ").link(guards.get(1).toString(), () -> {
+					.words("The condition ").link(guards.get(0).toString(), () -> {
 						ICodeDecoration<Text> d2 = w.addNote("Does this need \n to be duplicated?", ICodeDecoration.Location.RIGHT);
 						d2.show();
 						getDecorations().add(d2);
 					})
 					.words(" was found duplicated inside the code block.")
-					.words("\n\n - Neither of the variables " + vars + " used in the condition have their values changed in between calls.")
-					.words("\n - Double checking a condition wich parts don't change in between checks, is not necessary.")
+					.words("\n\n - Neither of the variables used in the conditions had their values changed in between.")
+					.words("\n - Double checking a condition which parts don't change in between checks, is not necessary.")
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 
 			link.requestLayout();

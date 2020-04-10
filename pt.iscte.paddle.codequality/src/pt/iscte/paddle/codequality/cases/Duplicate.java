@@ -8,9 +8,13 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.Text;
 
 import pt.iscte.paddle.codequality.misc.Category;
 import pt.iscte.paddle.javardise.service.IClassWidget;
+import pt.iscte.paddle.javardise.service.ICodeDecoration;
+import pt.iscte.paddle.javardise.service.IJavardiseService;
+import pt.iscte.paddle.javardise.service.IWidget;
 import pt.iscte.paddle.javardise.util.HyperlinkedText;
 import pt.iscte.paddle.model.IProgramElement;
 import pt.iscte.paddle.model.IStatement;
@@ -40,16 +44,36 @@ public class Duplicate extends BadCodeCase {
 
 	@Override
 	public void generateComponent(IClassWidget widget, org.eclipse.swt.widgets.Composite comp, int style) {
-		this.generateMark(widget, comp, style, duplicates);
-		this.generateExplanation(widget, comp, style);
+		generateMark(widget, comp, style, duplicates);
+		generateExplanation(widget, comp, style);
 	}
 	
 	@Override
 	protected void generateExplanation(IClassWidget widget, Composite comp, int style) {
-		Link link = new HyperlinkedText(null).words(getExplanation()).create(comp, SWT.WRAP | SWT.V_SCROLL);
-		link.requestLayout();
+		IWidget w = IJavardiseService.getWidget(duplicates.get(0));
+		if(w != null) {
+			Link link = new HyperlinkedText(null)
+					.words("The statement ")
+					.link(duplicates.get(0).toString(), () -> {
+						ICodeDecoration<Text> t = w.addNote("Couldn't this be \n anywhere else?", ICodeDecoration.Location.RIGHT);
+						t.show();
+						getDecorations().add(t);
+					})
+					.words(" was found in a condition and it's alternatives (elses).")
+					.words("\n\n - This generates code duplication that should be avoided in order to maintain a good quality code.")
+					.words("\n - Try extrating the duplicates from the condition blocks, this will help preventing code duplication.")
+					.create(comp, SWT.WRAP | SWT.SCROLL_LINE | SWT.V_SCROLL);
+
+			link.requestLayout();
+		}
 	}
 
+	/**
+	 * "The highlighted statements are duplicated. This"
+			+ "logic could be simplified in order to remove code duplication and improve the code base quality.";
+	 * @return
+	 */
+	
 	public List<IProgramElement> getDuplicates() {
 		return duplicates;
 	}

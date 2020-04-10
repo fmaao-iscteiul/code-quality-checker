@@ -8,7 +8,9 @@ import pt.iscte.paddle.codequality.linter.Linter;
 import pt.iscte.paddle.codequality.misc.BadCodeAnalyser;
 import pt.iscte.paddle.codequality.misc.Compability;
 import pt.iscte.paddle.model.IBinaryExpression;
+import pt.iscte.paddle.model.IBinaryOperator;
 import pt.iscte.paddle.model.IExpression;
+import pt.iscte.paddle.model.IOperator.OperationType;
 import pt.iscte.paddle.model.IProgramElement;
 import pt.iscte.paddle.model.IType;
 import pt.iscte.paddle.model.IVariableAssignment;
@@ -107,11 +109,11 @@ public class DuplicateGuard implements BadCodeAnalyser {
 	}
 
 	private void pairGatheredDuplicates() {
-
+		
 		for (DuplicateBranchGuard duplicateBranchGuard : duplicatedGuards) {
 			for(int i = 1; i < duplicateBranchGuard.occurences.size(); i++) {
 				INode start = duplicateBranchGuard.occurences.get(i - 1);
-				INode end= duplicateBranchGuard.occurences.get(i);
+				INode end = duplicateBranchGuard.occurences.get(i);
 
 				if(!hasBeenChanged(cfg, start, end)) pairs.add(new GuardPair(start, end));
 			}
@@ -121,18 +123,26 @@ public class DuplicateGuard implements BadCodeAnalyser {
 	
 	private boolean duplicateGuard(IExpression guard, IExpression listGuard) {
 		if(guard.isSame(listGuard)) return true;
+		if(guard instanceof IBinaryExpression 
+				&& (((IBinaryExpression) guard).getLeftOperand() instanceof IBinaryExpression)
+				&& (((IBinaryExpression) guard).getRightOperand() instanceof IBinaryExpression)) {
+			for (IExpression part : guard.getParts()) {
+				if(!part.isSame(IType.BOOLEAN.literal(true)) 
+						&& !part.isSame(IType.BOOLEAN.literal(false)) 
+						&& equalPartExpressions(part, listGuard)) 
+							return true;
+			}
+		} else return equalPartExpressions(guard, listGuard);
 		
-		for (IExpression part : guard.getParts()) {
-			if(!part.isSame(IType.BOOLEAN.literal(true)) 
-					&& !part.isSame(IType.BOOLEAN.literal(false)) 
-					&& equalPartExpressions(part, listGuard)) 
-						return true;
-		}
 		return false;
 	}
 	
 	private boolean equalPartExpressions(IExpression guard, IExpression listGuard) {
 		if(guard.isSame(listGuard)) return true;
+		if(listGuard instanceof IBinaryExpression) System.out.println(listGuard + " : " +((IBinaryExpression) listGuard).getOperator());
+		if(listGuard.getOperationType().equals(OperationType.RELATIONAL)
+				|| listGuard instanceof IBinaryExpression 
+				&& ((IBinaryExpression) listGuard).getOperator().equals(IBinaryOperator.OR)) return false;
 		
 		List<IExpression> guardParts = listGuard.getParts(); 
 		for (IExpression part : guardParts) {
