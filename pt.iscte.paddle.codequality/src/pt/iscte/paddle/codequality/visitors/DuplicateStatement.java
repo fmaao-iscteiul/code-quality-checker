@@ -11,7 +11,6 @@ import pt.iscte.paddle.codequality.misc.Category;
 import pt.iscte.paddle.codequality.misc.Explanations;
 import pt.iscte.paddle.model.IBlock.IVisitor;
 import pt.iscte.paddle.model.IVariableAssignment;
-import pt.iscte.paddle.model.cfg.IBranchNode;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
 import pt.iscte.paddle.model.cfg.INode;
 

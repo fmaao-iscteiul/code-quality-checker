@@ -11,6 +11,7 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 
 import pt.iscte.paddle.codequality.misc.Category;
+import pt.iscte.paddle.codequality.misc.Classification;
 import pt.iscte.paddle.javardise.service.IClassWidget;
 import pt.iscte.paddle.javardise.service.ICodeDecoration;
 import pt.iscte.paddle.javardise.service.IJavardiseService;
@@ -23,7 +24,7 @@ public class BooleanCheck extends BadCodeCase {
 	private IExpression expression;
 
 	public BooleanCheck(String explanation, IExpression selectionGuard) {
-		super(Category.FAULTY_BOOLEAN_CHECK, explanation, selectionGuard);
+		super(Category.FAULTY_BOOLEAN_CHECK, Classification.LIGHT, selectionGuard);
 		this.expression = Objects.requireNonNull(selectionGuard);
 	}
 
@@ -33,12 +34,14 @@ public class BooleanCheck extends BadCodeCase {
 
 	@Override
 	protected void generateMark(IClassWidget widget, org.eclipse.swt.widgets.Composite comp, int style) {
-		Color cyan = Display.getDefault().getSystemColor(SWT.COLOR_DARK_MAGENTA);
-		IWidget w = IJavardiseService.getWidget(element);
+		IWidget w = generateElementWidget(element);
 		if(w != null) {
-			ICodeDecoration<Canvas> d = w.addMark(cyan);
+			ICodeDecoration<Canvas> d = w.addMark(getColor());
 			d.show();
 			getDecorations().add(d);
+			ICodeDecoration<Text> d2 = w.addNote("Couln't you use \n the ! operator?", ICodeDecoration.Location.RIGHT);
+			d2.show();
+			getDecorations().add(d2);
 		}
 	}
 
@@ -48,13 +51,11 @@ public class BooleanCheck extends BadCodeCase {
 		if(w != null) {
 			Link link = new HyperlinkedText(null)
 					.words("The condition ")
-					.link(element.toString(), () -> {
-						ICodeDecoration<Text> d2 = w.addNote("Couln't this \n be simplefied?", ICodeDecoration.Location.RIGHT);
-						d2.show();
-						getDecorations().add(d2);
-					}) 
-					.words(" is unecessary large! \n\n - It represents the comparision between a boolean variable and one of it's binary possible values (true or false). "
-							+ "\n - The operator == isn't necessary and can be replaced with an operator in order to improve readability!")
+					.link(element.toString(), () -> {}) 
+					.words(" could make use of the '!' operator. \n")	
+					.words("\n - It represents the comparision between a boolean variable and one of it's binary possible values (true or false).")
+					.words("\n - It is more of a styling mather, but this kind of changes can improve the code readibility.")
+					
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 
 			link.requestLayout();

@@ -13,6 +13,7 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 
 import pt.iscte.paddle.codequality.misc.Category;
+import pt.iscte.paddle.codequality.misc.Classification;
 import pt.iscte.paddle.javardise.service.IClassWidget;
 import pt.iscte.paddle.javardise.service.ICodeDecoration;
 import pt.iscte.paddle.javardise.service.IJavardiseService;
@@ -26,7 +27,7 @@ public class MagicNumber extends BadCodeCase{
 	private IProgramElement magicNumber;
 
 	public MagicNumber(String explanation, IProgramElement magicNumber) {
-		super(Category.MAGIC_NUMBER, explanation);
+		super(Category.MAGIC_NUMBER, Classification.AVERAGE);
 		this.magicNumber = magicNumber;
 		this.occurrences.add(magicNumber);
 	}
@@ -54,14 +55,10 @@ public class MagicNumber extends BadCodeCase{
 
 		Link link = new HyperlinkedText(null)
 				.words("The highlighted number " ).link(magicNumber.toString(), () -> {
-					IWidget w = IJavardiseService.getWidget(occurrences.get(0));
-					ICodeDecoration<Text> d2 = w.addNote("What is this number \n used for?", ICodeDecoration.Location.RIGHT);
-					d2.show();
-					getDecorations().add(d2);
 				})
-				.words(" represents a magic number. \n\n - It doesn't provide any context about what it does."
-						+ " \n - This can make the code difficult to understand for other programmers as well as making it harder since"
-						+ " this number will have to be changed in in all the places that it's used.")
+				.words(" doesn't provide any context.")
+				.words("\n\n - It can be hard for another programmer to look at the number " + magicNumber  + " and figure out what it represents.")
+				.words("\n - It's also harder to change the number since in in all the places that it's used.")
 				.create(comp, SWT.WRAP | SWT.V_SCROLL);
 
 		link.requestLayout();
@@ -73,10 +70,14 @@ public class MagicNumber extends BadCodeCase{
 	@Override
 	protected void generateMark(IClassWidget widget, Composite comp, int style) {
 		for (IProgramElement el : occurrences) {
-			Color cyan = Display.getDefault().getSystemColor(SWT.COLOR_CYAN);
-			IWidget w = IJavardiseService.getWidget(el);
+			IWidget w = generateElementWidget(el);
 			if(w != null) {
-				ICodeDecoration<Canvas> d = w.addMark(cyan);
+				if(occurrences.indexOf(el) == 0) {
+					ICodeDecoration<Text> d2 = w.addNote("What is this number \n used for?", ICodeDecoration.Location.RIGHT);
+					d2.show();
+					getDecorations().add(d2);
+				}
+				ICodeDecoration<Canvas> d = w.addMark(getColor());
 				d.show();
 				getDecorations().add(d);
 			}

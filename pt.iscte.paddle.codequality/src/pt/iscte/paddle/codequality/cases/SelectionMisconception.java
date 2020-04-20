@@ -9,6 +9,7 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 
 import pt.iscte.paddle.codequality.misc.Category;
+import pt.iscte.paddle.codequality.misc.Classification;
 import pt.iscte.paddle.javardise.service.IClassWidget;
 import pt.iscte.paddle.javardise.service.ICodeDecoration;
 import pt.iscte.paddle.javardise.service.IJavardiseService;
@@ -19,17 +20,19 @@ import pt.iscte.paddle.model.IProgramElement;
 public class SelectionMisconception extends EmptyBranch {
 
 	public SelectionMisconception(String explanation, IProgramElement element) {
-		super(Category.SELECTION_MISCONCEPTION, explanation, element);
+		super(Category.SELECTION_MISCONCEPTION, Classification.AVERAGE, element);
 	}
 
 	@Override
 	protected void generateMark(IClassWidget widget, Composite comp, int style) {
-		Color cyan = Display.getDefault().getSystemColor(SWT.COLOR_DARK_MAGENTA);
-		IWidget w = IJavardiseService.getWidget(element);
+		IWidget w = generateElementWidget(element);
 		if(w != null) {
-			ICodeDecoration<Canvas> d = w.addMark(cyan);
+			ICodeDecoration<Canvas> d = w.addMark(getColor());
 			d.show();
 			getDecorations().add(d);
+			ICodeDecoration<Text> d2 = w.addNote("Couln't you use \n the '!' operator?", ICodeDecoration.Location.RIGHT);
+			d2.show();
+			getDecorations().add(d2);
 		}
 	}
 	/**
@@ -42,15 +45,10 @@ public class SelectionMisconception extends EmptyBranch {
 		IWidget w = IJavardiseService.getWidget(super.element);
 		if(w != null) {
 			Link link = new HyperlinkedText(null)
-					.words("The if condition block is empty and the else isn't: \n\n ")
-					.link(element.toString(), () -> {
-						ICodeDecoration<Text> d2 = w.addNote("Couln't it be simpler \n and smaller?", ICodeDecoration.Location.RIGHT);
-						d2.show();
-						getDecorations().add(d2);
-					})
-					.words("\n - The code was written in the else block and the if condition left empty because the target condition is a negation."
-							+ "\n - It is never a good practise to leave empty blocks in the code base."
-							+ "\n - There are native operators that were designed to deal with this kind of situations.")
+					.words("The code was written in the else block and the if block left empty.")
+					.words("\n\n - This means that the reponsible for the actions is the else block.")
+					.words("\n - This could be done with a single if condition, using the negation (!) operator.")
+					.words("\n - It is never a good practise to leave empty blocks in the code base.")
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 
 			link.requestLayout();

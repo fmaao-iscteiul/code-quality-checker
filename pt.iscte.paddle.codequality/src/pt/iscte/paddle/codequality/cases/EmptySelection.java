@@ -11,6 +11,7 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 
 import pt.iscte.paddle.codequality.misc.Category;
+import pt.iscte.paddle.codequality.misc.Classification;
 import pt.iscte.paddle.javardise.service.IClassWidget;
 import pt.iscte.paddle.javardise.service.ICodeDecoration;
 import pt.iscte.paddle.javardise.service.IJavardiseService;
@@ -25,7 +26,7 @@ import pt.iscte.paddle.model.ISelection;
 public class EmptySelection extends EmptyBranch {
 
 	public EmptySelection(String explanation, IProgramElement branch) {
-		super(Category.EMPTY_SELECTION, explanation, branch);
+		super(Category.EMPTY_SELECTION, Classification.SERIOUS, branch);
 	}
 
 	@Override
@@ -36,12 +37,14 @@ public class EmptySelection extends EmptyBranch {
 
 	@Override
 	protected void generateMark(IClassWidget widget, Composite comp, int style) {
-		Color blue = Display.getDefault().getSystemColor(SWT.COLOR_BLUE);
-		IWidget w = IJavardiseService.getWidget(element);
+		IWidget w = generateElementWidget(element);
 		if(w != null) {
-			ICodeDecoration<Canvas> d = w.addMark(blue);
+			ICodeDecoration<Canvas> d = w.addMark(getColor());
 			d.show();
 			getDecorations().add(d);
+			ICodeDecoration<Text> d2 = w.addNote("Nothing happens inside \n this block", ICodeDecoration.Location.RIGHT);
+			d2.show();
+			getDecorations().add(d2);
 		}
 	}
 	
@@ -50,14 +53,11 @@ public class EmptySelection extends EmptyBranch {
 		IWidget w = IJavardiseService.getWidget(super.element);
 		if(w != null) {
 			Link link = new HyperlinkedText(null)
-					.words("The highlighted if block is empty: \n\n ")
-					.link(element.toString(), ()-> {
-						ICodeDecoration<Text> d2 = w.addNote("No actions inside \n this block", ICodeDecoration.Location.RIGHT);
-						d2.show();
-						getDecorations().add(d2);
-					})
-					.words("\n - Empty code blocks are useless while running a program "
-							+ "because they don't add any actions to it, ever, and they make the code messy and confusing.")
+					.words("The highlighted if block has no actions inside. \n ")
+					.words("\n - If the condition ").link(((ISelection) element).getGuard().toString(), ()->{})
+					.words(" is true, nothing will happen.")
+					.words("\n - Empty code blocks don't add actions to the program execution.")
+					.words("\n - You should avoid empty blocks by adding some logic, or removing them.")
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 
 			link.requestLayout();

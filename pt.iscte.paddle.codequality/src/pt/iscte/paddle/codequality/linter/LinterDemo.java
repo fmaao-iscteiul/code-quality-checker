@@ -17,10 +17,17 @@ import org.eclipse.swt.widgets.Shell;
 import pt.iscte.paddle.codequality.cases.BadCodeCase;
 import pt.iscte.paddle.codequality.misc.CaseNames;
 import pt.iscte.paddle.codequality.tests.linter.DuplicateLoopGuard;
+import pt.iscte.paddle.codequality.tests.linter.DuplicateStatement;
+import pt.iscte.paddle.codequality.tests.linter.FaultyReturns;
+import pt.iscte.paddle.codequality.tests.linter.NonVoidPureFunction;
+import pt.iscte.paddle.codequality.tests.linter.SelectionMisconception;
+import pt.iscte.paddle.codequality.tests.linter.UnreachableCode;
+import pt.iscte.paddle.codequality.tests.linter.UselessAssignments;
 import pt.iscte.paddle.javardise.service.IClassWidget;
 import pt.iscte.paddle.javardise.service.IJavardiseService;
 import pt.iscte.paddle.javardise.util.HyperlinkedText;
 import pt.iscte.paddle.model.IModule;
+import pt.iscte.paddle.model.tests.BaseTest;
 
 public class LinterDemo {
 
@@ -28,19 +35,30 @@ public class LinterDemo {
 
 	public static void main(String[] args) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 
-//		UnreachableCode t = new UnreachableCode();
-//		NonVoidPureFunction t = new NonVoidPureFunction();
-//		SelectionMisconception t = new SelectionMisconception();
-		DuplicateLoopGuard t = new DuplicateLoopGuard();
-//				DuplicateStatement t = new DuplicateStatement();
-//						FaultyReturns t = new FaultyReturns();
+		UnreachableCode t = new UnreachableCode();
+		NonVoidPureFunction t1 = new NonVoidPureFunction();
+		SelectionMisconception t2 = new SelectionMisconception();
+		DuplicateLoopGuard t3 = new DuplicateLoopGuard();
+		DuplicateStatement t4 = new DuplicateStatement();
+		FaultyReturns t5 = new FaultyReturns();
+		UselessAssignments t6 = new UselessAssignments();
 
-		t.setup();
-		IModule module = t.getModule();
+		BaseTest[] modules = {
+				new FaultyReturns(),
+				new DuplicateStatement(),
+				new DuplicateLoopGuard(),
+				new SelectionMisconception(),
+				new NonVoidPureFunction(),
+				new UnreachableCode(),
+				new UselessAssignments()
+		};
+
+		t6.setup();
+		IModule module = t6.getModule();
 
 		Display display = new Display();
 		shell = new Shell(display);
-		shell.setText("ISTCHECKER - CODE QUALITY CHECKER");
+		shell.setText("ISCTECKER - CODE QUALITY CHECKER");
 		shell.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
 
 		FillLayout layout = new FillLayout();
@@ -58,8 +76,8 @@ public class LinterDemo {
 		//		Composite widgetComp = new Composite(outer, SWT.V_SCROLL);
 		//		widgetComp.setLayout(new FillLayout());
 
-		Composite codeAndCFG = new Composite(outer, SWT.NONE);
-		codeAndCFG.setLayout(new FillLayout());
+		Composite codeAndCFG = new Composite(outer, SWT.WRAP | SWT.V_SCROLL);
+		codeAndCFG.setLayout(new FillLayout(SWT.WRAP | SWT.V_SCROLL));
 
 		IClassWidget widget = IJavardiseService.createClassWidget(codeAndCFG, module);
 		widget.setReadOnly(true);
@@ -80,9 +98,31 @@ public class LinterDemo {
 				+ "The issue caught in your code were:"
 				);
 
-		final List list = new List(rightComp, SWT.V_SCROLL);
-		list.setBackground(new org.eclipse.swt.graphics.Color(display, 255, 255, 255));
-		list.setForeground(new org.eclipse.swt.graphics.Color(display, 0, 0, 0));
+//		final List moduleList = new List(rightComp, SWT.V_SCROLL);
+//		moduleList.addSelectionListener(new SelectionListener() {
+//			@Override
+//			public void widgetSelected(SelectionEvent e) {
+////				if(rightComp.getChildren().length > 1) rightComp.getChildren()[1].dispose();
+//				
+//				BaseTest baseTest = modules[moduleList.getSelectionIndex()];
+//				baseTest.setup();
+//				codeAndCFG.update();
+//				IClassWidget widget = IJavardiseService.createClassWidget(codeAndCFG, baseTest.getModule());
+//				widget.setReadOnly(true);
+//			}
+//
+//			@Override
+//			public void widgetDefaultSelected(SelectionEvent e) {}
+//		});
+//		
+		final List caseList = new List(rightComp, SWT.V_SCROLL);
+		caseList.setBackground(new org.eclipse.swt.graphics.Color(display, 255, 255, 255));
+		caseList.setForeground(new org.eclipse.swt.graphics.Color(display, 0, 0, 0));
+		
+
+//		for (BaseTest mod : modules) {
+//			moduleList.add(mod.getClass().getSimpleName());
+//		}
 
 		Link link = new HyperlinkedText(null).words("").create(rightComp, SWT.WRAP | SWT.V_SCROLL);
 		link.requestLayout();
@@ -92,24 +132,24 @@ public class LinterDemo {
 		TheLinter.loadVisitors().loadAnalysers();
 		TheLinter.getModule().setId("test");
 
-//		CFGViewer cfg = new CFGViewer(codeAndCFG);
-//		cfg.setInput(TheLinter.getProcedures().get(0).generateCFG().getNodes());
-//		cfg.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		//		CFGViewer cfg = new CFGViewer(codeAndCFG);
+		//		cfg.setInput(TheLinter.getProcedures().get(0).generateCFG().getNodes());
+		//		cfg.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		ArrayList<BadCodeCase> badCodeCases = TheLinter.analyse();
 
 		for(int i=0; i < badCodeCases.size(); i++) {
 			BadCodeCase badCase = badCodeCases.get(i);
-			if(badCase != null) list.add(CaseNames.getCaseName(badCase.getCaseCategory()));
+			if(badCase != null) caseList.add(CaseNames.getCaseName(badCase.getCaseCategory()));
 		}
 
-		list.addSelectionListener(new SelectionListener() {
+		caseList.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if(list.getSelectionIndex() == -1) return;
+				if(caseList.getSelectionIndex() == -1) return;
 				if(rightComp.getChildren().length > 1) rightComp.getChildren()[2].dispose();
 
-				BadCodeCase badCodeCase = badCodeCases.get(list.getSelectionIndex());
+				BadCodeCase badCodeCase = badCodeCases.get(caseList.getSelectionIndex());
 				badCodeCases.forEach(badCase -> badCase.hideAll());
 				badCodeCase.generateComponent(widget, rightComp, SWT.BORDER_DOT); // passar widget
 			}
@@ -118,7 +158,8 @@ public class LinterDemo {
 			public void widgetDefaultSelected(SelectionEvent e) {}
 		});
 
-		shell.pack();
+		shell.setSize(800, 800);
+//		shell.pack();
 		shell.open();
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) {

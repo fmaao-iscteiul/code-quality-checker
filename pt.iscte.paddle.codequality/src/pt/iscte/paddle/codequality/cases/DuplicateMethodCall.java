@@ -15,6 +15,7 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 
 import pt.iscte.paddle.codequality.misc.Category;
+import pt.iscte.paddle.codequality.misc.Classification;
 import pt.iscte.paddle.codequality.misc.Explanations;
 import pt.iscte.paddle.javardise.service.IClassWidget;
 import pt.iscte.paddle.javardise.service.ICodeDecoration;
@@ -30,7 +31,7 @@ public class DuplicateMethodCall extends BadCodeCase {
 	List<IProgramElement> duplicates;
 
 	public DuplicateMethodCall(Category category, Collection<INode> duplicatesList) {
-		super(category, Explanations.DUPLICATE_METHOD_CALL);
+		super(category, Classification.SERIOUS);
 		this.duplicates = new ArrayList<IProgramElement>();
 		duplicatesList.forEach(node -> this.duplicates.add(node.getElement()));
 	}
@@ -43,30 +44,16 @@ public class DuplicateMethodCall extends BadCodeCase {
 	
 	@Override
 	protected void generateExplanation(IClassWidget widget, Composite comp, int style) {
-		Color blue = Display.getDefault().getSystemColor(SWT.COLOR_BLUE);
 		IProcedureCall call = (IProcedureCall) duplicates.get(0);
 		Link link = new HyperlinkedText(null)
-				.words("The method call ")
+				.words("The function ")
 				.link(call.toString(), () -> {
-					ICodeDecoration<Canvas> d = IJavardiseService.getWidget(call.getProcedure()).addMark(blue);
+					ICodeDecoration<Canvas> d = IJavardiseService.getWidget(call.getProcedure()).addMark(getColor());
 					d.show();
 					getDecorations().add(d);
 				})
-				.words(" was called more than once. \n\n  - It's parameters values dind't change between calls, which means that the result will be the same. \n - It is also being called as a ")
-				.link("void", () -> {
-					
-				})
-				.words(" method, but it's return is of the type ")
-				.link(call.getProcedure().getReturnType().toString(), () -> {
-					ICodeDecoration<Text> d0 = widget.getProcedure((IProcedure) call.getProcedure()).getReturnType().addNote("Not void!", ICodeDecoration.Location.TOP);
-					ICodeDecoration<Label> d1 = widget.getProcedure((IProcedure) call.getProcedure()).getReturnType()
-							.addImage(new Image(Display.getDefault(), "arrow.png"), ICodeDecoration.Location.LEFT);
-					d0.show();
-					d1.show();
-					getDecorations().add(d0);
-					getDecorations().add(d1);
-				})
-				.words(". This can turn the code confusing.")
+				.words(" was called more than once. \n\n  - Its arguments didn't change values between calls, which means that the result will be the same.")
+				.words("\n - There is no point on having two " + call + " calls that return the exact same result.")
 				.create(comp, SWT.WRAP | SWT.V_SCROLL);
 
 		link.requestLayout();

@@ -9,6 +9,7 @@ import pt.iscte.paddle.codequality.misc.BadCodeAnalyser;
 import pt.iscte.paddle.codequality.misc.Compability;
 import pt.iscte.paddle.model.IBinaryExpression;
 import pt.iscte.paddle.model.IBinaryOperator;
+import pt.iscte.paddle.model.IControlStructure;
 import pt.iscte.paddle.model.IExpression;
 import pt.iscte.paddle.model.IOperator.OperationType;
 import pt.iscte.paddle.model.IProgramElement;
@@ -139,7 +140,6 @@ public class DuplicateGuard implements BadCodeAnalyser {
 	
 	private boolean equalPartExpressions(IExpression guard, IExpression listGuard) {
 		if(guard.isSame(listGuard)) return true;
-		if(listGuard instanceof IBinaryExpression) System.out.println(listGuard + " : " +((IBinaryExpression) listGuard).getOperator());
 		if(listGuard.getOperationType().equals(OperationType.RELATIONAL)
 				|| listGuard instanceof IBinaryExpression 
 				&& ((IBinaryExpression) listGuard).getOperator().equals(IBinaryOperator.OR)) return false;
@@ -161,6 +161,10 @@ public class DuplicateGuard implements BadCodeAnalyser {
 			boolean existsInBranchConditions = false;
 			if(node != null && node instanceof IBranchNode ) {
 				for(INode c: branchConditions) {
+					IControlStructure selection1 = (IControlStructure) node.getElement().getProperty(IControlStructure.class);
+					IControlStructure selection2 = (IControlStructure) c.getElement().getProperty(IControlStructure.class);	
+					if(!selection1.getParent().isSame(selection2.getBlock())) continue;
+					
 					IExpression guard = (IExpression) node.getElement();
 					IExpression listGuard = (IExpression) c.getElement();
 					if(duplicateGuard(guard, listGuard)) { // TODO see if guard is conjunction and check it's parts for duplicates.

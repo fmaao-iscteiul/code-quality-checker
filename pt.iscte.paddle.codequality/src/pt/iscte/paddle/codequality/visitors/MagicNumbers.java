@@ -43,17 +43,10 @@ public class MagicNumbers implements IVisitor{
 				if(!exists) {
 					MagicNumber mNumb = new MagicNumber(Explanations.MAGIC_NUMBER, exp);
 					mNumbers.add(mNumb);
-					Linter.getInstance().register(mNumb);
+					if(mNumb.getOccurrences().size() > 1) Linter.getInstance().register(mNumb);
 				}
 			}
 		}
-	}
-
-	@Override
-	public boolean visit(IVariableAssignment assignment) {
-		if(assignment.getTarget().toString().equals(assignment.getExpression().toString()))
-			Linter.getInstance().register(new FaultyAssignment(Explanations.SELF_ASSIGNMENT, assignment));
-		return true;
 	}
 
 	@Override

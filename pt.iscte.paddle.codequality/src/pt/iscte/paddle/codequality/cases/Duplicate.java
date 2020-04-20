@@ -11,6 +11,7 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 
 import pt.iscte.paddle.codequality.misc.Category;
+import pt.iscte.paddle.codequality.misc.Classification;
 import pt.iscte.paddle.javardise.service.IClassWidget;
 import pt.iscte.paddle.javardise.service.ICodeDecoration;
 import pt.iscte.paddle.javardise.service.IJavardiseService;
@@ -25,19 +26,19 @@ public class Duplicate extends BadCodeCase {
 	List<IProgramElement> duplicates;
 
 	public Duplicate(String explanation, IProgramElement duplicate) {
-		super(Category.DUPLICATE_CODE, explanation);
+		super(Category.DUPLICATE_CODE, Classification.SERIOUS);
 		this.duplicates = new ArrayList<IProgramElement>();
 		this.duplicates.add(duplicate);
 	}
 	
 	public Duplicate(Category category, String explanation, IProgramElement duplicate) {
-		super(category, explanation);
+		super(category, Classification.SERIOUS);
 		this.duplicates = new ArrayList<IProgramElement>();
 		this.duplicates.add(duplicate);
 	}
 
 	public Duplicate(Category category, String explanation, Collection<INode> duplicatesList) {
-		super(category, explanation);
+		super(category, Classification.SERIOUS);
 		this.duplicates = new ArrayList<IProgramElement>();
 		duplicatesList.forEach(node -> this.duplicates.add(node.getElement()));
 	}
@@ -51,13 +52,14 @@ public class Duplicate extends BadCodeCase {
 	@Override
 	protected void generateExplanation(IClassWidget widget, Composite comp, int style) {
 		IWidget w = IJavardiseService.getWidget(duplicates.get(0));
+		ICodeDecoration<Text> t = w.addNote("Couldn't this be \n anywhere else?", ICodeDecoration.Location.RIGHT);
+		t.show();
+		getDecorations().add(t);
 		if(w != null) {
 			Link link = new HyperlinkedText(null)
 					.words("The statement ")
 					.link(duplicates.get(0).toString(), () -> {
-						ICodeDecoration<Text> t = w.addNote("Couldn't this be \n anywhere else?", ICodeDecoration.Location.RIGHT);
-						t.show();
-						getDecorations().add(t);
+						
 					})
 					.words(" was found in a condition and it's alternatives (elses).")
 					.words("\n\n - This generates code duplication that should be avoided in order to maintain a good quality code.")

@@ -13,6 +13,7 @@ import pt.iscte.paddle.codequality.visitors.ProcedureCall;
 import pt.iscte.paddle.codequality.visitors.Return;
 import pt.iscte.paddle.codequality.visitors.Selection;
 import pt.iscte.paddle.codequality.visitors.Unreachable;
+import pt.iscte.paddle.codequality.visitors.UselessAssignment;
 import pt.iscte.paddle.model.IBlock.IVisitor;
 import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.IProcedure;
@@ -50,6 +51,7 @@ public enum Linter {
 		this.visitors.add(Loop.build());
 		this.visitors.add(MagicNumbers.build());
 		this.visitors.add(DeadCode.build());
+		this.visitors.add(new UselessAssignment());
 		this.visitors.add(DuplicateStatement.build(null));
 				
 		return this;

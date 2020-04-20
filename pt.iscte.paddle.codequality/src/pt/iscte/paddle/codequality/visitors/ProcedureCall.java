@@ -12,6 +12,7 @@ import pt.iscte.paddle.codequality.misc.BadCodeAnalyser;
 import pt.iscte.paddle.codequality.misc.Category;
 import pt.iscte.paddle.codequality.visitors.DuplicateGuard.GuardPair;
 import pt.iscte.paddle.model.IExpression;
+import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IProcedureCall;
 import pt.iscte.paddle.model.IType;
 import pt.iscte.paddle.model.IVariableAssignment;
@@ -19,7 +20,10 @@ import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph.Path;
 import pt.iscte.paddle.model.cfg.INode;
+import pt.iscte.paddle.model.roles.IFunctionClassifier;
+import pt.iscte.paddle.model.roles.IFunctionClassifier.Status;
 import pt.iscte.paddle.model.roles.impl.FixedValue;
+import pt.iscte.paddle.model.roles.impl.FunctionClassifier;
 
 public class ProcedureCall implements BadCodeAnalyser {
 
@@ -75,7 +79,7 @@ public class ProcedureCall implements BadCodeAnalyser {
 				if(hasBeenChanged(cfg, start, end)) duplicateBranchGuard.realDuplicates.remove(start);
 				
 			}
-			if(duplicateBranchGuard.realDuplicates.size() > 1)
+			if(duplicateBranchGuard.realDuplicates.size() > 1 && !new FunctionClassifier((IProcedure) ((IProcedureCall) duplicateBranchGuard.occ.getElement()).getProcedure()).getClassification().equals(Status.PROCEDURE))
 				Linter.getInstance().register(new DuplicateMethodCall(Category.DUPLICATE_PROCEDURE_CALL, duplicateBranchGuard.realDuplicates));			
 		}
 	}
@@ -114,10 +118,10 @@ public class ProcedureCall implements BadCodeAnalyser {
 				}
 
 				for (IVariableDeclaration var : call.getProcedure().getParameters()) {
-					if(!FixedValue.isFixedValue(var)) continue;
+					if(new FunctionClassifier((IProcedure) call.getProcedure()).getClassification().equals(Status.PROCEDURE) 
+							|| !FixedValue.isFixedValue(var)) continue;
 				}
 
-				boolean exists = false;
 				for(INode proc: calls) {
 					if(call.isSame(proc.getElement())) {
 

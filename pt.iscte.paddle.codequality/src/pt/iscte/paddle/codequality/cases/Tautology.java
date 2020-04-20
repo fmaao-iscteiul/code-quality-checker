@@ -9,6 +9,7 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 
 import pt.iscte.paddle.codequality.misc.Category;
+import pt.iscte.paddle.codequality.misc.Classification;
 import pt.iscte.paddle.javardise.service.IClassWidget;
 import pt.iscte.paddle.javardise.service.ICodeDecoration;
 import pt.iscte.paddle.javardise.service.IJavardiseService;
@@ -19,31 +20,28 @@ import pt.iscte.paddle.model.IProgramElement;
 public class Tautology extends BadCodeCase {
 
 	public Tautology(String explanation, IProgramElement element) {
-		super(Category.TALTOLOGY, explanation, element);
+		super(Category.TALTOLOGY, Classification.SERIOUS, element);
 	}
 	
 	@Override
 	protected void generateMark(IClassWidget widget, Composite comp, int style) {
-		Color cyan = Display.getDefault().getSystemColor(SWT.COLOR_CYAN);
-		IWidget w = IJavardiseService.getWidget(element);
+		IWidget w = generateElementWidget(element);
 		if(w != null) {
-			ICodeDecoration<Canvas> d = w.addMark(cyan);
+			ICodeDecoration<Canvas> d = w.addMark(getColor());
 			d.show();
 			getDecorations().add(d);
+			ICodeDecoration<Text> d2 = w.addNote("Isn't this always true?", ICodeDecoration.Location.RIGHT);
+			d2.show();
+			getDecorations().add(d2);
 		}
 	}
 	
 	@Override
 	protected void generateExplanation(IClassWidget widget, Composite comp, int style) {
-		IWidget w = IJavardiseService.getWidget(super.element);
+		IWidget w = generateElementWidget(element);
 		if(w != null) {
 			Link link = new HyperlinkedText(null)
-					.words("The condition statement ").link(element.toString(), () -> {
-						ICodeDecoration<Text> d2 = w.addNote("Won't this execute everytime?", ICodeDecoration.Location.RIGHT);
-						d2.show();
-						getDecorations().add(d2);
-					})
-					.words(" represents a tautology case. ")
+					.words("The condition ").link(element.toString(), () -> {}).words(" represents a tautology case. ")
 					.words("\n\n - This means that this condition will allways be avaliated as true.")
 					.words("\n - The program will always execute the code inside this condition, which means that"
 							+ " it is not necessary, or wrong.")

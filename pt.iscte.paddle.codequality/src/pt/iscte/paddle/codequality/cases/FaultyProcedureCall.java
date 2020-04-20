@@ -11,6 +11,7 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 
 import pt.iscte.paddle.codequality.misc.Category;
+import pt.iscte.paddle.codequality.misc.Classification;
 import pt.iscte.paddle.javardise.service.IClassWidget;
 import pt.iscte.paddle.javardise.service.ICodeDecoration;
 import pt.iscte.paddle.javardise.service.IJavardiseService;
@@ -22,36 +23,35 @@ import pt.iscte.paddle.model.IProcedureCall;
 public class FaultyProcedureCall extends BadCodeCase {
 
 	public FaultyProcedureCall(String explanation, IProcedureCall element) {
-		super(Category.FAULTY_METHOD_CALL, explanation, element);
+		super(Category.FAULTY_METHOD_CALL, Classification.AVERAGE, element);
 	}
 
 	@Override
 	protected void generateExplanation(IClassWidget widget, Composite comp, int style) {
 		IProcedureCall call = (IProcedureCall) element;
-		Color blue = Display.getDefault().getSystemColor(SWT.COLOR_BLUE);
-		IWidget w = IJavardiseService.getWidget(super.element);
+		IWidget w = generateElementWidget(element);
 		if(w != null) {
 			ICodeDecoration<Text> t = w.addNote("Doesn't this return \n something?", ICodeDecoration.Location.RIGHT);
 			t.show();
 			getDecorations().add(t);
 			Link link = new HyperlinkedText(null)
-					.words("A non void method was called has a void one should be. \n\n  - The method ")
+					.words("The method's return value is not being assigned or used. \n\n - The method ")
 					.link(call.toString(), () -> {
-						ICodeDecoration<Canvas> d0 = widget.getProcedure((IProcedure) call.getProcedure()).getMethodName().addMark(blue);
+						ICodeDecoration<Canvas> d0 = widget.getProcedure((IProcedure) call.getProcedure()).getMethodName().addMark(getColor());
 						d0.show();
 						super.getDecorations().add(d0);
 					})
-					.words(", returns the type: ")
+					.words(" isn't void and its return value is of type ")
 					.link(call.getProcedure().getReturnType().toString(), () -> {
 
-						ICodeDecoration<Canvas> d2 = widget.getProcedure((IProcedure) call.getProcedure()).getReturnType().addMark(blue);
-						ICodeDecoration<Text> d3 = widget.getProcedure((IProcedure) call.getProcedure()).getReturnType().addNote("Not void!", ICodeDecoration.Location.TOP);
+						ICodeDecoration<Canvas> d2 = widget.getProcedure((IProcedure) call.getProcedure()).getReturnType().addMark(getColor());
+						ICodeDecoration<Text> d3 = widget.getProcedure((IProcedure) call.getProcedure()).getReturnType().addNote("Return not used!", ICodeDecoration.Location.TOP);
 						d2.show();
 						d3.show();
 						super.getDecorations().add(d2);
 						super.getDecorations().add(d3);
 					})
-					.words(". \n  - Consider if this method should return anything at all, or investigate if it is being used the right way.")
+					.words("\n - If the method's " + call + " return value isn't used, you should consider if there is the need for the method to return it.")
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 
 			link.requestLayout();

@@ -13,6 +13,7 @@ import pt.iscte.paddle.model.IBinaryOperator;
 import pt.iscte.paddle.model.IBlock.IVisitor;
 import pt.iscte.paddle.model.IOperator.OperationType;
 import pt.iscte.paddle.model.ISelection;
+import pt.iscte.paddle.model.IType;
 
 public class Selection implements IVisitor {
 
@@ -24,22 +25,23 @@ public class Selection implements IVisitor {
 	public boolean visit(IBinaryExpression exp) {
 		if(exp.getOperationType().equals(OperationType.RELATIONAL) 
 				&& exp.getOperator().equals(IBinaryOperator.EQUAL) &&
-				exp.getLeftOperand().getType().isBoolean() && exp.getRightOperand().getType().isBoolean())
+				exp.getLeftOperand().getType().isBoolean() && exp.getRightOperand().getType().isBoolean()
+				&& (exp.getRightOperand().isSame(IType.BOOLEAN.literal(false)) || exp.getRightOperand().isSame(IType.BOOLEAN.literal(true))))
 			Linter.getInstance().register(new BooleanCheck(Explanations.FAULTY_BOOLEAN_CHECK, exp));
 		return true;
 	}
-	
+
 	@Override
 	public boolean visit(ISelection selection) {
 		if(!selection.getGuard().isNull()) {
-				if(selection.getGuard().isSame(BOOLEAN.literal(true))) 
-					Linter.getInstance().register(new Tautology(Explanations.TAUTOLOGY, selection.getGuard()));
-				else if(selection.getGuard().isSame(BOOLEAN.literal(false)))
-					Linter.getInstance().register(new Contradiction(Explanations.CONTRADICTION, selection.getGuard()));
+			if(selection.getGuard().isSame(BOOLEAN.literal(true))) 
+				Linter.getInstance().register(new Tautology(Explanations.TAUTOLOGY, selection.getGuard()));
+			else if(selection.getGuard().isSame(BOOLEAN.literal(false)))
+				Linter.getInstance().register(new Contradiction(Explanations.CONTRADICTION, selection.getGuard()));
 		}
 
 		if(selection.isEmpty()) {
-			
+
 			Linter.getInstance().register(new EmptySelection(Explanations.EMPTY_SELECTION, selection));
 
 			if(selection.hasAlternativeBlock() && !selection.getAlternativeBlock().isEmpty()) {

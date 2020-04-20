@@ -13,6 +13,7 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 
 import pt.iscte.paddle.codequality.misc.Category;
+import pt.iscte.paddle.codequality.misc.Classification;
 import pt.iscte.paddle.javardise.service.IClassWidget;
 import pt.iscte.paddle.javardise.service.ICodeDecoration;
 import pt.iscte.paddle.javardise.service.IJavardiseService;
@@ -27,7 +28,7 @@ public class UnreachableCode extends BadCodeCase {
 	private final List<INode> deadNodes;
 
 	public UnreachableCode(String explanation, List<INode> deadNodes) {
-		super(Category.UNREACHABLE_CODE, explanation, null);
+		super(Category.UNREACHABLE_CODE, Classification.SERIOUS, null);
 		this.deadNodes = deadNodes;
 	}
 
@@ -46,21 +47,17 @@ public class UnreachableCode extends BadCodeCase {
 		IWidget[] elements = new IWidget[deadNodes.size()];
 
 		for (int i = 0; i < elements.length; i++) {
-			//			IControlStructure s = deadNodes.get(i).getElement().getProperty(IControlStructure.class);
-			//			if(s != null) {
-			//				elements[i] = IJavardiseService.getWidget(s);
-			//			}
-			//			else 
-			elements[i] = IJavardiseService.getWidget(deadNodes.get(i).getElement());
+			IControlStructure s = deadNodes.get(i).getElement().getProperty(IControlStructure.class);
+			if(s != null) elements[i] = IJavardiseService.getWidget(s);
+			else elements[i] = IJavardiseService.getWidget(deadNodes.get(i).getElement());
 		}
 
-		Color cyan = Display.getDefault().getSystemColor(SWT.COLOR_CYAN);
-		ICodeDecoration<Canvas> dec = w.addRegionMark(cyan, elements);
-		ICodeDecoration<Text> note = w.addNote("Dwadwa", ICodeDecoration.Location.RIGHT);
+		ICodeDecoration<Canvas> dec = w.addRegionMark(getColor(), elements);
 		dec.show();
-		note.show();
-		super.addDecoration(note);
+		ICodeDecoration<Text> d1 = w.addNote("This code won't \n be executed!", ICodeDecoration.Location.RIGHT);
+		d1.show();
 		super.addDecoration(dec);
+		super.addDecoration(d1);
 
 		generateExplanation(widget, comp, style);
 	}
@@ -75,17 +72,18 @@ public class UnreachableCode extends BadCodeCase {
 					ICodeDecoration<Label> i = a.addImage(img, ICodeDecoration.Location.LEFT);
 					i.show();
 					getDecorations().add(i);
-					ICodeDecoration<Canvas> d0 = a.addMark(Display.getDefault().getSystemColor(SWT.COLOR_RED));
-					ICodeDecoration<Text> d1 = a.addNote("Causes the unreachable code!", ICodeDecoration.Location.RIGHT);
+//					ICodeDecoration<Canvas> d0 = a.addMark(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_MAGENTA));
+					ICodeDecoration<Text> d1 = a.addNote("Terminates the function execution!", ICodeDecoration.Location.RIGHT);
 					d1.show();
-					d0.show();
-					getDecorations().add(d0);
+//					d0.show();
+//					getDecorations().add(d0);
 					getDecorations().add(d1);
 				})
-				.words("that causes the non-execution of "+ deadNodes.size() + " of your code instructions.")
-				.words("\n\n - The return will stop the method execution.")
-				.words("\n - Any code after will never be executed.")
-				.words("\n - This means that the unreachable code becomes obsolete, unnecessary and therefore should be avoided at all cost.")
+				.words("that causes the function to terminate.\n")
+				.words("\n - Any code after the ") .link(deadNodes.get(0).getElement().toString(), ()->{})
+				.words(" statement won't be executed.")
+				.words("\n - This means that the unreachable lines become useless because they will never run.")
+				.words("\n - Modifications should be done in order to avoid having unreachable code.")
 				.create(comp, SWT.WRAP | SWT.V_SCROLL);
 		link.requestLayout();
 	}
