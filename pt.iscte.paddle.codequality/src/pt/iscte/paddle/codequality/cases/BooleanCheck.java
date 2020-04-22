@@ -39,7 +39,7 @@ public class BooleanCheck extends BadCodeCase {
 			ICodeDecoration<Canvas> d = w.addMark(getColor());
 			d.show();
 			getDecorations().add(d);
-			ICodeDecoration<Text> d2 = w.addNote("Couln't you use \n the ! operator?", ICodeDecoration.Location.RIGHT);
+			ICodeDecoration<Text> d2 = w.addNote("Maybe use \n the ! operator?", ICodeDecoration.Location.RIGHT);
 			d2.show();
 			getDecorations().add(d2);
 		}
@@ -50,12 +50,13 @@ public class BooleanCheck extends BadCodeCase {
 		IWidget w = IJavardiseService.getWidget(element);
 		if(w != null) {
 			Link link = new HyperlinkedText(null)
+					.words("Issue:\n\n")
 					.words("The condition ")
 					.link(element.toString(), () -> {}) 
 					.words(" could make use of the '!' operator. \n")	
 					.words("\n - It represents the comparision between a boolean variable and one of it's binary possible values (true or false).")
-					.words("\n - It is more of a styling mather, but this kind of changes can improve the code readibility.")
-					
+					.words("\n - It is more of a styling mather, but this can negatively affect the code readibility.")
+					.words("\n\nSuggestion:\nTry using the negation (!) operator in order to improve readibility.")
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 
 			link.requestLayout();

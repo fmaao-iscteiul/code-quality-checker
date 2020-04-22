@@ -34,9 +34,11 @@ public class BooleanReturnCheck extends BadCodeCase{
 		getDecorations().add(t);
 		if(w != null) {
 			Link link = new HyperlinkedText(null)
+					.words("Issue:\n\n")
 					.words("The ").link("if( "+((ISelection) element).getGuard().toString() + " )", ()->{}).words(" condition is unnecessary!\n ")
 					.words("\n - There is no need to check the value of a boolean variable before returning true or false.")
 					.words("\n - The condition itself already represents the value meant to be returned.")
+					.words("\n\nSuggestion:\n\n Return the boolean variable instead of checking it's value and then returning true or false.")
 					.create(comp, SWT.WRAP | SWT.SCROLL_LINE | SWT.V_SCROLL);
 
 			link.requestLayout();

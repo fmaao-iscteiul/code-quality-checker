@@ -53,8 +53,8 @@ public class LinterDemo {
 				new UselessAssignments()
 		};
 
-		t6.setup();
-		IModule module = t6.getModule();
+		t5.setup();
+		IModule module = t5.getModule();
 
 		Display display = new Display();
 		shell = new Shell(display);
@@ -89,14 +89,14 @@ public class LinterDemo {
 		rightLayout.spacing = 5;
 		rightComp.setLayout(rightLayout);
 
-		Label label = new Label(rightComp, SWT.WRAP | SWT.CENTER);
-		label.setText("CODE QUALITY CHECKER \n\n\n"
-				+ "This tool was designed to help you improve your code base, when it comes code quality!"
-				+ " It will detect and highlight many code quality related issues and alert you about them, including a brief explanation"
-				+ "regarding the reason why they should be avoid. With this being, this tool will help you in eliminating bad practises in an "
-				+ "autonomous way. \n\n"
-				+ "The issue caught in your code were:"
-				);
+//		Label label = new Label(rightComp, SWT.WRAP | SWT.CENTER);
+//		label.setText("CODE QUALITY CHECKER \n\n\n"
+//				+ "This tool was designed to help you improve your code base, when it comes code quality!"
+//				+ " It will detect and highlight many code quality related issues and alert you about them, including a brief explanation"
+//				+ "regarding the reason why they should be avoid. With this being, this tool will help you in eliminating bad practises in an "
+//				+ "autonomous way. \n\n"
+//				+ "The issue caught in your code were:"
+//				);
 
 //		final List moduleList = new List(rightComp, SWT.V_SCROLL);
 //		moduleList.addSelectionListener(new SelectionListener() {
@@ -147,7 +147,7 @@ public class LinterDemo {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if(caseList.getSelectionIndex() == -1) return;
-				if(rightComp.getChildren().length > 1) rightComp.getChildren()[2].dispose();
+				if(rightComp.getChildren().length > 1) rightComp.getChildren()[1].dispose();
 
 				BadCodeCase badCodeCase = badCodeCases.get(caseList.getSelectionIndex());
 				badCodeCases.forEach(badCase -> badCase.hideAll());

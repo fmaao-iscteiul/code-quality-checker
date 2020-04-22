@@ -17,9 +17,9 @@ import pt.iscte.paddle.javardise.service.IWidget;
 import pt.iscte.paddle.javardise.util.HyperlinkedText;
 import pt.iscte.paddle.model.IProgramElement;
 
-public class FaultyAssignment extends BadCodeCase{
+public class UselessSelfAssignment extends BadCodeCase{
 
-	public FaultyAssignment(String explanation, IProgramElement element) {
+	public UselessSelfAssignment(String explanation, IProgramElement element) {
 		super(Category.FAULTY_ASSIGNMENT, Classification.AVERAGE, element);
 	}
 
@@ -49,11 +49,12 @@ public class FaultyAssignment extends BadCodeCase{
 		IWidget w = IJavardiseService.getWidget(super.element);
 		if(w != null) {
 			Link link = new HyperlinkedText(null)
+					.words("Issue: \n\n")
 					.words("The assignment ").link(element.toString(), () -> {
 					})
-					.words(" means that the variable was assigned to itself. ")
-					.words("\n\n - This means that the variable was assigned with the same value that it already had.")
-					.words("\n - It is considered an useless assignment, because it has no impact in the program.")
+					.words(" means that the variable was assigned with the value that it already had. ")
+					.words("\n\n - It is an useless assignment because it has no impact in the program.")
+					.words("\n\n Suggestion: \n\n- Remove this useless assignment.")
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 
 			link.requestLayout();

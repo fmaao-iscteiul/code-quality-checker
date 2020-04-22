@@ -85,6 +85,7 @@ public enum Linter {
 		return caughtCases;
 	}
 	public void register(BadCodeCase catchedCase) {
+		// TODO add classification sorting.
 		this.caughtCases.add(catchedCase);
 	}
 	public IModule getModule() {

@@ -42,7 +42,7 @@ public class EmptySelection extends EmptyBranch {
 			ICodeDecoration<Canvas> d = w.addMark(getColor());
 			d.show();
 			getDecorations().add(d);
-			ICodeDecoration<Text> d2 = w.addNote("Nothing happens inside \n this block", ICodeDecoration.Location.RIGHT);
+			ICodeDecoration<Text> d2 = w.addNote("Why is it empty?", ICodeDecoration.Location.RIGHT);
 			d2.show();
 			getDecorations().add(d2);
 		}
@@ -57,7 +57,7 @@ public class EmptySelection extends EmptyBranch {
 					.words("\n - If the condition ").link(((ISelection) element).getGuard().toString(), ()->{})
 					.words(" is true, nothing will happen.")
 					.words("\n - Empty code blocks don't add actions to the program execution.")
-					.words("\n - You should avoid empty blocks by adding some logic, or removing them.")
+					.words("\n\nSuggestion:\n\n Either Add some logic to the if block, or remove it.")
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 
 			link.requestLayout();

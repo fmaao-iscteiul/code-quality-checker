@@ -46,14 +46,18 @@ public class DuplicateMethodCall extends BadCodeCase {
 	protected void generateExplanation(IClassWidget widget, Composite comp, int style) {
 		IProcedureCall call = (IProcedureCall) duplicates.get(0);
 		Link link = new HyperlinkedText(null)
+				.words("Issue:\n\n")
 				.words("The function ")
 				.link(call.toString(), () -> {
 					ICodeDecoration<Canvas> d = IJavardiseService.getWidget(call.getProcedure()).addMark(getColor());
 					d.show();
 					getDecorations().add(d);
 				})
-				.words(" was called more than once. \n\n  - Its arguments didn't change values between calls, which means that the result will be the same.")
+				.words(" was called more than once. \n\n - Its arguments values aren't changed between calls.")
+				.words("\n - The method doesn't change any variable that affects the program execution flow.")
+				.words("\n - This means that both calls will result in the same.")
 				.words("\n - There is no point on having two " + call + " calls that return the exact same result.")
+				.words("\n\nSuggestion: \n\nSince both calls result in the same, you should remove one of them.")
 				.create(comp, SWT.WRAP | SWT.V_SCROLL);
 
 		link.requestLayout();

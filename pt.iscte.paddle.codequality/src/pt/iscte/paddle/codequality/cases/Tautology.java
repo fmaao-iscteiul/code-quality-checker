@@ -45,6 +45,7 @@ public class Tautology extends BadCodeCase {
 					.words("\n\n - This means that this condition will allways be avaliated as true.")
 					.words("\n - The program will always execute the code inside this condition, which means that"
 							+ " it is not necessary, or wrong.")
+					.words("\n\nSuggestion: Change this condition so that it isn't always true.")
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 
 			link.requestLayout();

@@ -66,24 +66,26 @@ public class UnreachableCode extends BadCodeCase {
 	protected void generateExplanation(IClassWidget widget, Composite comp, int style) {
 		IWidget a = IJavardiseService.getWidget(deadNodes.get(0).getElement());
 		Link link = new HyperlinkedText(null)
+				.words("Issue:\n\n")
 				.words("There is a")
 				.link(" return statement ", () -> {
 					Image img = new Image(Display.getDefault(), "arrow.png");
 					ICodeDecoration<Label> i = a.addImage(img, ICodeDecoration.Location.LEFT);
 					i.show();
 					getDecorations().add(i);
-//					ICodeDecoration<Canvas> d0 = a.addMark(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_MAGENTA));
+					//					ICodeDecoration<Canvas> d0 = a.addMark(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_MAGENTA));
 					ICodeDecoration<Text> d1 = a.addNote("Terminates the function execution!", ICodeDecoration.Location.RIGHT);
 					d1.show();
-//					d0.show();
-//					getDecorations().add(d0);
+					//					d0.show();
+					//					getDecorations().add(d0);
 					getDecorations().add(d1);
 				})
-				.words("that causes the function to terminate.\n")
-				.words("\n - Any code after the ") .link(deadNodes.get(0).getElement().toString(), ()->{})
-				.words(" statement won't be executed.")
-				.words("\n - This means that the unreachable lines become useless because they will never run.")
-				.words("\n - Modifications should be done in order to avoid having unreachable code.")
+				.words("that causes the function execution to end.\n")
+				.words("\n - The function ends after the ").link(deadNodes.get(0).getElement().toString(), ()->{}).words(" statement.")
+				.words("\n - This means that code after that won't be executed.")
+				.words("\n - The unreachable lines become useless because they will never run.")
+				.words("\n\nSuggestion:")
+				.words("\n\nChange the place of the "+deadNodes.get(0).getElement().toString()+" statement or add a proper condition before calling it, in order to avoid chunks of unreachable code.")
 				.create(comp, SWT.WRAP | SWT.V_SCROLL);
 		link.requestLayout();
 	}

@@ -36,6 +36,8 @@ public class CaseNames {
 			return "Tautology";
 		case CONTRADICTION:
 			return "Dead Code";
+		case USELESS_CODE:
+			return "Unused assignment value";
 		default:
 			return category.toString();
 		}

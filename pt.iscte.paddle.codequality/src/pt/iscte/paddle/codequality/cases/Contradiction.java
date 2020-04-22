@@ -47,6 +47,7 @@ public class Contradiction extends BadCodeCase {
 					.words(" represents a contradiction case. ")
 					.words("\n\n - This means that this condition will allways be avaliated as false.")
 					.words("\n - The program will never execute the code inside this condition, which is useless.")
+					.words("\n\nSuggestion: Change this condition so that it isn't always true.")
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 
 			link.requestLayout();

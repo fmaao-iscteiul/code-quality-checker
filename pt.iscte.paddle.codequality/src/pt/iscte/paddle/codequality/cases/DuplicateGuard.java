@@ -48,7 +48,8 @@ public class DuplicateGuard extends BadCodeCase{
 					.words(" was found duplicated inside the code block.")
 					.words("\n\n - Neither of the variables used in the conditions had their values changed in between.")
 					.words("\n - Double checking a condition which parts don't change in between checks, will have the same result.")
-					.words("\n - Since the result is the same, it doesn't need to be duplicated. Second check should be removed.")
+					.words("\n - Since the result is the same, it doesn't need to be duplicated.")
+					.words("\n\nSolution: \n\n Remove the second check since it isn't necessary.")
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 
 			link.requestLayout();

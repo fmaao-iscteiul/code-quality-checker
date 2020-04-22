@@ -35,20 +35,18 @@ public class SelectionMisconception extends EmptyBranch {
 			getDecorations().add(d2);
 		}
 	}
-	/**
-	 * "The code was written in the else block and the if left empty because the"
-			+ " target condition was the opposite written in the if guard. This demonstrates a misconception when in comes to handling conditions."
-			+ "A negative condition can be used to fight these empty blocks of code.";
-	 */
+	
 	@Override
 	protected void generateExplanation(IClassWidget widget, Composite comp, int style) {
 		IWidget w = IJavardiseService.getWidget(super.element);
 		if(w != null) {
 			Link link = new HyperlinkedText(null)
-					.words("The code was written in the else block and the if block left empty.")
-					.words("\n\n - This means that the reponsible for the actions is the else block.")
-					.words("\n - This could be done with a single if condition, using the negation (!) operator.")
-					.words("\n - It is never a good practise to leave empty blocks in the code base.")
+					.words("Issue:\n\n")
+					.words("The code was written in the else block and the if section was left empty.")
+					.words("\n\n - This means that only the else block contains code that may be executed.")
+					.words("\n - The empty if should be avoided, because empty code blocks don't contribute to the program and affect code readibility.")
+					.words("\n\nSuggestion:")
+					.words("\n\n Try using the negation (!) operator in the if condition and write the code directly inside the if block.")
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 
 			link.requestLayout();

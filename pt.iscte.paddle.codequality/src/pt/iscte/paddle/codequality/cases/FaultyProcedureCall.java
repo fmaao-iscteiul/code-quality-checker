@@ -35,13 +35,16 @@ public class FaultyProcedureCall extends BadCodeCase {
 			t.show();
 			getDecorations().add(t);
 			Link link = new HyperlinkedText(null)
-					.words("The method's return value is not being assigned or used. \n\n - The method ")
+					.words("Issue: \n\n")
+					.words("The method ")
 					.link(call.toString(), () -> {
 						ICodeDecoration<Canvas> d0 = widget.getProcedure((IProcedure) call.getProcedure()).getMethodName().addMark(getColor());
 						d0.show();
 						super.getDecorations().add(d0);
 					})
-					.words(" isn't void and its return value is of type ")
+					.words(" doesn't have any impact on the program.")
+					.words("\n\n- The call " + call + " doesn't change it's arguments .")
+					.words("\n- The method's return value ")
 					.link(call.getProcedure().getReturnType().toString(), () -> {
 
 						ICodeDecoration<Canvas> d2 = widget.getProcedure((IProcedure) call.getProcedure()).getReturnType().addMark(getColor());
@@ -51,7 +54,10 @@ public class FaultyProcedureCall extends BadCodeCase {
 						super.getDecorations().add(d2);
 						super.getDecorations().add(d3);
 					})
-					.words("\n - If the method's " + call + " return value isn't used, you should consider if there is the need for the method to return it.")
+					.words(" was not used.")
+					.words("\n- The method call doesn't change any variables that can affect the program's execution flow.")
+					.words("\n- With this being, the method call has no impact in the execution of the program.")
+					.words("\n\nSuggestion: \n- Either remove the call or think if it's return value should be used.")
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 
 			link.requestLayout();

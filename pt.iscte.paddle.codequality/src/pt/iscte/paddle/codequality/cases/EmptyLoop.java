@@ -44,7 +44,7 @@ public class EmptyLoop extends EmptyBranch {
 					.words("\n - If the condition ").link(((ILoop) element).getGuard().toString(), ()->{})
 					.words(" is true, nothing but empty iterations will happen.")
 					.words("\n - Empty code blocks don't add actions to the program execution.")
-					.words("\n - You should avoid empty blocks by adding some logic, or removing them.")
+					.words("\n\nSuggestion: \n\n You should avoid empty blocks by adding some logic, or removing them.")
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 
 			link.requestLayout();

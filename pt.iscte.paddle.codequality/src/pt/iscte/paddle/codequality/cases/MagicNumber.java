@@ -54,11 +54,13 @@ public class MagicNumber extends BadCodeCase{
 	protected void generateExplanation(IClassWidget widget, Composite comp, int style) {
 
 		Link link = new HyperlinkedText(null)
+				.words("Issue: \n\n")
 				.words("The highlighted number " ).link(magicNumber.toString(), () -> {
 				})
-				.words(" doesn't provide any context.")
+				.words(" doesn't really tell what it stands for.")
 				.words("\n\n - It can be hard for another programmer to look at the number " + magicNumber  + " and figure out what it represents.")
-				.words("\n - It's also harder to change the number since in in all the places that it's used.")
+				.words("\n - It can also lead to bugs because it's more difficult to change it in every place that it is used.")
+				.words("\n\n Suggestion: \n\n - Try replacing this the number " + magicNumber + " with a well named variable.")
 				.create(comp, SWT.WRAP | SWT.V_SCROLL);
 
 		link.requestLayout();
@@ -73,7 +75,7 @@ public class MagicNumber extends BadCodeCase{
 			IWidget w = generateElementWidget(el);
 			if(w != null) {
 				if(occurrences.indexOf(el) == 0) {
-					ICodeDecoration<Text> d2 = w.addNote("What is this number \n used for?", ICodeDecoration.Location.RIGHT);
+					ICodeDecoration<Text> d2 = w.addNote("What does this number \n represent?", ICodeDecoration.Location.RIGHT);
 					d2.show();
 					getDecorations().add(d2);
 				}

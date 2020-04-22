@@ -2,7 +2,7 @@ package pt.iscte.paddle.codequality.visitors;
 
 import java.util.ArrayList;
 
-import pt.iscte.paddle.codequality.cases.FaultyAssignment;
+import pt.iscte.paddle.codequality.cases.UselessSelfAssignment;
 import pt.iscte.paddle.codequality.cases.MagicNumber;
 import pt.iscte.paddle.codequality.linter.Linter;
 import pt.iscte.paddle.codequality.misc.Explanations;
@@ -52,7 +52,7 @@ public class MagicNumbers implements IVisitor{
 	@Override
 	public boolean visit(IArrayElementAssignment assignment) {
 		if(assignment.getTarget().toString().equals(assignment.getExpression().toString()))
-			Linter.getInstance().register(new FaultyAssignment(Explanations.SELF_ASSIGNMENT, assignment));
+			Linter.getInstance().register(new UselessSelfAssignment(Explanations.SELF_ASSIGNMENT, assignment));
 		return true;
 	}
 }

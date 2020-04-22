@@ -2,18 +2,15 @@ package pt.iscte.paddle.codequality.visitors;
 import java.util.ArrayList;
 import java.util.List;
 
-import pt.iscte.paddle.codequality.cases.FaultyAssignment;
+import pt.iscte.paddle.codequality.cases.UselessSelfAssignment;
+import pt.iscte.paddle.codequality.cases.UselessVariableAssignment;
 import pt.iscte.paddle.codequality.linter.Linter;
 import pt.iscte.paddle.codequality.misc.Explanations;
 import pt.iscte.paddle.model.IArrayElementAssignment;
-import pt.iscte.paddle.model.IBlockElement;
-import pt.iscte.paddle.model.IExpression;
-import pt.iscte.paddle.model.ILiteral;
+import pt.iscte.paddle.model.IBlock.IVisitor;
 import pt.iscte.paddle.model.ILoop;
 import pt.iscte.paddle.model.IProcedureCall;
-import pt.iscte.paddle.model.IProcedureCallExpression;
 import pt.iscte.paddle.model.ISelection;
-import pt.iscte.paddle.model.IBlock.IVisitor;
 import pt.iscte.paddle.model.IStatement;
 import pt.iscte.paddle.model.IVariableAssignment;
 import pt.iscte.paddle.model.IVariableDeclaration;
@@ -25,16 +22,18 @@ public class UselessAssignment implements IVisitor {
 
 	public class Statement {
 		private IVariableDeclaration var;
+		private IStatement assignment;
 		private boolean used;
 
-		public Statement(IVariableDeclaration variable) {
+		public Statement(IVariableDeclaration variable, IStatement ass) {
 			this.var = variable;
+			this.assignment = ass;
 			this.used = false;
 		}
 
 		@Override
 		public String toString() {
-			return var.toString();
+			return "Variable --> " + var.toString() + "  Assignment --> " + assignment;
 		}
 
 		@Override
@@ -59,15 +58,16 @@ public class UselessAssignment implements IVisitor {
 		boolean exists = false;
 		for (Statement ass : uselessStatements) {
 			if(!ass.used && ass.var.equals(assignment.getTarget())) {
-				System.out.println("aqui2: " + assignment);
+				System.out.println("aqui2: " + ass);
+				Linter.getInstance().register(new UselessVariableAssignment(ass.assignment));
 				exists = true;
 				ass.used = true;
 			} else if (assignment.getExpression().includes(ass.var)) ass.used = true;
 		}
-		if(!exists) uselessStatements.add(new Statement(assignment.getTarget()));
+		if(!exists) uselessStatements.add(new Statement(assignment.getTarget(), assignment));
 
 		if(assignment.getTarget().toString().equals(assignment.getExpression().toString()))
-			Linter.getInstance().register(new FaultyAssignment(Explanations.SELF_ASSIGNMENT, assignment));
+			Linter.getInstance().register(new UselessSelfAssignment(Explanations.SELF_ASSIGNMENT, assignment));
 		return false;
 	}
 
@@ -75,7 +75,9 @@ public class UselessAssignment implements IVisitor {
 	public boolean visit(IProcedureCall call) {
 		call.getArguments().forEach(argument -> {
 			for (Statement statement : uselessStatements) {
-				if(argument.includes(statement.var)) statement.used = true;
+				if(argument.includes(statement.var)) {
+					statement.used = true;
+				}
 			}
 		});
 		return false;
