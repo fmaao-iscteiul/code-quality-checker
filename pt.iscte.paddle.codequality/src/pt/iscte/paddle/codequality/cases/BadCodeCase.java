@@ -45,6 +45,10 @@ public abstract class BadCodeCase {
 	public Category getCaseCategory() {
 		return category;
 	}
+	
+	public Classification getClassification() {
+		return classification;
+	}
 
 	public IProgramElement getElement() {
 		return element;

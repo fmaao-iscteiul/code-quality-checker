@@ -53,8 +53,8 @@ public class LinterDemo {
 				new UselessAssignments()
 		};
 
-		t5.setup();
-		IModule module = t5.getModule();
+		t2.setup();
+		IModule module = t2.getModule();
 
 		Display display = new Display();
 		shell = new Shell(display);

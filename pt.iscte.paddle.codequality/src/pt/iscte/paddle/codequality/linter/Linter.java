@@ -1,9 +1,11 @@
 package pt.iscte.paddle.codequality.linter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import pt.iscte.paddle.codequality.cases.BadCodeCase;
 import pt.iscte.paddle.codequality.misc.BadCodeAnalyser;
+import pt.iscte.paddle.codequality.misc.Classification;
 import pt.iscte.paddle.codequality.visitors.DeadCode;
 import pt.iscte.paddle.codequality.visitors.DuplicateGuard;
 import pt.iscte.paddle.codequality.visitors.DuplicateStatement;
@@ -87,6 +89,20 @@ public enum Linter {
 	public void register(BadCodeCase catchedCase) {
 		// TODO add classification sorting.
 		this.caughtCases.add(catchedCase);
+		this.caughtCases.sort(new Comparator<BadCodeCase>() {
+
+			@Override
+			public int compare(BadCodeCase o1, BadCodeCase o2) {
+                if(o1.getClassification().equals(o2.getClassification()) ) return 0;
+                else if(o1.getClassification().equals(Classification.SERIOUS) && o2.getClassification().equals(Classification.LIGHT)) return -1;
+                else if(o1.getClassification().equals(Classification.LIGHT) && o2.getClassification().equals(Classification.SERIOUS)) return 1;
+                else if(o1.getClassification().equals(Classification.SERIOUS) && o2.getClassification().equals(Classification.AVERAGE)) return -1;
+                else if(o1.getClassification().equals(Classification.AVERAGE) && o2.getClassification().equals(Classification.SERIOUS)) return 1;
+                else if(o1.getClassification().equals(Classification.AVERAGE) && o2.getClassification().equals(Classification.LIGHT)) return -1;
+                else if(o1.getClassification().equals(Classification.LIGHT) && o2.getClassification().equals(Classification.AVERAGE)) return 1;
+                else return 0;
+			}
+		});
 	}
 	public IModule getModule() {
 		return this.module;
