@@ -25,7 +25,7 @@ public class UselessVariableAssignment extends BadCodeCase {
 		if(w != null) {
 			Link link = new HyperlinkedText(null)
 					.words("Issue: \n\n")
-					.words("The highlighted assignment's ").link(element.toString(), () -> {
+					.words("The assignment ").link(element.toString(), () -> {
 					})
 					.words(" value was not used. ")
 					.words("\n\n - Variables don't need to be initialized before being assigned with a value. ")

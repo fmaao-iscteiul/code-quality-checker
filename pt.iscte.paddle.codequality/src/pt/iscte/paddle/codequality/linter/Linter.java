@@ -53,7 +53,6 @@ public enum Linter {
 		this.visitors.add(Loop.build());
 		this.visitors.add(MagicNumbers.build());
 		this.visitors.add(DeadCode.build());
-		this.visitors.add(new UselessAssignment());
 		this.visitors.add(DuplicateStatement.build(null));
 				
 		return this;
@@ -62,7 +61,9 @@ public enum Linter {
 	public Linter loadAnalysers() {
 		this.procedures.forEach(mProcedure -> {
 			IControlFlowGraph cfg = mProcedure.generateCFG();
-			cfg.display();			
+			cfg.display();
+			this.visitors.add(new UselessAssignment(cfg));
+			this.analysers.add(new UselessAssignment(cfg));
 			this.analysers.add(Unreachable.build(cfg));
 			this.analysers.add(DuplicateGuard.build(cfg));
 			this.analysers.add(DuplicateStatement.build(cfg));

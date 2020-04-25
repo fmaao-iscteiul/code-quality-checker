@@ -55,7 +55,7 @@ public class BooleanCheck extends BadCodeCase {
 					.link(element.toString(), () -> {}) 
 					.words(" could make use of the '!' operator. \n")	
 					.words("\n - It represents the comparision between a boolean variable and one of it's binary possible values (true or false).")
-					.words("\n - It is more of a styling mather, but this can negatively affect the code readibility.")
+					.words("\n - It is more of a styling mather, but this can negatively affect the code readibility, due to the condition's length.")
 					.words("\n\nSuggestion:\nTry using the negation (!) operator in order to improve readibility.")
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 

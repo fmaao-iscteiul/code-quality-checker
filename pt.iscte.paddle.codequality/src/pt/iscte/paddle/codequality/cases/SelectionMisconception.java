@@ -45,6 +45,7 @@ public class SelectionMisconception extends EmptyBranch {
 					.words("The code was written in the else block and the if section was left empty.")
 					.words("\n\n - This means that only the else block contains code that may be executed.")
 					.words("\n - The empty if should be avoided, because empty code blocks don't contribute to the program and affect code readibility.")
+					.words("\n - Conditions don't always need to be true.")
 					.words("\n\nSuggestion:")
 					.words("\n\n Try using the negation (!) operator in the if condition and write the code directly inside the if block.")
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);

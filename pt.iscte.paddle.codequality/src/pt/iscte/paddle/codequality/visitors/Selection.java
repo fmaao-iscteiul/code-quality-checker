@@ -24,9 +24,11 @@ public class Selection implements IVisitor {
 	@Override
 	public boolean visit(IBinaryExpression exp) {
 		if(exp.getOperationType().equals(OperationType.RELATIONAL) 
-				&& exp.getOperator().equals(IBinaryOperator.EQUAL) &&
-				exp.getLeftOperand().getType().isBoolean() && exp.getRightOperand().getType().isBoolean()
-				&& (exp.getRightOperand().isSame(IType.BOOLEAN.literal(false)) || exp.getRightOperand().isSame(IType.BOOLEAN.literal(true))))
+				&& (exp.getOperator().equals(IBinaryOperator.EQUAL) || exp.getOperator().equals(IBinaryOperator.DIFFERENT))
+				&& exp.getLeftOperand().getType().isBoolean() 
+				&& exp.getRightOperand().getType().isBoolean()
+				&& ((exp.getRightOperand().isSame(IType.BOOLEAN.literal(false)) || exp.getRightOperand().isSame(IType.BOOLEAN.literal(true)))
+						||  (exp.getLeftOperand().isSame(IType.BOOLEAN.literal(false)) || exp.getLeftOperand().isSame(IType.BOOLEAN.literal(true)))))
 			Linter.getInstance().register(new BooleanCheck(Explanations.FAULTY_BOOLEAN_CHECK, exp));
 		return true;
 	}
