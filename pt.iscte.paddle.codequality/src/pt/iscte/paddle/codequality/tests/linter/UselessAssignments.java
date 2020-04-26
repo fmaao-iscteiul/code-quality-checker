@@ -31,8 +31,8 @@ public class UselessAssignments extends BaseTest {
 	ISelection selection = body2.addSelectionWithAlternative(IType.BOOLEAN.literal(true));
 	IVariableAssignment useless3 = selection.addAssignment(array2, returnsArray.expression(array1));
 	IVariableAssignment useless31 = selection.getAlternativeBlock().addAssignment(array2, array1);
-//	IVariableAssignment useless32 = selection.getAlternativeBlock().addAssignment(array2, array1);
-	IVariableAssignment useless4 = selection.addAssignment(array1, array2);
+	IVariableAssignment useless32 = selection.getAlternativeBlock().addAssignment(array2, array1);
+//	IVariableAssignment useless4 = selection.addAssignment(array1, array2);
 //	IVariableAssignment useless45 = selection.addAssignment(array1, array2);
 	IVariableAssignment useless312 = body2.addAssignment(array2, array1);
 	

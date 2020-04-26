@@ -66,8 +66,9 @@ public class UselessAssignment implements IVisitor, BadCodeAnalyser {
 				boolean exists = false;
 				for (Statement ass : uselessStatements) {
 					if(ass.var.equals(assignment.getTarget())) {
-						if(included(cfg.pathsBetweenNodes(ass.node, node), ass.var)) 
+						if(!included(cfg.pathsBetweenNodes(ass.node, node), ass.var)) 
 							Linter.getInstance().register(new UselessVariableAssignment(ass.assignment));
+							
 						ass.assignment = assignment;
 						ass.node = node;
 						exists = true;
@@ -83,13 +84,14 @@ public class UselessAssignment implements IVisitor, BadCodeAnalyser {
 	}
 	
 	public boolean included(List<Path> paths, IVariableDeclaration variable) {
+		if(paths.size() == 0) return true;
 		for (Path path : paths) {
 			
 			INode first = path.getNodes().remove(0);
 			INode last = path.getNodes().remove(path.getNodes().size() - 1);
 			
-			if(!((IBlockElement) first.getElement()).getParent().isSame(((IBlockElement) last.getElement()).getParent())) return false;
-			else if(path.getNodes().size() == 0) return true;
+			if(!((IBlockElement) first.getElement()).getParent().isSame(((IBlockElement) last.getElement()).getParent())) return true;
+			
 			for (INode node : path.getNodes()) {
 				
 				if(node.getElement() instanceof IArrayElementAssignment) {
