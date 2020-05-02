@@ -5,22 +5,22 @@ import java.util.List;
 
 import org.eclipse.swt.widgets.Composite;
 
-import pt.iscte.paddle.codequality.cases.BadCodeCase;
+import pt.iscte.paddle.codequality.cases.base.QualityIssue;
 import pt.iscte.paddle.model.IProgramElement;
 
 public abstract class BaseComponent {
 	
 	private List<IProgramElement> elements;
 	private Composite comp;
-	private BadCodeCase badCase;
+	private QualityIssue badCase;
 	
-	public BaseComponent(Composite composite, BadCodeCase badCase, int style) {
+	public BaseComponent(Composite composite, QualityIssue badCase, int style) {
 		this.comp = new Composite(composite, style);
 		this.badCase = badCase;
 		this.elements = new ArrayList<IProgramElement>();
 	}
 	
-	public BadCodeCase getBadCase() {
+	public QualityIssue getBadCase() {
 		return badCase;
 	}
 	

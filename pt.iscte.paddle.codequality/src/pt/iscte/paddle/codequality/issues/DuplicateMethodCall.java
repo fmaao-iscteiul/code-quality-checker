@@ -1,50 +1,36 @@
-package pt.iscte.paddle.codequality.cases;
+package pt.iscte.paddle.codequality.issues;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
-import org.eclipse.swt.widgets.Text;
-
-import pt.iscte.paddle.codequality.misc.Category;
+import pt.iscte.paddle.codequality.misc.IssueType;
+import pt.iscte.paddle.codequality.cases.base.MultipleOccurrencesIssue;
 import pt.iscte.paddle.codequality.misc.Classification;
-import pt.iscte.paddle.codequality.misc.Explanations;
 import pt.iscte.paddle.javardise.service.IClassWidget;
 import pt.iscte.paddle.javardise.service.ICodeDecoration;
 import pt.iscte.paddle.javardise.service.IJavardiseService;
 import pt.iscte.paddle.javardise.util.HyperlinkedText;
-import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IProcedureCall;
 import pt.iscte.paddle.model.IProgramElement;
-import pt.iscte.paddle.model.cfg.INode;
 
-public class DuplicateMethodCall extends BadCodeCase {
+public class DuplicateMethodCall extends MultipleOccurrencesIssue {
 	
-	List<IProgramElement> duplicates;
 
-	public DuplicateMethodCall(Category category, Collection<INode> duplicatesList) {
-		super(category, Classification.SERIOUS);
-		this.duplicates = new ArrayList<IProgramElement>();
-		duplicatesList.forEach(node -> this.duplicates.add(node.getElement()));
+	public DuplicateMethodCall(List<IProgramElement> duplicatesList) {	
+		super(IssueType.DUPLICATE_SELECTION_GUARD, Classification.SERIOUS, duplicatesList);
 	}
 	
 	@Override
 	public void generateComponent(IClassWidget widget, org.eclipse.swt.widgets.Composite comp, int style) {
-		this.generateMark(widget, comp, style, duplicates);
+		this.generateMark(widget, comp, style);
 		this.generateExplanation(widget, comp, style);
 	}
 	
 	@Override
 	protected void generateExplanation(IClassWidget widget, Composite comp, int style) {
-		IProcedureCall call = (IProcedureCall) duplicates.get(0);
+		IProcedureCall call = (IProcedureCall) occurrences.get(0);
 		Link link = new HyperlinkedText(null)
 				.words("Issue:\n\n")
 				.words("The function ")

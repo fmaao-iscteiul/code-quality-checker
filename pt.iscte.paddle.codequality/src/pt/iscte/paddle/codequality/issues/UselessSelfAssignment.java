@@ -1,14 +1,12 @@
-package pt.iscte.paddle.codequality.cases;
+package pt.iscte.paddle.codequality.issues;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
-
-import pt.iscte.paddle.codequality.misc.Category;
+import pt.iscte.paddle.codequality.misc.IssueType;
+import pt.iscte.paddle.codequality.cases.base.SingleOcurrenceIssue;
 import pt.iscte.paddle.codequality.misc.Classification;
 import pt.iscte.paddle.javardise.service.IClassWidget;
 import pt.iscte.paddle.javardise.service.ICodeDecoration;
@@ -17,16 +15,16 @@ import pt.iscte.paddle.javardise.service.IWidget;
 import pt.iscte.paddle.javardise.util.HyperlinkedText;
 import pt.iscte.paddle.model.IProgramElement;
 
-public class UselessSelfAssignment extends BadCodeCase{
+public class UselessSelfAssignment extends SingleOcurrenceIssue {
 
-	public UselessSelfAssignment(String explanation, IProgramElement element) {
-		super(Category.FAULTY_ASSIGNMENT, Classification.AVERAGE, element);
+	public UselessSelfAssignment(IProgramElement occurrence) {
+		super(IssueType.FAULTY_ASSIGNMENT, Classification.AVERAGE, occurrence);
 	}
 
 
 	@Override
 	protected void generateMark(IClassWidget widget, Composite comp, int style) {
-		IWidget w = generateElementWidget(element);
+		IWidget w = generateElementWidget(occurrence);
 		if(w != null) {
 			ICodeDecoration<Canvas> d = w.addMark(getColor());
 			d.show();
@@ -37,20 +35,13 @@ public class UselessSelfAssignment extends BadCodeCase{
 		}
 	}
 
-	/**
-	 * 
-	 *
-	 * "The highlighted variable was assigned to itself. This leads to the assignment of a value that"
-			+ " the variable already had. With this being, it is considered an useless assignment."
-	 */
-	
 	@Override
 	protected void generateExplanation(IClassWidget widget, Composite comp, int style) {
-		IWidget w = IJavardiseService.getWidget(super.element);
+		IWidget w = IJavardiseService.getWidget(occurrence);
 		if(w != null) {
 			Link link = new HyperlinkedText(null)
 					.words("Issue: \n\n")
-					.words("The assignment ").link(element.toString(), () -> {
+					.words("The assignment ").link(occurrence.toString(), () -> {
 					})
 					.words(" means that the variable was assigned with the value that it already had. ")
 					.words("\n\n - It is an useless assignment because it has no impact in the program.")

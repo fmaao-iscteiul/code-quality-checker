@@ -1,7 +1,6 @@
-package pt.iscte.paddle.codequality.cases;
+package pt.iscte.paddle.codequality.issues;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
@@ -9,8 +8,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
-
-import pt.iscte.paddle.codequality.misc.Category;
+import pt.iscte.paddle.codequality.misc.IssueType;
+import pt.iscte.paddle.codequality.cases.base.SingleOcurrenceIssue;
 import pt.iscte.paddle.codequality.misc.Classification;
 import pt.iscte.paddle.javardise.service.IClassWidget;
 import pt.iscte.paddle.javardise.service.ICodeDecoration;
@@ -20,16 +19,16 @@ import pt.iscte.paddle.javardise.util.HyperlinkedText;
 import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IProcedureCall;
 
-public class FaultyProcedureCall extends BadCodeCase {
+public class FaultyProcedureCall extends SingleOcurrenceIssue {
 
 	public FaultyProcedureCall(String explanation, IProcedureCall element) {
-		super(Category.FAULTY_METHOD_CALL, Classification.AVERAGE, element);
+		super(IssueType.FAULTY_METHOD_CALL, Classification.AVERAGE, element);
 	}
 
 	@Override
 	protected void generateExplanation(IClassWidget widget, Composite comp, int style) {
-		IProcedureCall call = (IProcedureCall) element;
-		IWidget w = generateElementWidget(element);
+		IProcedureCall call = (IProcedureCall) occurrence;
+		IWidget w = generateElementWidget(occurrence);
 		if(w != null) {
 			ICodeDecoration<Text> t = w.addNote("Doesn't this return \n something?", ICodeDecoration.Location.RIGHT);
 			t.show();
@@ -65,10 +64,8 @@ public class FaultyProcedureCall extends BadCodeCase {
 	}
 
 	protected void generateDecoration(IClassWidget widget, Composite comp, int style) {
-		IProcedureCall call = (IProcedureCall) element;
-		Color blue = Display.getDefault().getSystemColor(SWT.COLOR_BLUE);
 		Image img = new Image(Display.getDefault(), "arrow.png");
-		IWidget w = IJavardiseService.getWidget(element);
+		IWidget w = IJavardiseService.getWidget(occurrence);
 		ICodeDecoration<Label> d = w.addImage(img, ICodeDecoration.Location.LEFT);
 		ICodeDecoration<Text> d1 = w.addNote("Doesn't this method \n return something?", ICodeDecoration.Location.RIGHT);
 		d.show();

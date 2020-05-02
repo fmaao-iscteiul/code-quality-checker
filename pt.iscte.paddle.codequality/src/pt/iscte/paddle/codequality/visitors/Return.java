@@ -1,6 +1,6 @@
 package pt.iscte.paddle.codequality.visitors;
 
-import pt.iscte.paddle.codequality.cases.BooleanReturnCheck;
+import pt.iscte.paddle.codequality.issues.BooleanReturnCheck;
 import pt.iscte.paddle.codequality.linter.Linter;
 import pt.iscte.paddle.codequality.misc.BadCodeAnalyser;
 import pt.iscte.paddle.model.IControlStructure;

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import pt.iscte.paddle.codequality.issues.DuplicateGuard;
 import pt.iscte.paddle.codequality.linter.Linter;
 import pt.iscte.paddle.codequality.misc.BadCodeAnalyser;
 import pt.iscte.paddle.codequality.misc.Compability;
@@ -20,23 +21,23 @@ import pt.iscte.paddle.model.cfg.IControlFlowGraph;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph.Path;
 import pt.iscte.paddle.model.cfg.INode;
 
-public class DuplicateGuard implements BadCodeAnalyser {
+public class DuplicateBranchGuard implements BadCodeAnalyser {
 
 	private IControlFlowGraph cfg;
 
-	private DuplicateGuard(IControlFlowGraph cfg) {
+	private DuplicateBranchGuard(IControlFlowGraph cfg) {
 		this.cfg = cfg;
 	}
 
-	public static DuplicateGuard build(IControlFlowGraph cfgBuilder) {
-		return new DuplicateGuard(cfgBuilder);
+	public static DuplicateBranchGuard build(IControlFlowGraph cfgBuilder) {
+		return new DuplicateBranchGuard(cfgBuilder);
 	}
 
-	class DuplicateBranchGuard {
+	private class Guard {
 		private ArrayList<INode> occurences;
 		private INode occ;
 
-		public DuplicateBranchGuard(INode node) {
+		public Guard(INode node) {
 			this.occurences = new ArrayList<INode>();
 			this.occurences.add(node);
 			this.occ = node;
@@ -65,7 +66,7 @@ public class DuplicateGuard implements BadCodeAnalyser {
 	}
 
 	private ArrayList<INode> branchConditions = new ArrayList<INode>();
-	private ArrayList<DuplicateBranchGuard> duplicatedGuards = new ArrayList<DuplicateBranchGuard>();
+	private ArrayList<Guard> duplicatedGuards = new ArrayList<Guard>();
 	// Paired duplicates
 	private ArrayList<GuardPair> pairs = new ArrayList<GuardPair>();
 
@@ -80,7 +81,7 @@ public class DuplicateGuard implements BadCodeAnalyser {
 				List<IProgramElement> elements = new ArrayList<IProgramElement>();
 				elements.add(d.getStart().getElement());
 				elements.add(d.getEnd().getElement());
-				Linter.getInstance().register(new pt.iscte.paddle.codequality.cases.DuplicateGuard(elements));
+				Linter.getInstance().register(new DuplicateGuard(elements));
 			});
 		}
 
@@ -111,7 +112,7 @@ public class DuplicateGuard implements BadCodeAnalyser {
 
 	private void pairGatheredDuplicates() {
 		
-		for (DuplicateBranchGuard duplicateBranchGuard : duplicatedGuards) {
+		for (Guard duplicateBranchGuard : duplicatedGuards) {
 			for(int i = 1; i < duplicateBranchGuard.occurences.size(); i++) {
 				INode start = duplicateBranchGuard.occurences.get(i - 1);
 				INode end = duplicateBranchGuard.occurences.get(i);
@@ -170,20 +171,20 @@ public class DuplicateGuard implements BadCodeAnalyser {
 					if(duplicateGuard(guard, listGuard)) { // TODO see if guard is conjunction and check it's parts for duplicates.
 						existsInBranchConditions = true;
 						if(duplicatedGuards.size() == 0) {
-							DuplicateBranchGuard dup = new DuplicateBranchGuard(c);
+							Guard dup = new Guard(c);
 							dup.occurences.add(node);
 							duplicatedGuards.add(dup);
 						}
 						else {
 							boolean exists = false;
-							for(DuplicateBranchGuard g: duplicatedGuards) {
+							for(Guard g: duplicatedGuards) {
 								if(g.occ.getElement().isSame(node.getElement())) {
 									g.occurences.add(node);
 									exists = true;
 								}
 							}
 							if(!exists) {
-								DuplicateBranchGuard dup = new DuplicateBranchGuard(c);
+								Guard dup = new Guard(c);
 								dup.occurences.add(node);
 								duplicatedGuards.add(dup);
 							}

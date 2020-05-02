@@ -9,16 +9,18 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 
-import pt.iscte.paddle.codequality.cases.BadCodeCase;
+import pt.iscte.paddle.codequality.cases.base.QualityIssue;
 import pt.iscte.paddle.codequality.misc.CaseNames;
-import pt.iscte.paddle.codequality.tests.linter.DuplicateLoopGuard;
+import pt.iscte.paddle.codequality.misc.SelfAssignment;
+import pt.iscte.paddle.codequality.tests.linter.ContraditionAndTautology;
+import pt.iscte.paddle.codequality.tests.linter.DuplicateGuard;
 import pt.iscte.paddle.codequality.tests.linter.DuplicateStatement;
 import pt.iscte.paddle.codequality.tests.linter.FaultyReturns;
+import pt.iscte.paddle.codequality.tests.linter.MagicNumbers;
 import pt.iscte.paddle.codequality.tests.linter.NonVoidPureFunction;
 import pt.iscte.paddle.codequality.tests.linter.SelectionMisconception;
 import pt.iscte.paddle.codequality.tests.linter.UnreachableCode;
@@ -38,15 +40,18 @@ public class LinterDemo {
 		UnreachableCode t = new UnreachableCode();
 		NonVoidPureFunction t1 = new NonVoidPureFunction();
 		SelectionMisconception t2 = new SelectionMisconception();
-		DuplicateLoopGuard t3 = new DuplicateLoopGuard();
+		DuplicateGuard t3 = new DuplicateGuard();
 		DuplicateStatement t4 = new DuplicateStatement();
 		FaultyReturns t5 = new FaultyReturns();
 		UselessAssignments t6 = new UselessAssignments();
+		ContraditionAndTautology t7 = new ContraditionAndTautology();
+		SelfAssignment t8 = new SelfAssignment();
+		MagicNumbers t9 = new MagicNumbers();
 
 		BaseTest[] modules = {
 				new FaultyReturns(),
 				new DuplicateStatement(),
-				new DuplicateLoopGuard(),
+				new DuplicateGuard(),
 				new SelectionMisconception(),
 				new NonVoidPureFunction(),
 				new UnreachableCode(),
@@ -54,7 +59,9 @@ public class LinterDemo {
 		};
 
 		t6.setup();
+		t9.setup();
 		IModule module = t6.getModule();
+		IModule module2 = t9.getModule();
 
 		Display display = new Display();
 		shell = new Shell(display);
@@ -127,20 +134,22 @@ public class LinterDemo {
 		Link link = new HyperlinkedText(null).words("").create(rightComp, SWT.WRAP | SWT.V_SCROLL);
 		link.requestLayout();
 
+		
+		ArrayList<IModule> mod = new ArrayList<IModule>();
+		mod.add(module);
+		mod.add(module2);
 		// LINTER INIT
-		Linter TheLinter = Linter.INSTANCE.init(module);
-		TheLinter.loadVisitors().loadAnalysers();
-		TheLinter.getModule().setId("test");
+		Linter TheLinter = Linter.INSTANCE.init(mod);
 
 		//		CFGViewer cfg = new CFGViewer(codeAndCFG);
 		//		cfg.setInput(TheLinter.getProcedures().get(0).generateCFG().getNodes());
 		//		cfg.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-		ArrayList<BadCodeCase> badCodeCases = TheLinter.analyse();
+		ArrayList<QualityIssue> badCodeCases = TheLinter.analyse();
 
 		for(int i=0; i < badCodeCases.size(); i++) {
-			BadCodeCase badCase = badCodeCases.get(i);
-			if(badCase != null) caseList.add(CaseNames.getCaseName(badCase.getCaseCategory()));
+			QualityIssue badCase = badCodeCases.get(i);
+			if(badCase != null) caseList.add(CaseNames.getCaseName(badCase.getIssueType()));
 		}
 
 		caseList.addSelectionListener(new SelectionListener() {
@@ -149,7 +158,7 @@ public class LinterDemo {
 				if(caseList.getSelectionIndex() == -1) return;
 				if(rightComp.getChildren().length > 1) rightComp.getChildren()[1].dispose();
 
-				BadCodeCase badCodeCase = badCodeCases.get(caseList.getSelectionIndex());
+				QualityIssue badCodeCase = badCodeCases.get(caseList.getSelectionIndex());
 				badCodeCases.forEach(badCase -> badCase.hideAll());
 				badCodeCase.generateComponent(widget, rightComp, SWT.BORDER_DOT); // passar widget
 			}

@@ -1,10 +1,10 @@
 package pt.iscte.paddle.codequality.visitors;
 import static pt.iscte.paddle.model.IType.BOOLEAN;
 
-import pt.iscte.paddle.codequality.cases.Contradiction;
-import pt.iscte.paddle.codequality.cases.EmptyLoop;
+import pt.iscte.paddle.codequality.issues.Contradiction;
+import pt.iscte.paddle.codequality.issues.EmptyLoop;
 import pt.iscte.paddle.codequality.linter.Linter;
-import pt.iscte.paddle.codequality.misc.Category;
+import pt.iscte.paddle.codequality.misc.IssueType;
 import pt.iscte.paddle.codequality.misc.Compability;
 import pt.iscte.paddle.codequality.misc.Explanations;
 import pt.iscte.paddle.model.IBlock.IVisitor;
@@ -27,7 +27,7 @@ public class Loop implements IVisitor{
 			Linter.getInstance().register(new Contradiction(Explanations.CONTRADICTION, loop.getGuard()));
 
 		if(loop.isEmpty())
-			Linter.getInstance().register(new EmptyLoop(Category.EMPTY_LOOP, Explanations.EMPTY_LOOP, loop));
+			Linter.getInstance().register(new EmptyLoop(IssueType.EMPTY_LOOP, Explanations.EMPTY_LOOP, loop));
 
 		return true;
 	}

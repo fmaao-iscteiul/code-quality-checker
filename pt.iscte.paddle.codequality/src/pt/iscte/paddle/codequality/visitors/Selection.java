@@ -1,11 +1,11 @@
 package pt.iscte.paddle.codequality.visitors;
 import static pt.iscte.paddle.model.IType.BOOLEAN;
 
-import pt.iscte.paddle.codequality.cases.BooleanCheck;
-import pt.iscte.paddle.codequality.cases.Contradiction;
-import pt.iscte.paddle.codequality.cases.EmptySelection;
-import pt.iscte.paddle.codequality.cases.SelectionMisconception;
-import pt.iscte.paddle.codequality.cases.Tautology;
+import pt.iscte.paddle.codequality.issues.BooleanCheck;
+import pt.iscte.paddle.codequality.issues.Contradiction;
+import pt.iscte.paddle.codequality.issues.EmptySelection;
+import pt.iscte.paddle.codequality.issues.SelectionMisconception;
+import pt.iscte.paddle.codequality.issues.Tautology;
 import pt.iscte.paddle.codequality.linter.Linter;
 import pt.iscte.paddle.codequality.misc.Explanations;
 import pt.iscte.paddle.model.IBinaryExpression;

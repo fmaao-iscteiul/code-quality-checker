@@ -1,11 +1,13 @@
 package pt.iscte.paddle.codequality.visitors;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import pt.iscte.paddle.codequality.cases.UnreachableCode;
+import pt.iscte.paddle.codequality.issues.UnreachableCode;
 import pt.iscte.paddle.codequality.linter.Linter;
 import pt.iscte.paddle.codequality.misc.BadCodeAnalyser;
 import pt.iscte.paddle.codequality.misc.Explanations;
+import pt.iscte.paddle.model.IProgramElement;
 import pt.iscte.paddle.model.IReturn;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
 import pt.iscte.paddle.model.cfg.INode;
@@ -35,7 +37,9 @@ public class Unreachable implements BadCodeAnalyser {
 				
 		});
 		if(!this.cfg.deadNodes().isEmpty()) {
-			Linter.getInstance().register(new UnreachableCode(Explanations.UNREACHABLE_CODE, deadNodes));
+			ArrayList<IProgramElement> occurrences = new ArrayList<IProgramElement>();
+			deadNodes.forEach(d -> occurrences.add(d.getElement()));
+			Linter.getInstance().register(new UnreachableCode(occurrences));
 		}
 	}
 

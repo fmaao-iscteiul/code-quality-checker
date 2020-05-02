@@ -1,4 +1,4 @@
-package pt.iscte.paddle.codequality.cases;
+package pt.iscte.paddle.codequality.issues;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Canvas;
@@ -6,7 +6,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 
-import pt.iscte.paddle.codequality.misc.Category;
+import pt.iscte.paddle.codequality.misc.IssueType;
+import pt.iscte.paddle.codequality.cases.base.SingleOcurrenceIssue;
 import pt.iscte.paddle.codequality.misc.Classification;
 import pt.iscte.paddle.javardise.service.IClassWidget;
 import pt.iscte.paddle.javardise.service.ICodeDecoration;
@@ -15,20 +16,20 @@ import pt.iscte.paddle.javardise.service.IWidget;
 import pt.iscte.paddle.javardise.util.HyperlinkedText;
 import pt.iscte.paddle.model.IProgramElement;
 
-public class UselessVariableAssignment extends BadCodeCase {
+public class Contradiction extends SingleOcurrenceIssue {
 
-	public UselessVariableAssignment(IProgramElement element) {
-		super(Category.USELESS_CODE, Classification.SERIOUS, element);
+	public Contradiction(String explanation, IProgramElement element) {
+		super(IssueType.CONTRADICTION, Classification.SERIOUS, element);
 	}
 	
 	@Override
 	protected void generateMark(IClassWidget widget, Composite comp, int style) {
-		IWidget w = generateElementWidget(element);
+		IWidget w = generateElementWidget(occurrence);
 		if(w != null) {
 			ICodeDecoration<Canvas> d = w.addMark(getColor());
 			d.show();
 			getDecorations().add(d);
-			ICodeDecoration<Text> d2 = w.addNote("This value won't be used!", ICodeDecoration.Location.RIGHT);
+			ICodeDecoration<Text> d2 = w.addNote("This condition will \n always be false!", ICodeDecoration.Location.RIGHT);
 			d2.show();
 			getDecorations().add(d2);
 		}
@@ -36,21 +37,19 @@ public class UselessVariableAssignment extends BadCodeCase {
 	
 	@Override
 	protected void generateExplanation(IClassWidget widget, Composite comp, int style) {
-		IWidget w = IJavardiseService.getWidget(super.element);
+		IWidget w = IJavardiseService.getWidget(occurrence);
 		if(w != null) {
 			Link link = new HyperlinkedText(null)
-					.words("Issue: \n\n")
-					.words("The assignment ").link(element.toString(), () -> {
+					.words("The condition ").link(occurrence.toString(), () -> {
+						
 					})
-					.words(" value was not used. ")
-					.words("\n\n - Variables don't need to be initialized before being assigned with a value. ")
-					.words("\n - The value was not used before the second assignment, which means that is as no impact. ")
-					.words("\n - Unused values are useless to the program.")
-					.words("\n\n Suggestion: \n\n- Remove this useless assignment.")
+					.words(" represents a contradiction case. ")
+					.words("\n\n - This means that this condition will allways be avaliated as false.")
+					.words("\n - The program will never execute the code inside this condition, which is useless.")
+					.words("\n\nSuggestion: Change this condition so that it isn't always true.")
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 
 			link.requestLayout();
 		}
 	}
-
 }

@@ -1,33 +1,30 @@
-package pt.iscte.paddle.codequality.cases;
+package pt.iscte.paddle.codequality.issues;
 
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
-
-import pt.iscte.paddle.codequality.misc.Category;
+import pt.iscte.paddle.codequality.misc.IssueType;
+import pt.iscte.paddle.codequality.cases.base.QualityIssue;
 import pt.iscte.paddle.codequality.misc.Classification;
 import pt.iscte.paddle.javardise.service.IClassWidget;
 import pt.iscte.paddle.javardise.service.ICodeDecoration;
-import pt.iscte.paddle.javardise.service.IJavardiseService;
 import pt.iscte.paddle.javardise.service.IWidget;
 import pt.iscte.paddle.javardise.util.HyperlinkedText;
 import pt.iscte.paddle.model.IProgramElement;
 
-public class MagicNumber extends BadCodeCase{
+public class MagicNumber extends QualityIssue {
 
 	private List<IProgramElement> occurrences = new ArrayList<IProgramElement>();
 	private IProgramElement magicNumber;
 
 	public MagicNumber(String explanation, IProgramElement magicNumber) {
-		super(Category.MAGIC_NUMBER, Classification.AVERAGE);
+		super(IssueType.MAGIC_NUMBER, Classification.AVERAGE);
 		this.magicNumber = magicNumber;
 		this.occurrences.add(magicNumber);
 	}

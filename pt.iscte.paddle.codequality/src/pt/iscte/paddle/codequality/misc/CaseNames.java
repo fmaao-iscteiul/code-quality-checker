@@ -2,7 +2,7 @@ package pt.iscte.paddle.codequality.misc;
 
 public class CaseNames {
 
-	public static String getCaseName(Category category) {
+	public static String getCaseName(IssueType category) {
 		switch (category) {
 		case DUPLICATE_CODE:
 			return "Duplicated statement";

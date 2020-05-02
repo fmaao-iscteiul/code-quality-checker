@@ -4,23 +4,20 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import pt.iscte.paddle.codequality.cases.DuplicateMethodCall;
-import pt.iscte.paddle.codequality.cases.FaultyProcedureCall;
+import pt.iscte.paddle.codequality.issues.DuplicateMethodCall;
+import pt.iscte.paddle.codequality.issues.FaultyProcedureCall;
 import pt.iscte.paddle.codequality.linter.Linter;
 import pt.iscte.paddle.codequality.misc.BadCodeAnalyser;
-import pt.iscte.paddle.codequality.misc.Category;
-import pt.iscte.paddle.codequality.visitors.DuplicateGuard.GuardPair;
 import pt.iscte.paddle.model.IExpression;
 import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IProcedureCall;
+import pt.iscte.paddle.model.IProgramElement;
 import pt.iscte.paddle.model.IType;
 import pt.iscte.paddle.model.IVariableAssignment;
 import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph.Path;
 import pt.iscte.paddle.model.cfg.INode;
-import pt.iscte.paddle.model.roles.IFunctionClassifier;
 import pt.iscte.paddle.model.roles.IFunctionClassifier.Status;
 import pt.iscte.paddle.model.roles.impl.FixedValue;
 import pt.iscte.paddle.model.roles.impl.FunctionClassifier;
@@ -29,7 +26,6 @@ public class ProcedureCall implements BadCodeAnalyser {
 
 	private ArrayList<INode> calls;
 	private ArrayList<DuplicateProcedureCall> duplicates;
-	private ArrayList<GuardPair> pairs = new ArrayList<GuardPair>();
 
 	private IControlFlowGraph cfg;
 
@@ -72,15 +68,20 @@ public class ProcedureCall implements BadCodeAnalyser {
 			for(int i = 1; i < duplicateBranchGuard.occurences.size(); i++) {
 				INode start = duplicateBranchGuard.occurences.get(i - 1);
 				INode end = duplicateBranchGuard.occurences.get(i);
-				
+
 				duplicateBranchGuard.realDuplicates.add(start);
 				duplicateBranchGuard.realDuplicates.add(end);
-				
+
 				if(hasBeenChanged(cfg, start, end)) duplicateBranchGuard.realDuplicates.remove(start);
-				
+
 			}
-			if(duplicateBranchGuard.realDuplicates.size() > 1 && !new FunctionClassifier((IProcedure) ((IProcedureCall) duplicateBranchGuard.occ.getElement()).getProcedure()).getClassification().equals(Status.PROCEDURE))
-				Linter.getInstance().register(new DuplicateMethodCall(Category.DUPLICATE_PROCEDURE_CALL, duplicateBranchGuard.realDuplicates));			
+			if(duplicateBranchGuard.realDuplicates.size() > 1 
+					&& !new FunctionClassifier((IProcedure) ((IProcedureCall) duplicateBranchGuard.occ.getElement()).getProcedure()).getClassification().equals(Status.PROCEDURE)) {
+				ArrayList<IProgramElement> occurrences = new ArrayList<IProgramElement>();
+				duplicateBranchGuard.realDuplicates.forEach(d -> occurrences.add(d.getElement()));
+				Linter.getInstance().register(new DuplicateMethodCall(occurrences));			
+			}
+
 		}
 	}
 

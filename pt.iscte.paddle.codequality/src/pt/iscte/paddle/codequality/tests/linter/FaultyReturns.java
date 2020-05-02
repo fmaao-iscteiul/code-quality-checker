@@ -26,6 +26,5 @@ public class FaultyReturns extends BaseTest {
 	ISelection selection = body.addSelectionWithAlternative(b.expression());
 	IReturn returnTrue = selection.addReturn(BOOLEAN.literal(true));
 	IReturn returnFalse = selection.getAlternativeBlock().addReturn(BOOLEAN.literal(false));
-	IVariableAssignment ass2 = body.addAssignment(b, BOOLEAN.literal(true));
 	
 }

@@ -1,6 +1,6 @@
 package pt.iscte.paddle.codequality.misc;
 
-public enum Category {
+public enum IssueType {
 	FAULTY_ASSIGNMENT,
 	SELECTION_MISCONCEPTION,
 	EMPTY_SELECTION,
