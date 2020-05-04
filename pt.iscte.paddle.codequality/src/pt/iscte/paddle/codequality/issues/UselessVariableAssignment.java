@@ -19,7 +19,6 @@ public class UselessVariableAssignment extends SingleOcurrenceIssue {
 
 	public UselessVariableAssignment(IProgramElement occurrence) {
 		super(IssueType.USELESS_CODE, Classification.SERIOUS, occurrence);
-		System.out.println(" DJWA DJ WAJDNAWJDNJWANDJWANDJNAWJ");
 	}
 	
 	@Override

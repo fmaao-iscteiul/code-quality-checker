@@ -14,6 +14,8 @@ import pt.iscte.paddle.model.IBlock.IVisitor;
 import pt.iscte.paddle.model.IOperator.OperationType;
 import pt.iscte.paddle.model.ISelection;
 import pt.iscte.paddle.model.IType;
+import pt.iscte.paddle.model.IVariableAssignment;
+import pt.iscte.paddle.model.IVariableDeclaration;
 
 public class Selection implements IVisitor {
 
@@ -35,13 +37,6 @@ public class Selection implements IVisitor {
 
 	@Override
 	public boolean visit(ISelection selection) {
-		if(!selection.getGuard().isNull()) {
-			if(selection.getGuard().isSame(BOOLEAN.literal(true))) 
-				Linter.getInstance().register(new Tautology(Explanations.TAUTOLOGY, selection.getGuard()));
-			else if(selection.getGuard().isSame(BOOLEAN.literal(false)))
-				Linter.getInstance().register(new Contradiction(Explanations.CONTRADICTION, selection.getGuard()));
-		}
-
 		if(selection.isEmpty()) {
 
 			Linter.getInstance().register(new EmptySelection(Explanations.EMPTY_SELECTION, selection));

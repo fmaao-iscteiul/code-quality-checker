@@ -2,30 +2,32 @@ package pt.iscte.paddle.codequality.visitors;
 import java.util.ArrayList;
 import java.util.List;
 
+import pt.iscte.paddle.codequality.issues.Contradiction;
+import pt.iscte.paddle.codequality.issues.Tautology;
 import pt.iscte.paddle.codequality.issues.UselessSelfAssignment;
 import pt.iscte.paddle.codequality.issues.UselessVariableAssignment;
 import pt.iscte.paddle.codequality.linter.Linter;
 import pt.iscte.paddle.codequality.misc.BadCodeAnalyser;
 import pt.iscte.paddle.codequality.misc.Explanations;
-import pt.iscte.paddle.model.IArrayElementAssignment;
+import pt.iscte.paddle.model.IBinaryExpression;
 import pt.iscte.paddle.model.IBlock.IVisitor;
-import pt.iscte.paddle.model.IBlockElement;
 import pt.iscte.paddle.model.IControlStructure;
 import pt.iscte.paddle.model.IExpression;
-import pt.iscte.paddle.model.ILoop;
-import pt.iscte.paddle.model.IProcedureCall;
-import pt.iscte.paddle.model.ISelection;
+import pt.iscte.paddle.model.IOperator;
+import pt.iscte.paddle.model.IOperator.OperationType;
+import pt.iscte.paddle.model.IProgramElement;
 import pt.iscte.paddle.model.IStatement;
+import pt.iscte.paddle.model.IType;
 import pt.iscte.paddle.model.IVariableAssignment;
 import pt.iscte.paddle.model.IVariableDeclaration;
+import pt.iscte.paddle.model.cfg.IBranchNode;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
-import pt.iscte.paddle.model.cfg.IControlFlowGraph.Path;
 import pt.iscte.paddle.model.cfg.INode;
 
 
 public class UselessAssignment implements IVisitor, BadCodeAnalyser {
 
-	private List<Statement> uselessStatements = new ArrayList<Statement>();
+	private List<Statement> assignmentStatements = new ArrayList<Statement>();
 
 	public class Statement {
 		private IVariableDeclaration var;
@@ -61,12 +63,13 @@ public class UselessAssignment implements IVisitor, BadCodeAnalyser {
 	public void analyse() {
 
 		for (INode node : cfg.getNodes()) {
-			if(node.getElement() instanceof IVariableAssignment) {
-				IVariableAssignment assignment = (IVariableAssignment) node.getElement();
+			IProgramElement element = node.getElement();
+			if(element instanceof IVariableAssignment) {
+				IVariableAssignment assignment = (IVariableAssignment) element;
 				boolean exists = false;
-				for (Statement ass : uselessStatements) {
+				for (Statement ass : assignmentStatements) {
 					if(ass.var.equals(assignment.getTarget())) {
-						if(!included(cfg.pathsBetweenNodes(ass.node, node), ass.var)) 
+						if(!cfg.usedOrChangedBetween(ass.node, node, ass.var)) 
 							Linter.getInstance().register(new UselessVariableAssignment(ass.assignment));
 
 						ass.assignment = assignment;
@@ -74,43 +77,50 @@ public class UselessAssignment implements IVisitor, BadCodeAnalyser {
 						exists = true;
 					} 
 				}
-				if(!exists) uselessStatements.add(new Statement(node, assignment));
+				if(!exists) assignmentStatements.add(new Statement(node, assignment));
 
 				if(assignment.getTarget().toString().equals(assignment.getExpression().toString()))
 					Linter.getInstance().register(new UselessSelfAssignment(assignment));
 
+			} else if(node instanceof IBranchNode) {
+				IControlStructure selection = element.getProperty(IControlStructure.class);
+				guardPartsDeepSearch(node, selection.getGuard());
 			}
 		}	
 	}
 
-	public boolean included(List<Path> paths, IVariableDeclaration variable) {
-		if(paths.size() == 0) return true;
-		for (Path path : paths) {
-
-			INode first = path.getNodes().remove(0);
-			INode last = path.getNodes().remove(path.getNodes().size() - 1);
-
-			if(!((IBlockElement) first.getElement()).getParent().isSame(((IBlockElement) last.getElement()).getParent())) return true;
-
-			for (INode node : path.getNodes()) {
-
-				if(node.getElement() instanceof IArrayElementAssignment 
-						&& (((IArrayElementAssignment) node.getElement()).getTarget().isSame(variable) 
-								|| ((IArrayElementAssignment) node.getElement()).getExpression().includes(variable))) 
-					return true;
-				else if(node.getElement() instanceof IVariableAssignment 
-						&& (((IVariableAssignment) node.getElement()).getTarget().isSame(variable) 
-								|| ((IVariableAssignment) node.getElement()).getExpression().includes(variable))) 
-					return true;
-
-				else if(node.getElement() instanceof IProcedureCall) 
-					for (IExpression argument : ((IProcedureCall) node.getElement()).getArguments()) 
-						if(argument.includes(variable)) return true;
-						else if((node.getElement() instanceof ISelection || node.getElement() instanceof ILoop) 
-								&& ((IControlStructure) node.getElement()).getGuard().includes(variable)) 
-							return true;
+	// TODO refactor the shit out of this mess.
+	void guardPartsDeepSearch(INode node, IExpression guard) {
+		if(guard instanceof IBinaryExpression) {
+			IBinaryExpression condition = (IBinaryExpression) guard;
+			if(guard.getOperationType().equals(OperationType.LOGICAL) && !condition.getOperator().equals(IOperator.OR)) return;
+		}
+		if(!guard.getParts().isEmpty())
+			for (IExpression part : guard.getParts()) 
+				guardPartsDeepSearch(node, part); 
+		else if(guard.isSame(IType.BOOLEAN.literal(true))) {
+			Linter.getInstance().register(new Tautology(Explanations.TAUTOLOGY, guard));
+			return;
+		}
+		else if(guard.isSame(IType.BOOLEAN.literal(false))) {
+			Linter.getInstance().register(new Contradiction(Explanations.CONTRADICTION, guard));
+			return;
+		}
+		else {
+			for (Statement statement : assignmentStatements) {
+				if(statement.var.expression().isSame(guard.expression()) 
+						&& !cfg.usedOrChangedBetween(statement.node, node, statement.var)) {
+					if(((IVariableAssignment) statement.node.getElement()).getExpression().isSame(IType.BOOLEAN.literal(true))) {
+						Linter.getInstance().register(new Tautology(Explanations.TAUTOLOGY, guard));
+						return;
+					}
+					else if(((IVariableAssignment) statement.node.getElement()).getExpression().isSame(IType.BOOLEAN.literal(false))) {
+						Linter.getInstance().register(new Contradiction(Explanations.CONTRADICTION, guard));
+						return;
+					}
+				}
 			}
 		}
-		return false;
 	}
+
 }

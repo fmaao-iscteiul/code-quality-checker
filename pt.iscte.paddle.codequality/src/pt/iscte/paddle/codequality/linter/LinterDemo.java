@@ -58,9 +58,9 @@ public class LinterDemo {
 				new UselessAssignments()
 		};
 
-		t6.setup();
+		t7.setup();
 		t9.setup();
-		IModule module = t6.getModule();
+		IModule module = t7.getModule();
 		IModule module2 = t9.getModule();
 
 		Display display = new Display();
@@ -137,7 +137,7 @@ public class LinterDemo {
 		
 		ArrayList<IModule> mod = new ArrayList<IModule>();
 		mod.add(module);
-		mod.add(module2);
+//		mod.add(module2);
 		// LINTER INIT
 		Linter TheLinter = Linter.INSTANCE.init(mod);
 

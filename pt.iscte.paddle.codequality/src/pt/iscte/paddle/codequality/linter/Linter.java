@@ -97,12 +97,12 @@ public enum Linter {
 			else results.put(issue.getIssueType(), 1);
 		});
 		System.out.println("------------------- RESULTS -------------------");
-		System.out.println("THE TOTAL NUMBER OF ISSUES IS: " + caughtIssues.size());
-		System.out.println("THE ISSUES FOUND CATEGORIES WERE: ");
+		System.out.println("\nTOTAL NUMBER OF ISSUES FOUND WITHIN THE PROVIDED MODULES IS: " + caughtIssues.size());
+		System.out.println("\n   THE CATEGORIES WERE: \n");
 		results.forEach((category, result) -> {
-			System.out.println("    " + category + " - " + result + " TIMES.");
+			System.out.println("      " + category + " - " + result + " TIMES.");
 		});
-		System.out.println("-----------------------------------------------");
+		System.out.println("\n-----------------------------------------------");
 	}
 
 	public ArrayList<IVisitor> getVisitors() {
