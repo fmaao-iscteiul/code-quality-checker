@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Teste
+Bundle-SymbolicName: pt.iscte.paddle.linter
+Bundle-Version: 1.0.0.qualifier
+Automatic-Module-Name: Teste
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Require-Bundle: pt.iscte.paddle.javardise;bundle-version="0.4.0",
+ pt.iscte.paddle.model;bundle-version="0.4.0",
+ org.junit;bundle-version="4.12.0",
+ pt.iscte.paddle.model.roles;bundle-version="0.1.0",
+ pt.iscte.pidesco.cfgviewer;bundle-version="1.0.0"
+Import-Package: org.eclipse.debug.core.model,
+ pt.iscte.paddle.model.roles,
+ pt.iscte.paddle.model.tests

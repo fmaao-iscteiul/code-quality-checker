@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Gui
+Bundle-SymbolicName: pt.iscte.paddle.linter.gui
+Bundle-Version: 1.0.0.qualifier
+Automatic-Module-Name: pt.iscte.paddle.linter.gui
+Bundle-RequiredExecutionEnvironment: JavaSE-13
