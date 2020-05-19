@@ -5,3 +5,15 @@ Bundle-SymbolicName: pt.iscte.paddle.linter.gui
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: pt.iscte.paddle.linter.gui
 Bundle-RequiredExecutionEnvironment: JavaSE-13
+Import-Package: pt.iscte.paddle.javardise.service,
+ pt.iscte.paddle.javardise.util,
+ pt.iscte.paddle.linter.cases.base,
+ pt.iscte.paddle.linter.examples,
+ pt.iscte.paddle.linter.issues,
+ pt.iscte.paddle.linter.linter,
+ pt.iscte.paddle.linter.misc,
+ pt.iscte.paddle.model,
+ pt.iscte.paddle.model.tests
+Require-Bundle: pt.iscte.paddle.model.tests,
+ org.eclipse.swt;bundle-version="3.113.0",
+ pt.iscte.paddle.model

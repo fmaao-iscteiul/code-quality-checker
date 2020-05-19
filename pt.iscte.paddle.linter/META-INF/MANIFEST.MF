@@ -13,3 +13,9 @@ Require-Bundle: pt.iscte.paddle.javardise;bundle-version="0.4.0",
 Import-Package: org.eclipse.debug.core.model,
  pt.iscte.paddle.model.roles,
  pt.iscte.paddle.model.tests
+Export-Package: pt.iscte.paddle.linter.cases.base,
+ pt.iscte.paddle.linter.examples,
+ pt.iscte.paddle.linter.issues,
+ pt.iscte.paddle.linter.linter,
+ pt.iscte.paddle.linter.misc,
+ pt.iscte.paddle.linter.visitors
