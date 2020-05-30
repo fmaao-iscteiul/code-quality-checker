@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import pt.iscte.paddle.linter.cases.base.CodeAnalyser;
+import pt.iscte.paddle.linter.cases.base.QualityIssue;
 import pt.iscte.paddle.linter.issues.DuplicateMethodCall;
 import pt.iscte.paddle.linter.issues.FaultyProcedureCall;
 import pt.iscte.paddle.linter.linter.Linter;
@@ -23,22 +25,10 @@ import pt.iscte.paddle.model.roles.IFunctionClassifier.Status;
 import pt.iscte.paddle.model.roles.impl.FixedValue;
 import pt.iscte.paddle.model.roles.impl.FunctionClassifier;
 
-public class ProcedureCall implements BadCodeAnalyser {
+public class ProcedureCall extends CodeAnalyser implements BadCodeAnalyser {
 
 	private ArrayList<INode> calls;
 	private ArrayList<DuplicateProcedureCall> duplicates;
-
-	private IControlFlowGraph cfg;
-
-	public ProcedureCall(IControlFlowGraph cfg) {
-		this.calls = new ArrayList<INode>();
-		this.duplicates = new ArrayList<DuplicateProcedureCall>();
-		this.cfg = cfg;
-	}
-
-	public static ProcedureCall build(IControlFlowGraph cfg) {
-		return new ProcedureCall(cfg);
-	}
 
 	class DuplicateProcedureCall {
 		private ArrayList<INode> occurences;
@@ -58,13 +48,14 @@ public class ProcedureCall implements BadCodeAnalyser {
 	}
 
 	@Override
-	public void analyse() {
-		this.gatherProcedureCallDuplicates();
-		this.pairGatheredDuplicates();
-
+	public void analyse(IControlFlowGraph cfg) {
+		this.calls = new ArrayList<INode>();
+		this.duplicates = new ArrayList<DuplicateProcedureCall>();
+		this.gatherProcedureCallDuplicates(cfg);
+		this.pairGatheredDuplicates(cfg);
 	}
 
-	private void pairGatheredDuplicates() {
+	private void pairGatheredDuplicates(IControlFlowGraph cfg) {
 		for (DuplicateProcedureCall duplicateBranchGuard : duplicates) {
 			for(int i = 1; i < duplicateBranchGuard.occurences.size(); i++) {
 				INode start = duplicateBranchGuard.occurences.get(i - 1);
@@ -80,7 +71,7 @@ public class ProcedureCall implements BadCodeAnalyser {
 					&& !new FunctionClassifier((IProcedure) ((IProcedureCall) duplicateBranchGuard.occ.getElement()).getProcedure()).getClassification().equals(Status.PROCEDURE)) {
 				ArrayList<IProgramElement> occurrences = new ArrayList<IProgramElement>();
 				duplicateBranchGuard.realDuplicates.forEach(d -> occurrences.add(d.getElement()));
-				Linter.getInstance().register(new DuplicateMethodCall(occurrences));			
+				issues.add(new DuplicateMethodCall(occurrences));
 			}
 
 		}
@@ -109,15 +100,14 @@ public class ProcedureCall implements BadCodeAnalyser {
 		return false;
 	}
 
-	private void gatherProcedureCallDuplicates() {
+	private void gatherProcedureCallDuplicates(IControlFlowGraph cfg) {
 		for (INode node : cfg.getNodes()) {
 			if(node.getElement() != null && node.getElement() instanceof IProcedureCall) {
 				IProcedureCall call = (IProcedureCall) node.getElement();
 
 				if(!call.getProcedure().getReturnType().equals(IType.VOID)) {
-					String explanation = "This method call is being used as if the method was void. The " + call.getProcedure().longSignature() + " method that was called returns the type: " 
-							+ call.getProcedure().getReturnType() + ". Non void methods should not be called as void ones because it's return value can be relevant.";
-					Linter.getInstance().register(new FaultyProcedureCall(explanation, call));
+					QualityIssue fCall = new FaultyProcedureCall(call);
+					issues.add(fCall);
 				}
 
 				for (IVariableDeclaration var : call.getProcedure().getParameters()) {

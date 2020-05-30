@@ -7,7 +7,7 @@ import pt.iscte.paddle.model.IProcedureCall;
 
 public class FaultyProcedureCall extends SingleOcurrenceIssue {
 
-	public FaultyProcedureCall(String explanation, IProcedureCall element) {
+	public FaultyProcedureCall(IProcedureCall element) {
 		super(IssueType.FAULTY_METHOD_CALL, Classification.AVERAGE, element);
 	}
 	

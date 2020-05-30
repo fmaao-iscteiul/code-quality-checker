@@ -4,31 +4,20 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import pt.iscte.paddle.linter.cases.base.CodeAnalyser;
+import pt.iscte.paddle.linter.cases.base.QualityIssue;
 import pt.iscte.paddle.linter.issues.Duplicate;
 import pt.iscte.paddle.linter.linter.Linter;
 import pt.iscte.paddle.linter.misc.BadCodeAnalyser;
-import pt.iscte.paddle.linter.misc.Explanations;
-import pt.iscte.paddle.model.IBlock.IVisitor;
 import pt.iscte.paddle.model.IProgramElement;
-import pt.iscte.paddle.model.IVariableAssignment;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
 import pt.iscte.paddle.model.cfg.INode;
 
-public class DuplicateStatement implements BadCodeAnalyser{
-
-	private IControlFlowGraph cfg;
-
-	private DuplicateStatement(IControlFlowGraph cfg) {
-		this.cfg = cfg;
-	}
-
-	public static DuplicateStatement build(IControlFlowGraph cfgBuilder) {
-		return new DuplicateStatement(cfgBuilder);
-	}
+public class DuplicateStatement extends CodeAnalyser implements BadCodeAnalyser {
 
 	@Override
-	public void analyse() {
-		for(INode node : this.cfg.getNodes()) {
+	public void analyse(IControlFlowGraph cfg) {
+		for(INode node : cfg.getNodes()) {
 			Set<INode> duplicates = new HashSet<INode>();
 			for(INode incoming: node.getIncomming()) 
 				for(INode n: node.getIncomming()) 
@@ -37,7 +26,7 @@ public class DuplicateStatement implements BadCodeAnalyser{
 			if(duplicates.size() > 1) {
 				ArrayList<IProgramElement> occurrences = new ArrayList<IProgramElement>();
 				duplicates.forEach(d -> occurrences.add(d.getElement()));
-				Linter.getInstance().register(new Duplicate(occurrences));
+				issues.add(new Duplicate(occurrences));
 			}
 		};
 	}

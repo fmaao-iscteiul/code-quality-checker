@@ -13,7 +13,7 @@ public class LintingResult {
 	private int numberOfIssues;
 	Map<IssueType, Integer> results;
 
-	public LintingResult(List<QualityIssue> issues) {
+	public LintingResult(List<QualityIssue> issues) { 
 		this.numberOfIssues = issues.size();
 
 		this.results = new HashMap<IssueType, Integer>();

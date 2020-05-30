@@ -12,6 +12,7 @@ Import-Package: pt.iscte.paddle.javardise.service,
  pt.iscte.paddle.linter.issues,
  pt.iscte.paddle.linter.linter,
  pt.iscte.paddle.linter.misc,
+ pt.iscte.paddle.linter.visitors,
  pt.iscte.paddle.model,
  pt.iscte.paddle.model.tests
 Require-Bundle: pt.iscte.paddle.model.tests,

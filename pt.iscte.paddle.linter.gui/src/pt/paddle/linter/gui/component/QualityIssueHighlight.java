@@ -274,8 +274,10 @@ public class QualityIssueHighlight {
 				? IJavardiseService.getWidget(((SingleOcurrenceIssue) issue).getOccurrence()) 
 						: IJavardiseService.getWidget(((MultipleOccurrencesIssue) issue).getOccurences().get(0));
 
+				if(w == null) return;
 				if(issue instanceof MultipleOccurrencesIssue) {
 					for (IProgramElement occ : ((MultipleOccurrencesIssue) issue).getOccurences()) {
+
 						w = IJavardiseService.getWidget(occ);
 						ICodeDecoration<Canvas> d = w.addMark(getColor());
 						decorations.add(d);
@@ -381,12 +383,12 @@ public class QualityIssueHighlight {
 					decorations.add(d2);
 				}
 	}
-	
+
 	public void show() {
 		generateExplanation();
 		generateHighlight();
 	}
-	
+
 	public void hide() {
 		decorations.forEach(mark -> {
 			mark.hide();

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import pt.iscte.paddle.linter.cases.base.CodeAnalyser;
+import pt.iscte.paddle.linter.cases.base.QualityIssue;
 import pt.iscte.paddle.linter.issues.DuplicateGuard;
 import pt.iscte.paddle.linter.linter.Linter;
 import pt.iscte.paddle.linter.misc.BadCodeAnalyser;
@@ -21,17 +23,7 @@ import pt.iscte.paddle.model.cfg.IControlFlowGraph;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph.Path;
 import pt.iscte.paddle.model.cfg.INode;
 
-public class DuplicateBranchGuard implements BadCodeAnalyser {
-
-	private IControlFlowGraph cfg;
-
-	private DuplicateBranchGuard(IControlFlowGraph cfg) {
-		this.cfg = cfg;
-	}
-
-	public static DuplicateBranchGuard build(IControlFlowGraph cfgBuilder) {
-		return new DuplicateBranchGuard(cfgBuilder);
-	}
+public class DuplicateBranchGuard extends CodeAnalyser implements BadCodeAnalyser {
 
 	private class Guard {
 		private ArrayList<INode> occurences;
@@ -71,17 +63,16 @@ public class DuplicateBranchGuard implements BadCodeAnalyser {
 	private ArrayList<GuardPair> pairs = new ArrayList<GuardPair>();
 
 	@Override
-	public void analyse() {
-
-		this.gatherGuardDuplicates();
-		this.pairGatheredDuplicates();
+	public void analyse(IControlFlowGraph cfg) {
+		this.gatherGuardDuplicates(cfg);
+		this.pairGatheredDuplicates(cfg);
 
 		if(!pairs.isEmpty()) {
 			pairs.forEach(d -> {
 				List<IProgramElement> elements = new ArrayList<IProgramElement>();
 				elements.add(d.getStart().getElement());
 				elements.add(d.getEnd().getElement());
-				Linter.getInstance().register(new DuplicateGuard(elements));
+				issues.add(new DuplicateGuard(elements));
 			});
 		}
 
@@ -110,7 +101,7 @@ public class DuplicateBranchGuard implements BadCodeAnalyser {
 		return false;
 	}
 
-	private void pairGatheredDuplicates() {
+	private void pairGatheredDuplicates(IControlFlowGraph cfg) {
 		
 		for (Guard duplicateBranchGuard : duplicatedGuards) {
 			for(int i = 1; i < duplicateBranchGuard.occurences.size(); i++) {
@@ -157,8 +148,8 @@ public class DuplicateBranchGuard implements BadCodeAnalyser {
 		return false;
 	}
 
-	private void gatherGuardDuplicates() {
-		this.cfg.getNodes().forEach(node -> {
+	private void gatherGuardDuplicates(IControlFlowGraph cfg) {
+		cfg.getNodes().forEach(node -> {
 			boolean existsInBranchConditions = false;
 			if(node != null && node instanceof IBranchNode ) {
 				for(INode c: branchConditions) {
