@@ -9,6 +9,7 @@ import pt.iscte.paddle.model.javaparser.SourceLocation;
 import pt.iscte.paddle.quality.cases.base.MultipleOccurrencesIssue;
 import pt.iscte.paddle.quality.cases.base.QualityIssue;
 import pt.iscte.paddle.quality.cases.base.SingleOcurrenceIssue;
+import pt.iscte.paddle.quality.issues.FaultyProcedureCall;
 import pt.iscte.paddle.quality.misc.IssueType;
 
 public class LintingResult {
@@ -22,13 +23,12 @@ public class LintingResult {
 		this.results = new HashMap<IssueType, Integer>();
 		issues.forEach(issue -> {
 
-//			if(issue instanceof MultipleOccurrencesIssue) 
-//				((MultipleOccurrencesIssue) issue).getOccurences().forEach(o ->{
-//					if(o!= null) System.out.println(issue.getIssueType() + " : " + o.getProperty(SourceLocation.class));
-//				});
-//			if(issue instanceof SingleOcurrenceIssue && issue != null) 
-//				System.out.println(issue.getIssueType() + " : " + ((SingleOcurrenceIssue) issue).getOccurrence() + " " + ((SingleOcurrenceIssue) issue).getOccurrence().getProperty(SourceLocation.class));
-
+			if(issue instanceof MultipleOccurrencesIssue) 
+				((MultipleOccurrencesIssue) issue).getOccurences().forEach(o ->{
+					if(o!= null) System.out.println(issue.getIssueType() + " : " + o + " " + o.getProperty(SourceLocation.class));
+				});
+			if(issue instanceof SingleOcurrenceIssue && issue != null) 
+				System.out.println(issue.getIssueType() + " : " + ((SingleOcurrenceIssue) issue).getOccurrence() + " " + ((SingleOcurrenceIssue) issue).getOccurrence().getProperty(SourceLocation.class));
 
 			if(results.containsKey(issue.getIssueType())) 
 				results.replace(issue.getIssueType(), results.get(issue.getIssueType()) + 1);

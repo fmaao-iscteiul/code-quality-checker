@@ -2,6 +2,7 @@ package component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ServiceLoader;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -74,6 +75,8 @@ public class QualityIssueHighlight {
 	}
 
 	public void generateExplanation() {
+		ServiceLoader<IJavardiseService> service = ServiceLoader.load(IJavardiseService.class);
+		IJavardiseService javardise = service.findFirst().get();
 		Link link = null;
 		if(issue instanceof BooleanCheck) {
 			link = new HyperlinkedText(null)
@@ -130,7 +133,7 @@ public class QualityIssueHighlight {
 					.words("Issue:\n\n")
 					.words("The function ")
 					.link(((DuplicateMethodCall) issue).getOccurences().get(0).toString(), () -> {
-						ICodeDecoration<Canvas> d = IJavardiseService.getWidget(((IProcedureCall) ((DuplicateMethodCall) issue).getOccurences().get(0)).getProcedure()).addMark(getColor());
+						ICodeDecoration<Canvas> d = javardise.getWidget(((IProcedureCall) ((DuplicateMethodCall) issue).getOccurences().get(0)).getProcedure()).addMark(getColor());
 						d.show();
 						decorations.add(d);
 					})
@@ -219,7 +222,7 @@ public class QualityIssueHighlight {
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 		}
 		else if(issue instanceof UnreachableCode) {
-			IWidget a = IJavardiseService.getWidget(((UnreachableCode) issue).getOccurences().get(0));
+			IWidget a = javardise.getWidget(((UnreachableCode) issue).getOccurences().get(0));
 			link = new HyperlinkedText(null)
 					.words("Issue:\n\n")
 					.words("There is a")
@@ -270,15 +273,17 @@ public class QualityIssueHighlight {
 	}
 
 	public void generateHighlight() {
+		ServiceLoader<IJavardiseService> service = ServiceLoader.load(IJavardiseService.class);
+		IJavardiseService javardise = service.findFirst().get();
 		IWidget w = (issue instanceof SingleOcurrenceIssue) 
-				? IJavardiseService.getWidget(((SingleOcurrenceIssue) issue).getOccurrence()) 
-						: IJavardiseService.getWidget(((MultipleOccurrencesIssue) issue).getOccurences().get(0));
+				? javardise.getWidget(((SingleOcurrenceIssue) issue).getOccurrence()) 
+						: javardise.getWidget(((MultipleOccurrencesIssue) issue).getOccurences().get(0));
 
 				if(w == null) return;
 				if(issue instanceof MultipleOccurrencesIssue) {
 					for (IProgramElement occ : ((MultipleOccurrencesIssue) issue).getOccurences()) {
 
-						w = IJavardiseService.getWidget(occ);
+						w = javardise.getWidget(occ);
 						ICodeDecoration<Canvas> d = w.addMark(getColor());
 						decorations.add(d);
 						d.show();
@@ -331,7 +336,7 @@ public class QualityIssueHighlight {
 				}
 				else if(issue instanceof MagicNumber) {
 					for (IProgramElement el : ((MagicNumber) issue).getOccurrences()) {
-						w = IJavardiseService.getWidget(el);
+						w = javardise.getWidget(el);
 						if(w != null) {
 							if(((MagicNumber) issue).getOccurrences().indexOf(el) == 0) {
 								ICodeDecoration<Text> d2 = w.addNote("What does this number \n represent?", ICodeDecoration.Location.RIGHT);
@@ -353,16 +358,16 @@ public class QualityIssueHighlight {
 				}
 				else if(issue instanceof UnreachableCode) {
 					if(((UnreachableCode) issue).getOccurences().get(0) instanceof IReturn) {
-						w = IJavardiseService.getWidget(((UnreachableCode) issue).getOccurences().get(1));
+						w = javardise.getWidget(((UnreachableCode) issue).getOccurences().get(1));
 					}
-					else w = IJavardiseService.getWidget(((UnreachableCode) issue).getOccurences().get(0));
+					else w = javardise.getWidget(((UnreachableCode) issue).getOccurences().get(0));
 
 					IWidget[] elements = new IWidget[((UnreachableCode) issue).getOccurences().size()];
 
 					for (int i = 0; i < elements.length; i++) {
 						IControlStructure s = ((UnreachableCode) issue).getOccurences().get(i).getProperty(IControlStructure.class);
-						if(s != null) elements[i] = IJavardiseService.getWidget(s);
-						else elements[i] = IJavardiseService.getWidget(((UnreachableCode) issue).getOccurences().get(i));
+						if(s != null) elements[i] = javardise.getWidget(s);
+						else elements[i] = javardise.getWidget(((UnreachableCode) issue).getOccurences().get(i));
 					}
 
 					ICodeDecoration<Canvas> dec = w.addRegionMark(getColor(), elements);

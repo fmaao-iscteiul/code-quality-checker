@@ -17,18 +17,18 @@ public class DuplicateStatement extends CodeAnalyser implements BadCodeAnalyser 
 
 	@Override
 	public void analyse(IControlFlowGraph cfg) {
-		for(INode node : cfg.getNodes()) {
-			Set<INode> duplicates = new HashSet<INode>();
-			for(INode incoming: node.getIncomming()) 
-				for(INode n: node.getIncomming()) 
-					if(n != null && incoming != null && !node.isExit() && !n.equals(incoming) && n.getElement().isSame(incoming.getElement())) 
-						duplicates.add(n);
-			if(duplicates.size() > 1) {
-				ArrayList<IProgramElement> occurrences = new ArrayList<IProgramElement>();
-				duplicates.forEach(d -> occurrences.add(d.getElement()));
-				issues.add(new Duplicate(occurrences));
-			}
-		};
+//		for(INode node : cfg.getNodes()) {
+//			Set<INode> duplicates = new HashSet<INode>();
+//			for(INode incoming: node.getIncomming()) 
+//				for(INode n: node.getIncomming()) 
+//					if(n != null && incoming != null && !node.isExit() && !n.equals(incoming) && n.getElement().isSame(incoming.getElement())) 
+//						duplicates.add(n);
+//			if(duplicates.size() > 1) {
+//				ArrayList<IProgramElement> occurrences = new ArrayList<IProgramElement>();
+//				duplicates.forEach(d -> occurrences.add(d.getElement()));
+//				issues.add(new Duplicate(occurrences));
+//			}
+//		};
 	}
 
 }

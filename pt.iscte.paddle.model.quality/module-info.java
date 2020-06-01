@@ -7,8 +7,10 @@ module pt.iscte.paddle.model.quality {
 	
 	exports pt.iscte.paddle.quality.client;
 	exports pt.iscte.paddle.quality.visitors;
+	opens pt.iscte.paddle.quality.examples;
 	exports pt.iscte.paddle.quality.examples;
 	exports pt.iscte.paddle.quality.cases.base;
 	exports pt.iscte.paddle.quality.misc;
 	exports pt.iscte.paddle.quality.issues;
+
 }

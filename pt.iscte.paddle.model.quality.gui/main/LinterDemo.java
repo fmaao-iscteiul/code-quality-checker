@@ -1,6 +1,8 @@
 package main;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.ServiceLoader;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -13,9 +15,16 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 
 import component.QualityIssueHighlight;
+import pt.iscte.paddle.javardise.service.IClassWidget;
+import pt.iscte.paddle.javardise.service.IJavardiseService;
+import pt.iscte.paddle.javardise.util.HyperlinkedText;
+import pt.iscte.paddle.model.IModule;
+import pt.iscte.paddle.model.javaparser.Java2Paddle;
 import pt.iscte.paddle.model.tests.BaseTest;
 import pt.iscte.paddle.quality.cases.base.QualityIssue;
 import pt.iscte.paddle.quality.client.Linter;
+import pt.iscte.paddle.quality.client.LintingResult;
+import pt.iscte.paddle.quality.examples.Contains;
 import pt.iscte.paddle.quality.examples.ContraditionAndTautology;
 import pt.iscte.paddle.quality.examples.DuplicateGuard;
 import pt.iscte.paddle.quality.examples.DuplicateStatement;
@@ -27,10 +36,36 @@ import pt.iscte.paddle.quality.examples.UnreachableCode;
 import pt.iscte.paddle.quality.examples.UselessAssignments;
 import pt.iscte.paddle.quality.misc.CaseNames;
 import pt.iscte.paddle.quality.misc.SelfAssignment;
-import pt.iscte.paddle.quality.visitors.DuplicateBranchGuard;
-import pt.iscte.paddle.quality.visitors.Selection;
 
 public class LinterDemo {
+	
+	static ArrayList<IModule> searchDirectoryForModules(File f) {
+		ArrayList<IModule> modules = new ArrayList<IModule>();
+		File[] files = f.listFiles(file -> file.getName().endsWith(".java"));
+		for (File file : files) {
+			if(file.isDirectory()) {
+				try {
+					Java2Paddle jparser = new Java2Paddle(file);
+					IModule m = jparser.parse();
+					modules.add(m);
+				} catch (Exception e) {
+					System.out.println("ups");
+				}
+				searchDirectoryForModules(file);
+			} else {
+				try {
+					System.out.println(file);
+					Java2Paddle jparser = new Java2Paddle(file);
+					IModule m = jparser.parse();
+					System.out.println(m);
+					modules.add(m);
+				} catch (Exception e) {
+					System.out.println("ups");
+				}
+			}
+		}
+		return modules;
+	}
 
 	private static Shell shell;
 
@@ -48,7 +83,7 @@ public class LinterDemo {
 		SelfAssignment t8 = new SelfAssignment();
 		MagicNumbers t9 = new MagicNumbers();
 
-		modules.add(t2);
+		modules.add(new Contains());
 		modules.add(t1);
 		modules.add(t6);
 		modules.add(t3);
@@ -102,17 +137,23 @@ public class LinterDemo {
 
 		Link link = new HyperlinkedText(null).words("").create(rightComp, SWT.WRAP | SWT.V_SCROLL);
 		link.requestLayout();
-
-		BaseTest testCase = modules.get(0);
-		testCase.setup();
-
-		IClassWidget widget = IJavardiseService.createClassWidget(codeAndCFG, testCase.getModule());
+		
+		File f = new File("/Users/franciscoalfredo/Desktop/Trabalhos/19");
+		IModule testCase = searchDirectoryForModules(f).get(0);
+		
+		ServiceLoader<IJavardiseService> service = ServiceLoader.load(IJavardiseService.class);
+		IJavardiseService javardise = service.findFirst().get();
+		
+		System.out.println(testCase);
+		
+		IClassWidget widget = javardise.createClassWidget(codeAndCFG, testCase, null);
 		widget.setReadOnly(true);
 
 		// LINTER INIT
-		Linter linter = new Linter(Selection.class, DuplicateBranchGuard.class);
+		Linter linter = new Linter();
 		//		TheLinter.loadAnalysers(new Selection(), new MagicNumbers());
-		java.util.List<QualityIssue> issues = linter.analyse(testCase.getModule());
+		java.util.List<QualityIssue> issues = linter.analyse(testCase);
+		System.out.println(new LintingResult(issues));
 //		System.out.println(TheLinter.getResults());
 
 		for (QualityIssue qIssue : issues) {
@@ -138,13 +179,13 @@ public class LinterDemo {
 				testCase.setup();
 
 				codeAndCFG.getChildren()[0].dispose();
-				IClassWidget widget = IJavardiseService.createClassWidget(codeAndCFG, testCase.getModule());
+				IClassWidget widget = javardise.createClassWidget(codeAndCFG, testCase.getModule(), null);
 				widget.setReadOnly(true);
 				codeAndCFG.redraw();
 
 				// LINTER INIT
 				java.util.List<QualityIssue> issues = linter.analyse(testCase.getModule());
-
+				System.out.println(new LintingResult(issues));
 				for (QualityIssue qIssue : issues) {
 					if(qIssue == null) continue;
 					caseList.add(CaseNames.getCaseName(qIssue.getIssueType()));

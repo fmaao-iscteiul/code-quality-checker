@@ -22,11 +22,11 @@ import pt.iscte.paddle.model.tests.TestNaturals;
 
 public class NonVoidPureFunction extends BaseTest{
 
-	IProcedure naturals = module.addProcedure(INT.array());
+	IProcedure naturals = module.addProcedure(INT.array().reference());
 	IVariableDeclaration n = naturals.addParameter(INT);
 	IBlock body = naturals.getBody();
-	IVariableDeclaration array = body.addVariable(INT.array());
-	IVariableAssignment ass1 = body.addAssignment(array, INT.array().stackAllocation(n));
+	IVariableDeclaration array = body.addVariable(INT.array().reference());
+	IVariableAssignment ass1 = body.addAssignment(array, INT.array().heapAllocation(n));
 	IVariableDeclaration i = body.addVariable(INT, INT.literal(0));
 	
 //	IVariableAssignment ass123 = body.addAssignment(n, ADD.on(n, INT.literal(1)));
@@ -39,10 +39,10 @@ public class NonVoidPureFunction extends BaseTest{
 	IVariableAssignment ass3 = loop.addAssignment(i, ADD.on(i, INT.literal(1)));
 	IReturn addReturn = body.addReturn(array);
 	
-	IProcedure nonVoidPureFunctionText = module.addProcedure(IType.INT.array());
+	IProcedure nonVoidPureFunctionText = module.addProcedure(IType.INT.array().reference());
 	IBlock body2 = nonVoidPureFunctionText.getBody();
-	IVariableDeclaration naturalsArray = body2.addVariable(INT.array());
-	IVariableAssignment ass112 = body2.addAssignment(naturalsArray, INT.array().stackAllocation(n));
+	IVariableDeclaration naturalsArray = body2.addVariable(INT.array().reference());
+	IVariableAssignment ass112 = body2.addAssignment(naturalsArray, INT.array().heapAllocation(n));
 	IVariableDeclaration b = body2.addVariable(INT, INT.literal(10)); 
 	
 	IProcedureCall proCall = body2.addCall(naturals, b);

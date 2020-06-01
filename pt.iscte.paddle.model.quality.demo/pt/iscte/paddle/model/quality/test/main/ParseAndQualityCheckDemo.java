@@ -7,22 +7,24 @@ import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.javaparser.Java2Paddle;
 import pt.iscte.paddle.quality.client.Linter;
 import pt.iscte.paddle.quality.client.LintingResult;
+import pt.iscte.paddle.quality.examples.Contains;
 
 public class ParseAndQualityCheckDemo {
 
 	public static void main(String[] args) {
 
-		File f = new File("/Users/franciscoalfredo/Desktop/teste");
+		File f = new File("/Users/franciscoalfredo/Desktop/Trabalhos");
 		Linter linter = new Linter();
+		searchDirectoryForModules(f).forEach(module -> {
+			System.out.println("Casos detetados: " + new LintingResult(linter.analyse(module)));
+		});
 		
 //		Contains issue = new Contains();
 //		issue.setup();
 //		IModule module = issue.getModule();
 //		System.out.println("Casos detetados: " + new LintingResult(linter.analyse(module)));
 		
-		searchDirectoryForModules(f).forEach(module -> {
-			System.out.println("Casos detetados: " + new LintingResult(linter.analyse(module)));
-		});
+
 
 	}
 
