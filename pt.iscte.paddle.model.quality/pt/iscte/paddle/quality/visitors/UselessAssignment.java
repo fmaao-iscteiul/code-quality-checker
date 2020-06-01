@@ -86,7 +86,7 @@ public class UselessAssignment extends CodeAnalyser implements BadCodeAnalyser {
 		}	
 	}
 
-	// TODO refactor the shit out of this mess.
+	// TODO 20-3-2020 - change/refactor the shit out of this mess.
 	void guardPartsDeepSearch(IControlFlowGraph cfg, INode node, IExpression guard) {
 		if(guard instanceof IBinaryExpression) {
 			IBinaryExpression condition = (IBinaryExpression) guard;

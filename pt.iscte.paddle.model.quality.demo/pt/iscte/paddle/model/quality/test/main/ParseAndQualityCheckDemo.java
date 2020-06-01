@@ -1,7 +1,6 @@
 package pt.iscte.paddle.model.quality.test.main;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import pt.iscte.paddle.model.IModule;
@@ -13,9 +12,14 @@ public class ParseAndQualityCheckDemo {
 
 	public static void main(String[] args) {
 
-		File f = new File("/Users/franciscoalfredo/Desktop/Trabalhos");
-
+		File f = new File("/Users/franciscoalfredo/Desktop/teste");
 		Linter linter = new Linter();
+		
+//		Contains issue = new Contains();
+//		issue.setup();
+//		IModule module = issue.getModule();
+//		System.out.println("Casos detetados: " + new LintingResult(linter.analyse(module)));
+		
 		searchDirectoryForModules(f).forEach(module -> {
 			System.out.println("Casos detetados: " + new LintingResult(linter.analyse(module)));
 		});
@@ -35,6 +39,16 @@ public class ParseAndQualityCheckDemo {
 					System.out.println("ups");
 				}
 				searchDirectoryForModules(file);
+			} else {
+				try {
+					System.out.println(file);
+					Java2Paddle jparser = new Java2Paddle(file);
+					IModule m = jparser.parse();
+					System.out.println(m);
+					modules.add(m);
+				} catch (Exception e) {
+					System.out.println("ups");
+				}
 			}
 		}
 		return modules;

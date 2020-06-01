@@ -22,12 +22,12 @@ public class LintingResult {
 		this.results = new HashMap<IssueType, Integer>();
 		issues.forEach(issue -> {
 
-			if(issue instanceof MultipleOccurrencesIssue) 
-				((MultipleOccurrencesIssue) issue).getOccurences().forEach(o ->{
-					if(o!= null) System.out.println(issue.getIssueType() + " :" + o.getProperty(SourceLocation.class));
-				});
-			if(issue instanceof SingleOcurrenceIssue && issue != null) 
-				System.out.println(issue.getIssueType() + " :" + ((SingleOcurrenceIssue) issue).getOccurrence() + " " + ((SingleOcurrenceIssue) issue).getOccurrence().getProperty(SourceLocation.class));
+//			if(issue instanceof MultipleOccurrencesIssue) 
+//				((MultipleOccurrencesIssue) issue).getOccurences().forEach(o ->{
+//					if(o!= null) System.out.println(issue.getIssueType() + " : " + o.getProperty(SourceLocation.class));
+//				});
+//			if(issue instanceof SingleOcurrenceIssue && issue != null) 
+//				System.out.println(issue.getIssueType() + " : " + ((SingleOcurrenceIssue) issue).getOccurrence() + " " + ((SingleOcurrenceIssue) issue).getOccurrence().getProperty(SourceLocation.class));
 
 
 			if(results.containsKey(issue.getIssueType())) 
