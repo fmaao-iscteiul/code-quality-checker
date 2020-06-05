@@ -41,11 +41,12 @@ public class LinterDemo {
 	
 	static ArrayList<IModule> searchDirectoryForModules(File f) {
 		ArrayList<IModule> modules = new ArrayList<IModule>();
-		File[] files = f.listFiles(file -> file.getName().endsWith(".java"));
+		File[] files = f.listFiles(file -> file.getName().endsWith("Project53.java"));
+//		File[] files = f.listFiles();
 		for (File file : files) {
 			if(file.isDirectory()) {
 				try {
-					Java2Paddle jparser = new Java2Paddle(file);
+					Java2Paddle jparser = new Java2Paddle(file, file.getName().replace(".java", ""));
 					IModule m = jparser.parse();
 					modules.add(m);
 				} catch (Exception e) {
@@ -55,7 +56,7 @@ public class LinterDemo {
 			} else {
 				try {
 					System.out.println(file);
-					Java2Paddle jparser = new Java2Paddle(file);
+					Java2Paddle jparser = new Java2Paddle(file, file.getName().replace(".java", ""));
 					IModule m = jparser.parse();
 					System.out.println(m);
 					modules.add(m);
@@ -138,23 +139,21 @@ public class LinterDemo {
 		Link link = new HyperlinkedText(null).words("").create(rightComp, SWT.WRAP | SWT.V_SCROLL);
 		link.requestLayout();
 		
-		File f = new File("/Users/franciscoalfredo/Desktop/Trabalhos/19");
-		IModule testCase = searchDirectoryForModules(f).get(0);
+		File f = new File("/Users/franciscoalfredo/Desktop/uni/tese/trabalhos4paddle/src");
+		ArrayList<IModule> parsedModules = searchDirectoryForModules(f);
+		IModule testCase = parsedModules.get(0);
 		
 		ServiceLoader<IJavardiseService> service = ServiceLoader.load(IJavardiseService.class);
 		IJavardiseService javardise = service.findFirst().get();
 		
-		System.out.println(testCase);
 		
-		IClassWidget widget = javardise.createClassWidget(codeAndCFG, testCase, null);
+		IClassWidget widget = javardise.createClassWidget(codeAndCFG, testCase, testCase.getId());
 		widget.setReadOnly(true);
 
 		// LINTER INIT
 		Linter linter = new Linter();
-		//		TheLinter.loadAnalysers(new Selection(), new MagicNumbers());
 		java.util.List<QualityIssue> issues = linter.analyse(testCase);
-		System.out.println(new LintingResult(issues));
-//		System.out.println(TheLinter.getResults());
+		parsedModules.forEach(m -> System.out.println(new LintingResult(linter.analyse(m))));
 
 		for (QualityIssue qIssue : issues) {
 			caseList.add(CaseNames.getCaseName(qIssue.getIssueType()));

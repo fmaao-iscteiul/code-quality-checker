@@ -13,42 +13,43 @@ public class ParseAndQualityCheckDemo {
 
 	public static void main(String[] args) {
 
-		File f = new File("/Users/franciscoalfredo/Desktop/Trabalhos");
+		File f = new File("/Users/franciscoalfredo/Desktop/uni/tese/"
+				+ "trabalhos4paddle/src");
 		Linter linter = new Linter();
 		searchDirectoryForModules(f).forEach(module -> {
 			System.out.println("Casos detetados: " + new LintingResult(linter.analyse(module)));
 		});
+		
 		
 //		Contains issue = new Contains();
 //		issue.setup();
 //		IModule module = issue.getModule();
 //		System.out.println("Casos detetados: " + new LintingResult(linter.analyse(module)));
 		
-
-
 	}
 
 	static ArrayList<IModule> searchDirectoryForModules(File f) {
 		ArrayList<IModule> modules = new ArrayList<IModule>();
+//		File[] files = f.listFiles(file -> file.getName().equals("Project92.java"));
 		File[] files = f.listFiles();
 		for (File file : files) {
 			if(file.isDirectory()) {
 				try {
-					Java2Paddle jparser = new Java2Paddle(file);
+					Java2Paddle jparser = new Java2Paddle(file, file.getName().replace(".java", ""));
 					IModule m = jparser.parse();
 					modules.add(m);
 				} catch (Exception e) {
 					System.out.println("ups");
+					e.printStackTrace();
 				}
 				searchDirectoryForModules(file);
 			} else {
 				try {
-					System.out.println(file);
-					Java2Paddle jparser = new Java2Paddle(file);
+					Java2Paddle jparser = new Java2Paddle(file, file.getName().replace(".java", ""));
 					IModule m = jparser.parse();
-					System.out.println(m);
 					modules.add(m);
 				} catch (Exception e) {
+					e.printStackTrace();
 					System.out.println("ups");
 				}
 			}

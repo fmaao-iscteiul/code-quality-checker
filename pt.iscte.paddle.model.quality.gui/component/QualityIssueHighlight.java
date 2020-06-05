@@ -41,6 +41,7 @@ import pt.iscte.paddle.quality.issues.FaultyProcedureCall;
 import pt.iscte.paddle.quality.issues.MagicNumber;
 import pt.iscte.paddle.quality.issues.SelectionMisconception;
 import pt.iscte.paddle.quality.issues.Tautology;
+import pt.iscte.paddle.quality.issues.UnnecessaryReturn;
 import pt.iscte.paddle.quality.issues.UnreachableCode;
 import pt.iscte.paddle.quality.issues.UselessSelfAssignment;
 import pt.iscte.paddle.quality.issues.UselessVariableAssignment;
@@ -268,6 +269,15 @@ public class QualityIssueHighlight {
 					.words("\n\n Suggestion: \n\n- Remove this useless assignment because its value isn't used.")
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 		}
+		else if (issue instanceof UnnecessaryReturn) {
+			link = new HyperlinkedText(null)
+					.words("Issue:\n\n")
+					.words("The highlighted return isn't necessary!")
+					.words("\n\n - Void methods don't always need to have a return statement in order to finish executing.")
+					.words("\n\n - Since the return is at the end of the method, it is useless because the method would terminate anyway.")
+					.words("\n\n Suggestion: \n\n- Remove this useless return statement.")
+					.create(comp, SWT.WRAP | SWT.V_SCROLL);
+		}
 
 		if(link != null) link.requestLayout();
 	}
@@ -384,6 +394,11 @@ public class QualityIssueHighlight {
 				}
 				else if(issue instanceof UselessVariableAssignment) {
 					ICodeDecoration<Text> d2 = w.addNote("This value won't be used!", ICodeDecoration.Location.RIGHT);
+					d2.show();
+					decorations.add(d2);
+				}
+				else if(issue instanceof UnnecessaryReturn) {
+					ICodeDecoration<Text> d2 = w.addNote("Useless return!", ICodeDecoration.Location.RIGHT);
 					d2.show();
 					decorations.add(d2);
 				}

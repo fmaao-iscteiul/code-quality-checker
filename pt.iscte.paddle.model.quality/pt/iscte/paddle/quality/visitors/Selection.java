@@ -4,19 +4,18 @@ import java.util.ArrayList;
 
 import pt.iscte.paddle.model.IBinaryExpression;
 import pt.iscte.paddle.model.IBinaryOperator;
-import pt.iscte.paddle.model.IProgramElement;
 import pt.iscte.paddle.model.IBlock.IVisitor;
+import pt.iscte.paddle.model.IBlockElement;
 import pt.iscte.paddle.model.IOperator.OperationType;
+import pt.iscte.paddle.model.IProgramElement;
+import pt.iscte.paddle.model.ISelection;
+import pt.iscte.paddle.model.IType;
 import pt.iscte.paddle.quality.cases.base.CodeAnalyser;
-import pt.iscte.paddle.quality.cases.base.QualityIssue;
-import pt.iscte.paddle.quality.client.Linter;
 import pt.iscte.paddle.quality.issues.BooleanCheck;
 import pt.iscte.paddle.quality.issues.Duplicate;
 import pt.iscte.paddle.quality.issues.EmptySelection;
 import pt.iscte.paddle.quality.issues.SelectionMisconception;
 import pt.iscte.paddle.quality.misc.Explanations;
-import pt.iscte.paddle.model.ISelection;
-import pt.iscte.paddle.model.IType;
 
 public class Selection extends CodeAnalyser implements IVisitor {
 
@@ -34,6 +33,8 @@ public class Selection extends CodeAnalyser implements IVisitor {
 		return true;
 	}
 
+	ArrayList<ISelection> previousSelections = new ArrayList<ISelection>();
+	
 	@Override
 	public boolean visit(ISelection selection) {
 		if(selection.isEmpty()) {
@@ -43,41 +44,63 @@ public class Selection extends CodeAnalyser implements IVisitor {
 				issues.add(new SelectionMisconception(Explanations.SELECTION_MISCONCEPTION, selection));
 			}
 		}
-		ArrayList<IProgramElement> occurrences = new ArrayList<IProgramElement>();
-		duplicatesDeepSearch(selection, occurrences);
-		if(!occurrences.isEmpty()) issues.add(new Duplicate(occurrences));
+		
+		boolean hasParent = false;
+		for (ISelection sel : previousSelections) {
+				if(selection.getParent().isSame(sel) 
+						|| selection.getParent().isSame(sel.getAlternativeBlock())) hasParent = true;
+		}
+		previousSelections.add(selection);
+		if(!hasParent) {
+			duplicatesDeepSearch(selection).forEach(duplicate -> issues.add(duplicate));
+		}
+			
 		return true;
 	}
 
-	public void duplicatesDeepSearch(ISelection selection, ArrayList<IProgramElement> occurrences) {
-		if(!selection.hasAlternativeBlock()) return;
+	public ArrayList<Duplicate> duplicatesDeepSearch(ISelection selection) {
+		ArrayList<Duplicate> duplicates = new ArrayList<Duplicate>();
+		if(!selection.hasAlternativeBlock()) return duplicates;
 
-		selection.getBlock().getChildren().forEach(c -> {
-			selection.getAlternativeBlock().getChildren().forEach(rC -> {
+		for (IBlockElement c: selection.getBlock().getChildren()) {
+			boolean canProceed = true;
+			ArrayList<IProgramElement> occurrences = new ArrayList<IProgramElement>();
+			for (IBlockElement rC : selection.getAlternativeBlock().getChildren()) {
+
 				if(rC instanceof ISelection) {
-					((ISelection) rC).getBlock().getChildren().forEach(c2 -> {
+					boolean exists2 = false;
+					for (IBlockElement c2 : ((ISelection) rC).getBlock().getChildren()) {							
 						if(c.isSame(c2)) {
-							occurrences.add(c);
-							occurrences.add(c2);
+							exists2 = true;
+							if(!occurrences.contains(c)) occurrences.add(c);
+							if(!occurrences.contains(c2)) occurrences.add(c2);
 						}
-					});
-					if(((ISelection) rC).hasAlternativeBlock())
-						((ISelection) rC).getAlternativeBlock().getChildren().forEach(c2 -> {
+					}
+					if(!exists2) canProceed = false;
+					if(((ISelection) rC).hasAlternativeBlock()) {
+						boolean exists = false;
+						for (IBlockElement c2 : ((ISelection) rC).getAlternativeBlock().getChildren()) {							
 							if(c.isSame(c2)) {
-								occurrences.add(c);
-								occurrences.add(c2);
+								exists = true;
+								if(!occurrences.contains(c)) occurrences.add(c);
+								if(!occurrences.contains(c2)) occurrences.add(c2);
 							}
-						});
-					duplicatesDeepSearch((ISelection) rC, occurrences);
+						}
+						if(!exists) canProceed = false;
+					}
+					if(occurrences.size() > 1)
+						duplicatesDeepSearch((ISelection) rC);
 				}
 				else {
 					if(c.isSame(rC)) {
-						occurrences.add(c);
-						occurrences.add(rC);
+						if(!occurrences.contains(c)) occurrences.add(c);
+						if(!occurrences.contains(rC)) occurrences.add(rC);
 					}
 				}
-			});
-		});
+			}
+			if(!occurrences.isEmpty() && canProceed) duplicates.add(new Duplicate(occurrences)); 
+		};
+		return duplicates;
 	}
 
 	@Override

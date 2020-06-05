@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import pt.iscte.paddle.model.IControlStructure;
 import pt.iscte.paddle.model.IExpression;
 import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IProcedureCall;
@@ -104,13 +105,17 @@ public class ProcedureCall extends CodeAnalyser implements BadCodeAnalyser {
 			if(node.getElement() != null && node.getElement() instanceof IProcedureCall) {
 				IProcedureCall call = (IProcedureCall) node.getElement();
 
-				if(!call.getProcedure().getReturnType().equals(IType.VOID)) {
-					QualityIssue fCall = new FaultyProcedureCall(call);
-					issues.add(fCall);
-				}
+
+				if(!call.getProcedure().getReturnType().equals(IType.VOID)
+						&& !((IProcedure) call.getProcedure()).isConstantTime()
+						&& (call.getProperty(IControlStructure.class) == null
+						|| call.getProperty(IControlStructure.class) != null 
+							&& !((IControlStructure) call.getProperty(IControlStructure.class)).getGuard().isSame(call) ))
+					issues.add(new FaultyProcedureCall(call));
+
 
 				if(call.getProcedure() == null || call.getProcedure().getParameters() == null) continue;
-				
+
 				for (IVariableDeclaration var : call.getProcedure().getParameters()) {
 					if(IFunctionClassifier.create((IProcedure) call.getProcedure()).getClassification().equals(Status.PROCEDURE) 
 							|| !IFixedValue.isFixedValue(var)) continue;
