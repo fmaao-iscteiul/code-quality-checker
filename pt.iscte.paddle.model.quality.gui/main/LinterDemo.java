@@ -2,6 +2,8 @@ package main;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ServiceLoader;
 
 import org.eclipse.swt.SWT;
@@ -41,7 +43,7 @@ public class LinterDemo {
 	
 	static ArrayList<IModule> searchDirectoryForModules(File f) {
 		ArrayList<IModule> modules = new ArrayList<IModule>();
-		File[] files = f.listFiles(file -> file.getName().endsWith("Project53.java"));
+		File[] files = f.listFiles(file -> file.getName().endsWith("5.java"));
 //		File[] files = f.listFiles();
 		for (File file : files) {
 			if(file.isDirectory()) {
@@ -153,7 +155,18 @@ public class LinterDemo {
 		// LINTER INIT
 		Linter linter = new Linter();
 		java.util.List<QualityIssue> issues = linter.analyse(testCase);
-		parsedModules.forEach(m -> System.out.println(new LintingResult(linter.analyse(m))));
+		
+		Map<String, java.util.List<QualityIssue>> globalResults = new HashMap<String, java.util.List<QualityIssue>>();
+		
+		parsedModules.forEach(m -> {
+			java.util.List<QualityIssue> qIssues = linter.analyse(m);
+			globalResults.put(m.getId(), qIssues);
+		});
+		
+		System.out.println("------------------------------------");
+		System.out.println("NUMBER OF PARSED MODULES: " + parsedModules.size());
+		LintingResult results = new LintingResult(globalResults);
+		System.out.println(results);
 
 		for (QualityIssue qIssue : issues) {
 			caseList.add(CaseNames.getCaseName(qIssue.getIssueType()));
@@ -185,6 +198,7 @@ public class LinterDemo {
 				// LINTER INIT
 				java.util.List<QualityIssue> issues = linter.analyse(testCase.getModule());
 				System.out.println(new LintingResult(issues));
+				
 				for (QualityIssue qIssue : issues) {
 					if(qIssue == null) continue;
 					caseList.add(CaseNames.getCaseName(qIssue.getIssueType()));

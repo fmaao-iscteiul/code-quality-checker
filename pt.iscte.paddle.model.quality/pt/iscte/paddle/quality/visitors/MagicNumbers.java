@@ -13,7 +13,7 @@ import pt.iscte.paddle.quality.issues.MagicNumber;
 import pt.iscte.paddle.quality.issues.UselessSelfAssignment;
 import pt.iscte.paddle.quality.misc.Explanations;
 
-public class MagicNumbers extends CodeAnalyser implements IVisitor{
+public class MagicNumbers extends CodeAnalyser implements IVisitor {
 
 	private ArrayList<MagicNumber> mNumbers = new ArrayList<MagicNumber>();
 
@@ -27,13 +27,14 @@ public class MagicNumbers extends CodeAnalyser implements IVisitor{
 
 				if(magicNumber.getOccurences().get(0).isSame(exp)) {
 					exists = true;
-					magicNumber.addAssignment(exp);						
+					magicNumber.addAssignment(exp);
+					if(!issues.contains(magicNumber)) 
+						issues.add(magicNumber);
 				}
 
 			if(!exists) {
 				MagicNumber mNumb = new MagicNumber(Explanations.MAGIC_NUMBER, exp);
 				mNumbers.add(mNumb);
-				issues.add(mNumb);
 			}
 		}
 	}

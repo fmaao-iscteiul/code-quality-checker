@@ -20,13 +20,20 @@ public class Return extends CodeAnalyser implements BadCodeAnalyser {
 		for (INode node : cfg.getNodes()) {
 			if(node instanceof IBranchNode 
 					&& ((IBranchNode) node).hasBranch() 
-					&& ((IBranchNode) node).getAlternative().getElement() instanceof IReturn) {
+					&& ((IBranchNode) node).getAlternative().getElement() instanceof IReturn
+					&& ((IBranchNode) node).getNext().getElement() != null 
+					&& ((IBranchNode) node).getNext().getElement() instanceof IReturn) {
 				IReturn ret = (IReturn) ((IBranchNode) node).getAlternative().getElement();
+				IReturn altRet = (IReturn) ((IBranchNode) node).getNext().getElement();
 				IControlStructure s = node.getElement().getProperty(IControlStructure.class);
-				if(s.getGuard().getType().equals(IType.BOOLEAN) && (s.getGuard().getNumberOfParts() == 0 || s.getGuard().getNumberOfParts() == 1) 
-						&& (ret != null && ret.getExpression() != null && ret.getExpression().isSame(IType.BOOLEAN.literal(true))
-						|| ret.getReturnValueType().isSame(IType.BOOLEAN.literal(false)))) {
-					issues.add(new BooleanReturnCheck(s));
+
+				if((ret != null && ret.getExpression() != null 
+						&& (ret.getExpression().isSame(IType.BOOLEAN.literal(true))
+								|| ret.getExpression().isSame(IType.BOOLEAN.literal(false))))
+						&& (altRet.getExpression().isSame(IType.BOOLEAN.literal(true))
+								|| altRet.getExpression().isSame(IType.BOOLEAN.literal(false)))
+						) {
+					issues.add(new BooleanReturnCheck(s.getGuard()));
 				}
 			}
 			else if(node.getNext() != null 
