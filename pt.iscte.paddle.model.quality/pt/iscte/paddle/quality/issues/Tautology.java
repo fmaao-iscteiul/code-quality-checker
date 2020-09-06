@@ -8,7 +8,7 @@ import pt.iscte.paddle.quality.misc.IssueType;
 public class Tautology extends SingleOcurrenceIssue {
 
 	public Tautology(String explanation, IProgramElement occurrence) {
-		super(IssueType.TALTOLOGY, Classification.SERIOUS, occurrence);
+		super(IssueType.TAUTOLOGY, Classification.SERIOUS, occurrence);
 	}
 	
 }

@@ -1,9 +1,14 @@
 package pt.iscte.paddle.quality.visitors;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import pt.iscte.paddle.model.IBinaryExpression;
 import pt.iscte.paddle.model.IBinaryOperator;
+import pt.iscte.paddle.model.IBlock;
 import pt.iscte.paddle.model.IBlock.IVisitor;
 import pt.iscte.paddle.model.IBlockElement;
 import pt.iscte.paddle.model.IOperator.OperationType;
@@ -19,6 +24,7 @@ import pt.iscte.paddle.quality.misc.Explanations;
 
 public class Selection extends CodeAnalyser implements IVisitor {
 
+
 	@Override
 	public boolean visit(IBinaryExpression exp) {
 		if(exp.getOperationType().equals(OperationType.RELATIONAL) 
@@ -33,10 +39,11 @@ public class Selection extends CodeAnalyser implements IVisitor {
 		return true;
 	}
 
-	ArrayList<ISelection> previousSelections = new ArrayList<ISelection>();
-	
+	HashSet<ISelection> previousSelections = new HashSet<ISelection>();
+
 	@Override
 	public boolean visit(ISelection selection) {
+
 		if(selection.isEmpty()) {
 			issues.add(new EmptySelection(Explanations.EMPTY_SELECTION, selection));
 
@@ -44,64 +51,79 @@ public class Selection extends CodeAnalyser implements IVisitor {
 				issues.add(new SelectionMisconception(Explanations.SELECTION_MISCONCEPTION, selection));
 			}
 		}
-		
+
 		boolean hasParent = false;
 		for (ISelection sel : previousSelections) {
-				if(selection.getParent().isSame(sel) 
-						|| selection.getParent().isSame(sel.getAlternativeBlock())) hasParent = true;
+			if(selection.getParent().isSame(sel) 
+					|| selection.getParent().isSame(sel.getAlternativeBlock())) hasParent = true;
+		}
+
+		if(!hasParent && selection.hasAlternativeBlock()) {
+			ArrayList<Duplicate> duplicates = new ArrayList<Duplicate>();
+			for (IBlockElement sElement: this.getRawChildren(selection.getBlock())) {
+				ArrayList<IProgramElement> occurrences = new ArrayList<IProgramElement>(Arrays.asList(sElement));
+				HashSet<IProgramElement> occurrencesFound = duplicatesDeepSearch(selection.getAlternativeBlock(), sElement);
+				if(occurrencesFound == null) continue;
+				else if(!occurrencesFound.isEmpty()) occurrences.addAll(occurrencesFound);
+				if(occurrences.size() > 1) 
+					duplicates.add(new Duplicate(occurrences));
+			};
+			issues.addAll(duplicates);
 		}
 		previousSelections.add(selection);
-		if(!hasParent) {
-			duplicatesDeepSearch(selection).forEach(duplicate -> issues.add(duplicate));
-		}
-			
 		return true;
 	}
 
-	public ArrayList<Duplicate> duplicatesDeepSearch(ISelection selection) {
-		ArrayList<Duplicate> duplicates = new ArrayList<Duplicate>();
-		if(!selection.hasAlternativeBlock()) return duplicates;
+	public HashSet<IProgramElement> duplicatesDeepSearch(IBlock block, IProgramElement element) {
 
-		for (IBlockElement c: selection.getBlock().getChildren()) {
-			boolean canProceed = true;
-			ArrayList<IProgramElement> occurrences = new ArrayList<IProgramElement>();
-			for (IBlockElement rC : selection.getAlternativeBlock().getChildren()) {
+		HashSet<IProgramElement> occurrences = new HashSet<IProgramElement>();
+		List<IBlockElement> alternativeElements = this.getRawChildren(block.getBlock());
+		if(alternativeElements.isEmpty() || alternativeElements.size() > 1) return null;
 
-				if(rC instanceof ISelection) {
-					boolean exists2 = false;
-					for (IBlockElement c2 : ((ISelection) rC).getBlock().getChildren()) {							
-						if(c.isSame(c2)) {
-							exists2 = true;
-							if(!occurrences.contains(c)) occurrences.add(c);
-							if(!occurrences.contains(c2)) occurrences.add(c2);
-						}
-					}
-					if(!exists2) canProceed = false;
-					if(((ISelection) rC).hasAlternativeBlock()) {
-						boolean exists = false;
-						for (IBlockElement c2 : ((ISelection) rC).getAlternativeBlock().getChildren()) {							
-							if(c.isSame(c2)) {
-								exists = true;
-								if(!occurrences.contains(c)) occurrences.add(c);
-								if(!occurrences.contains(c2)) occurrences.add(c2);
-							}
-						}
-						if(!exists) canProceed = false;
-					}
-					if(occurrences.size() > 1)
-						duplicatesDeepSearch((ISelection) rC);
-				}
-				else {
-					if(c.isSame(rC)) {
-						if(!occurrences.contains(c)) occurrences.add(c);
-						if(!occurrences.contains(rC)) occurrences.add(rC);
-					}
+		IBlockElement child = alternativeElements.get(0);
+		boolean found = false;
+		if(child instanceof ISelection 
+				&& ((ISelection) child).hasAlternativeBlock()
+				&& !((ISelection) child).getAlternativeBlock().isEmpty()) {
+
+			for(IBlockElement aElement: ((ISelection) child).getBlock().getChildren()) {
+				if(aElement.isSame(element)) {
+					found = true;
+					occurrences.add(aElement);
 				}
 			}
-			if(!occurrences.isEmpty() && canProceed) duplicates.add(new Duplicate(occurrences)); 
-		};
-		return duplicates;
+			HashSet<IProgramElement> occ = duplicatesDeepSearch(((ISelection) child).getAlternativeBlock(), element);
+			if(occ != null && !occ.isEmpty()) occurrences.addAll(occ);
+			else return null;
+		} else {
+			for(IBlockElement aElement: alternativeElements) {
+				if(aElement.isSame(element)) {
+					found = true;
+					occurrences.add(aElement);
+				}
+			}
+		}
+
+		return found && occurrences.size() > 0 ? occurrences : null;
 	}
+
+	private List<IBlockElement> getRawChildren(IBlock block) {
+		ArrayList<IBlockElement> children = new ArrayList<IBlockElement>();
+		if(block == null || block != null && block.getChildren().size() == 0) return children;
+
+		for(IBlockElement el: block.getBlock().getChildren()) {
+			if(el instanceof IBlock) children.addAll(getRawChildren((IBlock) el));
+			else {
+				boolean contains = false;
+				for(IBlockElement el2: children) {
+					if(el.isSame(el2)) contains = true;
+				}
+				if(!contains) children.add(el);
+			}
+		}
+		return children;
+	}
+
 
 	@Override
 	public boolean visitAlternative(ISelection selection) {

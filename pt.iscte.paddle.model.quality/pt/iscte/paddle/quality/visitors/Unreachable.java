@@ -22,7 +22,7 @@ public class Unreachable extends CodeAnalyser implements BadCodeAnalyser {
 			if(!node.isEntry() && !node.isExit() && node.getIncomming().isEmpty()) {
 				int index = cfg.getNodes().indexOf(node);
 				INode n = cfg.getNodes().get(index - 1);
-				if(n.getElement() != null && n.getElement() instanceof IReturn)
+				if(n.getElement() != null && n.getElement() instanceof IReturn && !((IReturn) n.getElement()).isError())
 					deadNodes.add(0, n);
 			}
 				

@@ -77,7 +77,7 @@ public class UselessAssignment extends CodeAnalyser implements BadCodeAnalyser {
 				if(assignment.getTarget().toString().equals(assignment.getExpression().toString())) {
 					issues.add(new UselessSelfAssignment(assignment));
 				}
-					
+
 
 			} else if(node instanceof IBranchNode) {
 				IControlStructure selection = element.getProperty(IControlStructure.class);

@@ -81,21 +81,19 @@ public class QualityIssueHighlight {
 		Link link = null;
 		if(issue instanceof BooleanCheck) {
 			link = new HyperlinkedText(null)
-					.words("Issue:\n\n")
 					.words("The condition ")
 					.link(((BooleanCheck) issue).getOccurrence().toString(), () -> {}) 
 					.words(" could make use of the '!' operator. \n")
 					.words("\n - It represents the comparision between a boolean variable and one of it's binary possible values (true or false).")
 					.words("\n - It is more of a styling mather, but this can negatively affect the code readibility, due to the condition's length.")
-					.words("\n\nSuggestion:\nTry using the negation (!) operator in order to improve readibility.")
+//					.words("\n\nSuggestion:\nTry using the negation (!) operator in order to improve readibility.")
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 		} else if(issue instanceof BooleanReturnCheck) {
 			link = new HyperlinkedText(null)
-					.words("Issue:\n\n")
-					.words("The ").link("if( "+((ISelection) ((BooleanReturnCheck) issue).getOccurrence()).getGuard().toString() + " )", ()->{}).words(" condition is unnecessary!\n ")
+					.words("The ").link("if( "+(((BooleanReturnCheck) issue).getOccurrence()).toString() + " )", ()->{}).words(" condition is unnecessary!\n ")
 					.words("\n - There is no need to check the value of a boolean variable before returning true or false.")
 					.words("\n - The condition itself already represents the value meant to be returned.")
-					.words("\n\nSuggestion:\n\n Return the boolean variable instead of checking it's value and then returning true or false.")
+//					.words("\n\nSuggestion:\n\n Return the boolean variable instead of checking it's value and then returning true or false.")
 					.create(comp, SWT.WRAP | SWT.SCROLL_LINE | SWT.V_SCROLL);
 		} else if(issue instanceof Contradiction) {
 			link = new HyperlinkedText(null)
@@ -105,7 +103,7 @@ public class QualityIssueHighlight {
 					.words(" represents a contradiction case. ")
 					.words("\n\n - This means that this condition will allways be avaliated as false.")
 					.words("\n - The program will never execute the code inside this condition, which is useless.")
-					.words("\n\nSuggestion: Change this condition so that it isn't always true.")
+//					.words("\n\nSuggestion: Change this condition so that it isn't always true.")
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 		}
 		else if(issue instanceof Duplicate) {
@@ -126,12 +124,11 @@ public class QualityIssueHighlight {
 					.words("\n\n - Neither of the variables used in the conditions had their values changed in between.")
 					.words("\n - Double checking a condition which parts don't change in between checks, will have the same result.")
 					.words("\n - Since the result is the same, it doesn't need to be duplicated.")
-					.words("\n\nSolution: \n\n Remove the second check since it isn't necessary.")
+//					.words("\n\nSolution: \n\n Remove the second check since it isn't necessary.")
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 		}
 		else if(issue instanceof DuplicateMethodCall) {
 			link = new HyperlinkedText(null)
-					.words("Issue:\n\n")
 					.words("The function ")
 					.link(((DuplicateMethodCall) issue).getOccurences().get(0).toString(), () -> {
 						ICodeDecoration<Canvas> d = javardise.getWidget(((IProcedureCall) ((DuplicateMethodCall) issue).getOccurences().get(0)).getProcedure()).addMark(getColor());
@@ -142,7 +139,7 @@ public class QualityIssueHighlight {
 					.words("\n - The method doesn't change any variable that affects the program execution flow.")
 					.words("\n - This means that both calls will result in the same.")
 					.words("\n - There is no point on having two " + ((DuplicateMethodCall) issue).getOccurences().get(0) + " calls that return the exact same result.")
-					.words("\n\nSuggestion: \n\nSince both calls result in the same, you should remove one of them.")
+//					.words("\n\nSuggestion: \n\nSince both calls result in the same, you should remove one of them.")
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 		}
 		else if(issue instanceof EmptyLoop) {
@@ -151,7 +148,7 @@ public class QualityIssueHighlight {
 					.words("\n - If the condition ").link(((ILoop) ((SingleOcurrenceIssue) issue).getOccurrence()).getGuard().toString(), ()->{})
 					.words(" is true, nothing but empty iterations will happen.")
 					.words("\n - Empty code blocks don't add actions to the program execution.")
-					.words("\n\nSuggestion: \n\n You should avoid empty blocks by adding some logic, or removing them.")
+//					.words("\n\nSuggestion: \n\n You should avoid empty blocks by adding some logic, or removing them.")
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 		}
 		else if(issue instanceof EmptySelection) {
@@ -160,13 +157,12 @@ public class QualityIssueHighlight {
 					.words("\n - If the condition ").link(((ISelection) ((SingleOcurrenceIssue) issue).getOccurrence()).getGuard().toString(), ()->{})
 					.words(" is true, nothing will happen.")
 					.words("\n - Empty code blocks don't add actions to the program execution.")
-					.words("\n\nSuggestion:\n\n Either Add some logic to the if block, or remove it.")
+//					.words("\n\nSuggestion:\n\n Either Add some logic to the if block, or remove it.")
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 		}
 		else if(issue instanceof FaultyProcedureCall) {
 			IProcedureCall call = (IProcedureCall) ((SingleOcurrenceIssue) issue).getOccurrence();
 			link = new HyperlinkedText(null)
-					.words("Issue: \n\n")
 					.words("The method ")
 					.link(call.toString(), () -> {
 						ICodeDecoration<Canvas> d0 = widget.getProcedure((IProcedure) call.getProcedure()).getMethodName().addMark(getColor());
@@ -188,29 +184,27 @@ public class QualityIssueHighlight {
 					.words(" was not used.")
 					.words("\n- The method call doesn't change any variables that can affect the program's execution flow.")
 					.words("\n- With this being, the method call has no impact in the execution of the program.")
-					.words("\n\nSuggestion: \n- Either remove the call or think if it's return value should be used.")
+//					.words("\n\nSuggestion: \n- Either remove the call or think if it's return value should be used.")
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 		}
 		else if(issue instanceof MagicNumber) {
 			link = new HyperlinkedText(null)
-					.words("Issue: \n\n")
 					.words("The highlighted number " ).link(((MagicNumber) issue).getOccurences().get(0).toString(), () -> {
 					})
 					.words(" doesn't really tell what it stands for.")
 					.words("\n\n - It can be hard for another programmer to look at the number " + ((MagicNumber) issue).getOccurences().get(0)  + " and figure out what it represents.")
 					.words("\n - It can also lead to bugs because it's more difficult to change it in every place that it is used.")
-					.words("\n\n Suggestion: \n\n - Try replacing this the number " + ((MagicNumber) issue).getOccurences().get(0) + " with a well named variable.")
+//					.words("\n\n Suggestion: \n\n - Try replacing this the number " + ((MagicNumber) issue).getOccurences().get(0) + " with a well named variable.")
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 		}
 		else if(issue instanceof SelectionMisconception) {
 			link = new HyperlinkedText(null)
-					.words("Issue:\n\n")
 					.words("The code was written in the else block and the if section was left empty.")
 					.words("\n\n - This means that only the else block contains code that may be executed.")
 					.words("\n - The empty if should be avoided, because empty code blocks don't contribute to the program and affect code readibility.")
 					.words("\n - Conditions don't always need to be true.")
-					.words("\n\nSuggestion:")
-					.words("\n\n Try using the negation (!) operator in the if condition and write the code directly inside the if block.")
+//					.words("\n\nSuggestion:")
+//					.words("\n\n Try using the negation (!) operator in the if condition and write the code directly inside the if block.")
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 		}
 		else if(issue instanceof Tautology) {
@@ -219,13 +213,12 @@ public class QualityIssueHighlight {
 					.words("\n\n - This means that this condition will allways be avaliated as true.")
 					.words("\n - The program will always execute the code inside this condition, which means that"
 							+ " it is not necessary, or wrong.")
-					.words("\n\nSuggestion: Change this condition so that it isn't always true.")
+//					.words("\n\nSuggestion: Change this condition so that it isn't always true.")
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 		}
 		else if(issue instanceof UnreachableCode) {
 			IWidget a = javardise.getWidget(((UnreachableCode) issue).getOccurences().get(0));
 			link = new HyperlinkedText(null)
-					.words("Issue:\n\n")
 					.words("There is a")
 					.link(" return statement ", () -> {
 						Image img = new Image(Display.getDefault(), "arrow.png");
@@ -243,39 +236,36 @@ public class QualityIssueHighlight {
 					.words("\n - The function ends after the ").link(((UnreachableCode) issue).getOccurences().get(0).toString(), ()->{}).words(" statement.")
 					.words("\n - This means that code after that won't be executed.")
 					.words("\n - The unreachable lines become useless because they will never run.")
-					.words("\n\nSuggestion:")
-					.words("\n\nChange the place of the "+((UnreachableCode) issue).getOccurences().get(0).toString()+" statement or add a proper condition before calling it, in order to avoid chunks of unreachable code.")
+//					.words("\n\nSuggestion:")
+//					.words("\n\nChange the place of the "+((UnreachableCode) issue).getOccurences().get(0).toString()+" statement or add a proper condition before calling it, in order to avoid chunks of unreachable code.")
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 		}
 		else if(issue instanceof UselessSelfAssignment) {
 			link = new HyperlinkedText(null)
-					.words("Issue: \n\n")
 					.words("The assignment ").link(((UselessSelfAssignment) issue).getOccurrence().toString(), () -> {
 					})
 					.words(" means that the variable was assigned with the value that it already had. ")
 					.words("\n\n - It is an useless assignment because it has no impact in the program.")
-					.words("\n\n Suggestion: \n\n- Remove this useless assignment.")
+//					.words("\n\n Suggestion: \n\n- Remove this useless assignment.")
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 		}
 		else if(issue instanceof UselessVariableAssignment) {
 			link = new HyperlinkedText(null)
-					.words("Issue: \n\n")
 					.words("The assignment ").link(((UselessVariableAssignment) issue).getOccurrence().toString(), () -> {
 					})
 					.words(" value was not used. ")
 					.words("\n\n - Variables don't need to be initialized before being assigned with a value. ")
 					.words("\n - The value was not used before the second assignment, which means that is as no impact. ")
 					.words("\n - Unused values are useless to the program.")
-					.words("\n\n Suggestion: \n\n- Remove this useless assignment because its value isn't used.")
+//					.words("\n\n Suggestion: \n\n- Remove this useless assignment because its value isn't used.")
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 		}
 		else if (issue instanceof UnnecessaryReturn) {
 			link = new HyperlinkedText(null)
-					.words("Issue:\n\n")
 					.words("The highlighted return isn't necessary!")
 					.words("\n\n - Void methods don't always need to have a return statement in order to finish executing.")
 					.words("\n\n - Since the return is at the end of the method, it is useless because the method would terminate anyway.")
-					.words("\n\n Suggestion: \n\n- Remove this useless return statement.")
+//					.words("\n\n Suggestion: \n\n- Remove this useless return statement.")
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 		}
 

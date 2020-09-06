@@ -36,7 +36,7 @@ public class Linter {
 	private void loadAllVisitors() {
 		this.visitors.add(Selection.class);
 		this.visitors.add(Loop.class);
-		this.visitors.add(MagicNumbers.class);
+//		this.visitors.add(MagicNumbers.class);
 		this.visitors.add(UselessAssignment.class);
 		this.visitors.add(Unreachable.class);
 		this.visitors.add(DuplicateBranchGuard.class);
@@ -47,14 +47,10 @@ public class Linter {
 	public List<QualityIssue> analyse(IModule... modules) {
 		ArrayList<QualityIssue> caughtIssues = new ArrayList<>();
 		for (IModule module : modules) {
+			MagicNumbers mNumbers = new MagicNumbers();
 			module.getProcedures().forEach(proc -> {
+				proc.accept(mNumbers);
 				IControlFlowGraph cfg = proc.generateCFG();
-				//				System.out.println("-----------------------------------");
-				//				System.out.println(proc);
-				//				System.out.println(proc.getId());
-				//				cfg.display();
-				//				System.out.println("-----------------------------------");
-
 				visitors.forEach(visitor -> {
 					CodeAnalyser analyser;
 					try {
@@ -68,9 +64,9 @@ public class Linter {
 							| InvocationTargetException | NoSuchMethodException | SecurityException e1) {
 						e1.printStackTrace();
 					}
-
 				});
-			});			
+			});
+			caughtIssues.addAll(mNumbers.getQualityIssues());
 		}
 		return caughtIssues;
 	}

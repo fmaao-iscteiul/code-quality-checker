@@ -17,7 +17,7 @@ import pt.iscte.paddle.quality.cases.base.SingleOcurrenceIssue;
 import pt.iscte.paddle.quality.misc.IssueType;
 
 public class LintingResult {
-	
+
 	private class IssueMetric {
 		int totalOccurrences = 1;
 		int numberOfProjects = 0;
@@ -35,11 +35,15 @@ public class LintingResult {
 
 			this.occurrencesCounter = new HashMap<IssueType, IssueMetric>();
 			this.issuesPerProject = new HashMap<String, List<IssueType>>();
-			
-			for (Entry<String, List<QualityIssue>> project : modules.entrySet()) {
-				numberOfIssues += project.getValue().size();
-				myWriter.append("\n------------ Module: " + project.getKey() + " ------------\n");
-				project.getValue().forEach(i -> {
+
+			for (Entry<String, List<QualityIssue>> model : modules.entrySet()) {
+
+				Map<IssueType, Integer> issuesCounter = new HashMap<IssueType, Integer>(); 
+
+				issuesPerProject.put(model.getKey(), new ArrayList<IssueType>());
+				numberOfIssues += model.getValue().size();
+				myWriter.append("\n------------ Module: " + model.getKey() + " ------------\n");
+				model.getValue().forEach(i -> {
 					try {
 						if(i instanceof MultipleOccurrencesIssue) 
 							((MultipleOccurrencesIssue) i).getOccurences().forEach(o ->{
@@ -69,30 +73,27 @@ public class LintingResult {
 						if(occurrencesCounter.containsKey(i.getIssueType())) 
 							occurrencesCounter.get(i.getIssueType()).totalOccurrences += 1;
 						else occurrencesCounter.put(i.getIssueType(), new IssueMetric());
-						
-							
-						if(issuesPerProject.get(project.getKey()) == null) {
-							ArrayList<IssueType> types = new ArrayList<IssueType>();
-							types.add(i.getIssueType());
-							issuesPerProject.put(project.getKey(), types);
+
+
+						if(!issuesPerProject.get(model.getKey()).contains(i.getIssueType())) {
 							occurrencesCounter.get(i.getIssueType()).numberOfProjects += 1;
-						}
-						else if(!issuesPerProject.get(project.getKey()).contains(i.getIssueType())) {
-							occurrencesCounter.get(i.getIssueType()).numberOfProjects += 1;
-							issuesPerProject.get(project.getKey()).add(i.getIssueType());
+							issuesPerProject.get(model.getKey()).add(i.getIssueType());
 						}
 
+						if(!issuesCounter.containsKey(i.getIssueType()))
+							issuesCounter.put(i.getIssueType(), 1);
+						else issuesCounter.put(i.getIssueType(), issuesCounter.get(i.getIssueType()) + 1);
+
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				});
+				myWriter.append(modelResults(issuesCounter));
 			}
 
-			myWriter.append("\n\n"+toString());
+			myWriter.append("\n\n"+finalResults());
 			myWriter.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -129,7 +130,7 @@ public class LintingResult {
 				}
 			}
 
-			myWriter.append("\n\n"+toString());
+			myWriter.append("\n\n"+finalResults());
 			myWriter.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -137,20 +138,29 @@ public class LintingResult {
 		}
 	}
 
-	@Override
-	public String toString() {
+	public String modelResults(Map<IssueType, Integer> issuesCounter) {
+		int total = 0;
+		String results = "";
+		for (Entry<IssueType, Integer> issue : issuesCounter.entrySet()) {
+			results = results.concat("\n      " + issue.getKey() + " - " + issue.getValue());
+			total += issue.getValue();
+		}
+		return "\n\n---------------- Results for the model above: "+total+" issues were found ----------------\n\n".concat(results).concat("\n\n");
+	}
 
-		String resultsText =  "------------------- FINAL RESULTS -------------------\n\nTOTAL NUMBER OF ISSUES FOUND WITHIN THE PROVIDED MODULES IS: " 
+	public String finalResults() {
+		String resultsText =  "------------------- FINAL RESULTS -------------------\n\nTHE TOTAL NUMBER OF ISSUES FOUND WITHIN THE PROVIDED MODULES IS " 
 				+ this.numberOfIssues +
-				" ACROSS " + issuesPerProject.size() +  " MODULES\n   THE CATEGORIES WERE: \n";
+				" ACROSS " +  issuesPerProject.size() + (issuesPerProject.size() > 1 ?  " MODULES" : " MODULE") + " \n   THE CATEGORIES WERE: \n";
 		for (Entry<IssueType, IssueMetric> issue : occurrencesCounter.entrySet()) {
 			resultsText = resultsText.concat("      " + issue.getKey() + " - " + issue.getValue().totalOccurrences 
-					+ " TIMES ACROSS " + issue.getValue().numberOfProjects + " MODULES.\n");			
+					+ " TIMES ACROSS " + issue.getValue().numberOfProjects + (issue.getValue().numberOfProjects > 1 ? " MODULES" : " MODULE") + ".\n");			
 		}
 
 		resultsText = resultsText.concat("\n-----------------------------------------------");
 
 		return resultsText;
 	}
+
 
 }

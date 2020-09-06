@@ -16,21 +16,25 @@ import pt.iscte.paddle.quality.misc.Explanations;
 public class MagicNumbers extends CodeAnalyser implements IVisitor {
 
 	private ArrayList<MagicNumber> mNumbers = new ArrayList<MagicNumber>();
-
+	
 	@Override
 	public void visit(ILiteral exp) {
 		boolean exists = false;
-		if(exp.getType().isNumber() 
+		if(exp.getType().isNumber() && !exp.isSame(IType.INT.literal(2))
 				&& !exp.isSame(IType.INT.literal(1)) && !exp.isSame(IType.INT.literal(0))
 				&& !exp.isSame(IType.DOUBLE.literal(1.0)) && !exp.isSame(IType.DOUBLE.literal(0.0))) {
-			for (MagicNumber magicNumber : mNumbers) 
-
+			
+			for (MagicNumber magicNumber : mNumbers) {
+				
 				if(magicNumber.getOccurences().get(0).isSame(exp)) {
 					exists = true;
 					magicNumber.addAssignment(exp);
-					if(!issues.contains(magicNumber)) 
+					if(!issues.contains(magicNumber))
+						{
 						issues.add(magicNumber);
+						}
 				}
+			}
 
 			if(!exists) {
 				MagicNumber mNumb = new MagicNumber(Explanations.MAGIC_NUMBER, exp);

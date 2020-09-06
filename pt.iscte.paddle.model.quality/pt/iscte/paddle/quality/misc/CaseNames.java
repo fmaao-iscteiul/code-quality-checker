@@ -32,12 +32,14 @@ public class CaseNames {
 			return "If condition misconception";
 		case UNREACHABLE_CODE:
 			return "Unreachable code";
-		case TALTOLOGY:
+		case TAUTOLOGY:
 			return "Tautology";
 		case CONTRADICTION:
 			return "Dead Code";
 		case USELESS_CODE:
 			return "Unused assignment value";
+		case USELESS_RETURN:
+			return "Useless return";
 		default:
 			return category.toString();
 		}

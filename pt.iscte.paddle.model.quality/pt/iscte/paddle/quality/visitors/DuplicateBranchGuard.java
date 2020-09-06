@@ -116,9 +116,7 @@ public class DuplicateBranchGuard extends CodeAnalyser implements BadCodeAnalyse
 	
 	private boolean duplicateGuard(IExpression guard, IExpression listGuard) {
 		if(guard.isSame(listGuard)) return true;
-		if(guard instanceof IBinaryExpression 
-				&& (((IBinaryExpression) guard).getLeftOperand() instanceof IBinaryExpression)
-				&& (((IBinaryExpression) guard).getRightOperand() instanceof IBinaryExpression)) {
+		if(guard instanceof IBinaryExpression) {
 			for (IExpression part : guard.getParts()) {
 				if(!part.isSame(IType.BOOLEAN.literal(true)) 
 						&& !part.isSame(IType.BOOLEAN.literal(false)) 
