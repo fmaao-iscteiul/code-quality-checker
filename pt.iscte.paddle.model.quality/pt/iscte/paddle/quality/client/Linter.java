@@ -51,6 +51,7 @@ public class Linter {
 			module.getProcedures().forEach(proc -> {
 				proc.accept(mNumbers);
 				IControlFlowGraph cfg = proc.generateCFG();
+				cfg.getNodes().forEach(n -> System.out.println(n));
 				visitors.forEach(visitor -> {
 					CodeAnalyser analyser;
 					try {

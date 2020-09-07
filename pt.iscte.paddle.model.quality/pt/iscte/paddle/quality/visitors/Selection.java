@@ -107,7 +107,7 @@ public class Selection extends CodeAnalyser implements IVisitor {
 		return found && occurrences.size() > 0 ? occurrences : null;
 	}
 
-	private List<IBlockElement> getRawChildren(IBlock block) {
+	static private List<IBlockElement> getRawChildren(IBlock block) {
 		ArrayList<IBlockElement> children = new ArrayList<IBlockElement>();
 		if(block == null || block != null && block.getChildren().size() == 0) return children;
 

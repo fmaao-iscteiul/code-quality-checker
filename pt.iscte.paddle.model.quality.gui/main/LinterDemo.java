@@ -51,8 +51,8 @@ public class LinterDemo {
 
 	static ArrayList<IModule> searchDirectoryForModules(File f) {
 		ArrayList<IModule> modules = new ArrayList<IModule>();
-//		File[] files = f.listFiles(file -> file.getName().endsWith("Example.java"));
-		File[] files = f.listFiles(file -> !file.getName().endsWith("Example.java"));
+		File[] files = f.listFiles(file -> file.getName().endsWith("Example.java"));
+//		File[] files = f.listFiles(file -> !file.getName().endsWith("Example.java"));
 		for (File file : files) {
 			if(file.isDirectory()) {
 				try {
