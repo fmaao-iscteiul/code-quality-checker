@@ -7,7 +7,6 @@ import pt.iscte.paddle.model.IOperator;
 import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IReturn;
 import pt.iscte.paddle.model.IVariableDeclaration;
-import pt.iscte.paddle.model.roles.IGatherer.Operation;
 import pt.iscte.paddle.model.tests.BaseTest;
 
 public class MagicNumbers extends BaseTest {

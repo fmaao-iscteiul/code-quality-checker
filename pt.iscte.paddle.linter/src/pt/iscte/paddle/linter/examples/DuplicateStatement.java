@@ -22,7 +22,7 @@ public class DuplicateStatement extends BaseTest{
 	IVariableDeclaration n = naturals.addParameter(INT);
 	IBlock body = naturals.getBody();
 	IVariableDeclaration array = body.addVariable(INT.array());
-	IVariableAssignment ass1 = body.addAssignment(array, INT.array().stackAllocation(n));
+	IVariableAssignment ass1 = body.addAssignment(array, INT.array().heapAllocation(n));
 	IVariableDeclaration i = body.addVariable(INT, INT.literal(0));
 	ISelection selection = body.addSelectionWithAlternative(IOperator.GREATER.on(i, IType.INT.literal(10)));
 	IVariableAssignment ass4 = selection.addAssignment(i, INT.literal(10));

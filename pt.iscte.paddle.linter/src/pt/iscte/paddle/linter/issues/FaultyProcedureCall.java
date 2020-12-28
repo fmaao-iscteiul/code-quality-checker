@@ -11,4 +11,9 @@ public class FaultyProcedureCall extends SingleOcurrenceIssue {
 		super(IssueType.FAULTY_METHOD_CALL, Classification.AVERAGE, element);
 	}
 	
+	@Override
+	public String getIssueTitle() {
+		return super.getIssueTitle() + " " + occurrence;
+	}
+	
 }

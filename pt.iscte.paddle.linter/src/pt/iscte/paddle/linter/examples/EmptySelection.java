@@ -26,7 +26,7 @@ public class EmptySelection extends BaseTest{
 	IVariableDeclaration b = naturals.addParameter(BOOLEAN);
 	IBlock body = naturals.getBody();
 	IVariableDeclaration array = body.addVariable(INT.array());
-	IVariableAssignment ass1 = body.addAssignment(array, INT.array().stackAllocation(n));
+	IVariableAssignment ass1 = body.addAssignment(array, INT.array().heapAllocation(n));
 	ISelection selection_true = body.addSelection(IOperator.EQUAL.on(n, INT.literal(10)));
 	ISelection selection_false = body.addSelection(IOperator.EQUAL.on(b, BOOLEAN.literal(false)));
 	IVariableDeclaration i = body.addVariable(INT, INT.literal(0));

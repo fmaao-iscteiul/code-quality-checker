@@ -26,7 +26,7 @@ public class NonVoidPureFunction extends BaseTest{
 	IVariableDeclaration n = naturals.addParameter(INT);
 	IBlock body = naturals.getBody();
 	IVariableDeclaration array = body.addVariable(INT.array());
-	IVariableAssignment ass1 = body.addAssignment(array, INT.array().stackAllocation(n));
+	IVariableAssignment ass1 = body.addAssignment(array, INT.array().heapAllocation(n));
 	IVariableDeclaration i = body.addVariable(INT, INT.literal(0));
 	
 //	IVariableAssignment ass123 = body.addAssignment(n, ADD.on(n, INT.literal(1)));
@@ -42,7 +42,7 @@ public class NonVoidPureFunction extends BaseTest{
 	IProcedure nonVoidPureFunctionText = module.addProcedure(IType.INT.array());
 	IBlock body2 = nonVoidPureFunctionText.getBody();
 	IVariableDeclaration naturalsArray = body2.addVariable(INT.array());
-	IVariableAssignment ass112 = body2.addAssignment(naturalsArray, INT.array().stackAllocation(n));
+	IVariableAssignment ass112 = body2.addAssignment(naturalsArray, INT.array().heapAllocation(n));
 	IVariableDeclaration b = body2.addVariable(INT, INT.literal(10)); 
 	
 	IProcedureCall proCall = body2.addCall(naturals, b);

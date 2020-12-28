@@ -2,22 +2,25 @@ package pt.paddle.linter.gui.component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ServiceLoader;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 
-import pt.iscte.paddle.javardise.service.IClassWidget;
-import pt.iscte.paddle.javardise.service.ICodeDecoration;
-import pt.iscte.paddle.javardise.service.IJavardiseService;
-import pt.iscte.paddle.javardise.service.IWidget;
-import pt.iscte.paddle.javardise.util.HyperlinkedText;
+import pt.iscte.javardise.api.ICodeDecoration;
+import pt.iscte.javardise.api.IWidget;
+import pt.iscte.javardise.javaeditor.api.HyperlinkedText;
+import pt.iscte.javardise.javaeditor.api.IClassWidget;
+import pt.iscte.javardise.javaeditor.api.IJavardiseService;
 import pt.iscte.paddle.linter.cases.base.MultipleOccurrencesIssue;
 import pt.iscte.paddle.linter.cases.base.QualityIssue;
 import pt.iscte.paddle.linter.cases.base.SingleOcurrenceIssue;
@@ -52,6 +55,9 @@ public class QualityIssueHighlight {
 	private Composite comp;
 	private QualityIssue issue;
 
+	IJavardiseService serv = ServiceLoader.load(IJavardiseService.class).findFirst().get();
+	
+	
 	public QualityIssueHighlight(IClassWidget widget, Composite comp, QualityIssue issue) {
 		this.widget = widget;
 		this.comp = comp;
@@ -73,11 +79,11 @@ public class QualityIssueHighlight {
 		return null;
 	}
 
-	public void generateExplanation() {
+	public Link generateExplanation() {
+		
 		Link link = null;
 		if(issue instanceof BooleanCheck) {
 			link = new HyperlinkedText(null)
-					.words("Issue:\n\n")
 					.words("The condition ")
 					.link(((BooleanCheck) issue).getOccurrence().toString(), () -> {}) 
 					.words(" could make use of the '!' operator. \n")
@@ -87,7 +93,6 @@ public class QualityIssueHighlight {
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 		} else if(issue instanceof BooleanReturnCheck) {
 			link = new HyperlinkedText(null)
-					.words("Issue:\n\n")
 					.words("The ").link("if( "+((ISelection) ((BooleanReturnCheck) issue).getOccurrence()).getGuard().toString() + " )", ()->{}).words(" condition is unnecessary!\n ")
 					.words("\n - There is no need to check the value of a boolean variable before returning true or false.")
 					.words("\n - The condition itself already represents the value meant to be returned.")
@@ -127,10 +132,9 @@ public class QualityIssueHighlight {
 		}
 		else if(issue instanceof DuplicateMethodCall) {
 			link = new HyperlinkedText(null)
-					.words("Issue:\n\n")
 					.words("The function ")
 					.link(((DuplicateMethodCall) issue).getOccurences().get(0).toString(), () -> {
-						ICodeDecoration<Canvas> d = IJavardiseService.getWidget(((IProcedureCall) ((DuplicateMethodCall) issue).getOccurences().get(0)).getProcedure()).addMark(getColor());
+						ICodeDecoration<Canvas> d = serv.getWidget(((IProcedureCall) ((DuplicateMethodCall) issue).getOccurences().get(0)).getProcedure()).addMark(getColor());
 						d.show();
 						decorations.add(d);
 					})
@@ -162,7 +166,6 @@ public class QualityIssueHighlight {
 		else if(issue instanceof FaultyProcedureCall) {
 			IProcedureCall call = (IProcedureCall) ((SingleOcurrenceIssue) issue).getOccurrence();
 			link = new HyperlinkedText(null)
-					.words("Issue: \n\n")
 					.words("The method ")
 					.link(call.toString(), () -> {
 						ICodeDecoration<Canvas> d0 = widget.getProcedure((IProcedure) call.getProcedure()).getMethodName().addMark(getColor());
@@ -189,18 +192,18 @@ public class QualityIssueHighlight {
 		}
 		else if(issue instanceof MagicNumber) {
 			link = new HyperlinkedText(null)
-					.words("Issue: \n\n")
 					.words("The highlighted number " ).link(((MagicNumber) issue).getOccurences().get(0).toString(), () -> {
 					})
-					.words(" doesn't really tell what it stands for.")
-					.words("\n\n - It can be hard for another programmer to look at the number " + ((MagicNumber) issue).getOccurences().get(0)  + " and figure out what it represents.")
-					.words("\n - It can also lead to bugs because it's more difficult to change it in every place that it is used.")
-					.words("\n\n Suggestion: \n\n - Try replacing this the number " + ((MagicNumber) issue).getOccurences().get(0) + " with a well named variable.")
+					.words(" doesn't really tell what it stands for.").newline()
+					.line("\n\n - It can be hard for another programmer to look at the number " + ((MagicNumber) issue).getOccurences().get(0)  + " and figure out what it represents.")
+					.line("\n - It can also lead to bugs because it's more difficult to change it in every place that it is used.")
+					.newline()
+					.line("Suggestion:")
+					.line("\t- Try replacing this the number " + ((MagicNumber) issue).getOccurences().get(0) + " with a well named variable.")
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 		}
 		else if(issue instanceof SelectionMisconception) {
 			link = new HyperlinkedText(null)
-					.words("Issue:\n\n")
 					.words("The code was written in the else block and the if section was left empty.")
 					.words("\n\n - This means that only the else block contains code that may be executed.")
 					.words("\n - The empty if should be avoided, because empty code blocks don't contribute to the program and affect code readibility.")
@@ -219,9 +222,8 @@ public class QualityIssueHighlight {
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 		}
 		else if(issue instanceof UnreachableCode) {
-			IWidget a = IJavardiseService.getWidget(((UnreachableCode) issue).getOccurences().get(0));
+			IWidget a = serv.getWidget(((UnreachableCode) issue).getOccurences().get(0));
 			link = new HyperlinkedText(null)
-					.words("Issue:\n\n")
 					.words("There is a")
 					.link(" return statement ", () -> {
 						Image img = new Image(Display.getDefault(), "arrow.png");
@@ -245,7 +247,6 @@ public class QualityIssueHighlight {
 		}
 		else if(issue instanceof UselessSelfAssignment) {
 			link = new HyperlinkedText(null)
-					.words("Issue: \n\n")
 					.words("The assignment ").link(((UselessSelfAssignment) issue).getOccurrence().toString(), () -> {
 					})
 					.words(" means that the variable was assigned with the value that it already had. ")
@@ -255,7 +256,6 @@ public class QualityIssueHighlight {
 		}
 		else if(issue instanceof UselessVariableAssignment) {
 			link = new HyperlinkedText(null)
-					.words("Issue: \n\n")
 					.words("The assignment ").link(((UselessVariableAssignment) issue).getOccurrence().toString(), () -> {
 					})
 					.words(" value was not used. ")
@@ -266,76 +266,74 @@ public class QualityIssueHighlight {
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 		}
 
-		if(link != null) link.requestLayout();
+		if(link != null) {
+			link.setFont(new Font(Display.getDefault(), "Arial", 16, SWT.NORMAL));
+			link.requestLayout();
+		}
+		
+		return link;
 	}
 
 	public void generateHighlight() {
+//		if(issue instanceof SingleOcurrenceIssue)
+//			System.out.println("EL: " + ((SingleOcurrenceIssue) issue).getOccurrence());
+//		else
+//			System.out.println("ELs: " + ((MultipleOccurrencesIssue) issue).getOccurences());
 		IWidget w = (issue instanceof SingleOcurrenceIssue) 
-				? IJavardiseService.getWidget(((SingleOcurrenceIssue) issue).getOccurrence()) 
-						: IJavardiseService.getWidget(((MultipleOccurrencesIssue) issue).getOccurences().get(0));
+				? serv.getWidget(((SingleOcurrenceIssue) issue).getOccurrence()) 
+						: serv.getWidget(((MultipleOccurrencesIssue) issue).getOccurences().get(0));
 
 				if(w == null) return;
 				if(issue instanceof MultipleOccurrencesIssue) {
 					for (IProgramElement occ : ((MultipleOccurrencesIssue) issue).getOccurences()) {
 
-						w = IJavardiseService.getWidget(occ);
+						w = serv.getWidget(occ);
 						ICodeDecoration<Canvas> d = w.addMark(getColor());
 						decorations.add(d);
-						d.show();
 					}
 				} else {
 					ICodeDecoration<Canvas> d = w.addMark(getColor());
 					decorations.add(d);
-					d.show();
 				}
 
 				if(issue instanceof BooleanCheck) {
 					ICodeDecoration<Text> d2 = w.addNote("Maybe use \n the ! operator?", ICodeDecoration.Location.RIGHT);
-					d2.show();
 					decorations.add(d2);
 				}
 				else if(issue instanceof BooleanReturnCheck) {
 					ICodeDecoration<Text> t = w.addNote("Shouldn't you \n return the variable?", ICodeDecoration.Location.RIGHT);
-					t.show();
 					decorations.add(t);
 				} 
 				else if(issue instanceof Contradiction) {
 					ICodeDecoration<Text> d2 = w.addNote("This condition will \n always be false!", ICodeDecoration.Location.RIGHT);
-					d2.show();
 					decorations.add(d2);
 				}
 				else if(issue instanceof Duplicate) {
 					ICodeDecoration<Text> t = w.addNote("Couldn't this be \n anywhere else?", ICodeDecoration.Location.RIGHT);
-					t.show();
 					decorations.add(t);
 				}
 				else if(issue instanceof DuplicateGuard) {
 					ICodeDecoration<Text> d2 = w.addNote("Unnecessary double-check?", ICodeDecoration.Location.RIGHT);
-					d2.show();
 					decorations.add(d2);
 				}
 				else if(issue instanceof EmptyLoop) {
 					ICodeDecoration<Text> d2 = w.addNote("Why is this loop empty?", ICodeDecoration.Location.RIGHT);
-					d2.show();
 					decorations.add(d2);
 				}
 				else if(issue instanceof EmptySelection) {
 					ICodeDecoration<Text> d2 = w.addNote("Why is it empty?", ICodeDecoration.Location.RIGHT);
-					d2.show();
 					decorations.add(d2);
 				}
 				else if(issue instanceof FaultyProcedureCall) {
 					ICodeDecoration<Text> t = w.addNote("Doesn't this return \n something?", ICodeDecoration.Location.RIGHT);
-					t.show();
 					decorations.add(t);
 				}
 				else if(issue instanceof MagicNumber) {
 					for (IProgramElement el : ((MagicNumber) issue).getOccurrences()) {
-						w = IJavardiseService.getWidget(el);
+						w = serv.getWidget(el);
 						if(w != null) {
 							if(((MagicNumber) issue).getOccurrences().indexOf(el) == 0) {
 								ICodeDecoration<Text> d2 = w.addNote("What does this number \n represent?", ICodeDecoration.Location.RIGHT);
-								d2.show();
 								decorations.add(d2);
 							}
 						}
@@ -343,50 +341,51 @@ public class QualityIssueHighlight {
 				}
 				else if(issue instanceof SelectionMisconception) {
 					ICodeDecoration<Text> d2 = w.addNote("Couln't you use \n the '!' operator?", ICodeDecoration.Location.RIGHT);
-					d2.show();
 					decorations.add(d2);
 				}
 				else if(issue instanceof Tautology) {
 					ICodeDecoration<Text> d2 = w.addNote("Isn't this always true?", ICodeDecoration.Location.RIGHT);
-					d2.show();
 					decorations.add(d2);
 				}
 				else if(issue instanceof UnreachableCode) {
 					if(((UnreachableCode) issue).getOccurences().get(0) instanceof IReturn) {
-						w = IJavardiseService.getWidget(((UnreachableCode) issue).getOccurences().get(1));
+						w = serv.getWidget(((UnreachableCode) issue).getOccurences().get(1));
 					}
-					else w = IJavardiseService.getWidget(((UnreachableCode) issue).getOccurences().get(0));
+					else w = serv.getWidget(((UnreachableCode) issue).getOccurences().get(0));
 
 					IWidget[] elements = new IWidget[((UnreachableCode) issue).getOccurences().size()];
 
 					for (int i = 0; i < elements.length; i++) {
 						IControlStructure s = ((UnreachableCode) issue).getOccurences().get(i).getProperty(IControlStructure.class);
-						if(s != null) elements[i] = IJavardiseService.getWidget(s);
-						else elements[i] = IJavardiseService.getWidget(((UnreachableCode) issue).getOccurences().get(i));
+						if(s != null) elements[i] = serv.getWidget(s);
+						else elements[i] = serv.getWidget(((UnreachableCode) issue).getOccurences().get(i));
 					}
 
 					ICodeDecoration<Canvas> dec = w.addRegionMark(getColor(), elements);
-					dec.show();
 					ICodeDecoration<Text> d1 = w.addNote("This code won't \n be executed!", ICodeDecoration.Location.RIGHT);
-					d1.show();
 					decorations.add(dec);
 					decorations.add(d1);
 				}
 				else if(issue instanceof UselessSelfAssignment) {
 					ICodeDecoration<Text> d2 = w.addNote("What does this actually do?", ICodeDecoration.Location.RIGHT);
-					d2.show();
 					decorations.add(d2);
 				}
 				else if(issue instanceof UselessVariableAssignment) {
 					ICodeDecoration<Text> d2 = w.addNote("This value won't be used!", ICodeDecoration.Location.RIGHT);
-					d2.show();
 					decorations.add(d2);
 				}
 	}
 
-	public void show() {
-		generateExplanation();
+	public void generateDecorations() {
+		decorations.clear();
+//		generateExplanation();
 		generateHighlight();
+	}
+	
+	public void show() {
+		decorations.forEach(mark -> {
+			mark.show();
+		});
 	}
 
 	public void hide() {
@@ -395,4 +394,22 @@ public class QualityIssueHighlight {
 		});
 	}
 
+	public int getYLocation() {
+		if(decorations.isEmpty())
+			return 0;
+		else
+			return decorations.get(0).locationHeight();
+	}
+
+	public Control getControl() {
+		return decorations.get(0).getControl();
+	}
+
+	public void remove() {
+		decorations.forEach(mark -> {
+			mark.delete();
+		});
+	}
+
+	
 }

@@ -9,7 +9,6 @@ import pt.iscte.paddle.linter.cases.base.CodeAnalyser;
 import pt.iscte.paddle.linter.cases.base.QualityIssue;
 import pt.iscte.paddle.linter.issues.DuplicateMethodCall;
 import pt.iscte.paddle.linter.issues.FaultyProcedureCall;
-import pt.iscte.paddle.linter.linter.Linter;
 import pt.iscte.paddle.linter.misc.BadCodeAnalyser;
 import pt.iscte.paddle.model.IExpression;
 import pt.iscte.paddle.model.IProcedure;

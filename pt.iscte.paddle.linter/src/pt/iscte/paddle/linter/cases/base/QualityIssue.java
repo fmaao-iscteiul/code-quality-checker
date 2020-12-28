@@ -20,4 +20,8 @@ public abstract class QualityIssue {
 	public Classification getClassification() {
 		return classification;
 	}
+	
+	public String getIssueTitle() {
+		return type.toString();
+	}
 }

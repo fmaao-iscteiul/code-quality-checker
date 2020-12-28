@@ -13,8 +13,7 @@ public class ParseAndQualityCheckDemo {
 
 	public static void main(String[] args) {
 
-		File f = new File("/Users/franciscoalfredo/Desktop/uni/tese/"
-				+ "trabalhos4paddle/src");
+		File f = new File("/Users/andresantos/Desktop/Trabalhos35/1");
 		Linter linter = new Linter();
 		searchDirectoryForModules(f).forEach(module -> {
 			System.out.println("Casos detetados: " + new LintingResult(linter.analyse(module)));

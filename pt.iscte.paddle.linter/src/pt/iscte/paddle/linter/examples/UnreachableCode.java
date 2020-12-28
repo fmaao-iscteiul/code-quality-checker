@@ -23,7 +23,7 @@ public class UnreachableCode extends BaseTest{
 	IVariableDeclaration b = naturals.addParameter(BOOLEAN);
 	IBlock body = naturals.getBody();
 	IVariableDeclaration array = body.addVariable(INT.array());
-	IVariableAssignment ass1 = body.addAssignment(array, INT.array().stackAllocation(n));
+	IVariableAssignment ass1 = body.addAssignment(array, INT.array().heapAllocation(n));
 	IReturn addReturn1 = body.addReturn(array);
 	IVariableDeclaration i = body.addVariable(INT, INT.literal(0));
 	ILoop loop = body.addLoop(SMALLER.on(i, n));

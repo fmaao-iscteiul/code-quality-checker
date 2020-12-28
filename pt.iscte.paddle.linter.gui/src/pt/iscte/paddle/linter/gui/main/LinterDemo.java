@@ -2,6 +2,7 @@ package pt.iscte.paddle.linter.gui.main;
 
 
 import java.util.ArrayList;
+import java.util.ServiceLoader;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -13,9 +14,9 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 
-import pt.iscte.paddle.javardise.service.IClassWidget;
-import pt.iscte.paddle.javardise.service.IJavardiseService;
-import pt.iscte.paddle.javardise.util.HyperlinkedText;
+import pt.iscte.javardise.javaeditor.api.HyperlinkedText;
+import pt.iscte.javardise.javaeditor.api.IClassWidget;
+import pt.iscte.javardise.javaeditor.api.IJavardiseService;
 import pt.iscte.paddle.linter.cases.base.QualityIssue;
 import pt.iscte.paddle.linter.examples.ContraditionAndTautology;
 import pt.iscte.paddle.linter.examples.DuplicateGuard;
@@ -54,11 +55,11 @@ public class LinterDemo {
 		MagicNumbers t9 = new MagicNumbers();
 
 		modules.add(t2);
-		modules.add(t1);
-		modules.add(t6);
-		modules.add(t3);
-		modules.add(t4);
-		modules.add(t5);
+//		modules.add(t1);
+//		modules.add(t6);
+//		modules.add(t3);
+//		modules.add(t4);
+//		modules.add(t5);
 		UselessAssignments issue = new UselessAssignments();
 		issue.setup();
 
@@ -111,7 +112,9 @@ public class LinterDemo {
 		BaseTest testCase = modules.get(0);
 		testCase.setup();
 
-		IClassWidget widget = IJavardiseService.createClassWidget(codeAndCFG, testCase.getModule());
+		ServiceLoader<IJavardiseService> loader = ServiceLoader.load(IJavardiseService.class);
+		IJavardiseService serv = loader.findFirst().get();
+		IClassWidget widget = serv.createClassWidget(codeAndCFG, testCase.getModule());
 		widget.setReadOnly(true);
 
 		// LINTER INIT
@@ -143,9 +146,12 @@ public class LinterDemo {
 				testCase.setup();
 
 				codeAndCFG.getChildren()[0].dispose();
-				IClassWidget widget = IJavardiseService.createClassWidget(codeAndCFG, testCase.getModule());
+				ServiceLoader<IJavardiseService> loader = ServiceLoader.load(IJavardiseService.class);
+				IJavardiseService serv = loader.findFirst().get();
+				
+				IClassWidget widget = serv.createClassWidget(codeAndCFG, testCase.getModule());
 				widget.setReadOnly(true);
-				codeAndCFG.redraw();
+				codeAndCFG.requestLayout();
 
 				// LINTER INIT
 				java.util.List<QualityIssue> issues = linter.analyse(testCase.getModule());
@@ -157,7 +163,7 @@ public class LinterDemo {
 				}
 				caseList.setBackground(new org.eclipse.swt.graphics.Color(display, 255, 255, 255));
 				caseList.setForeground(new org.eclipse.swt.graphics.Color(display, 0, 0, 0));
-				caseList.redraw();
+				caseList.requestLayout();
 				rightComp.requestLayout();
 			}
 
@@ -177,7 +183,7 @@ public class LinterDemo {
 				QualityIssueHighlight badQualityIssue = highlights.get(caseList.getSelectionIndex());
 
 				highlights.forEach(i -> i.hide());
-				badQualityIssue.show();
+				badQualityIssue.generateDecorations();
 			}
 
 			@Override
