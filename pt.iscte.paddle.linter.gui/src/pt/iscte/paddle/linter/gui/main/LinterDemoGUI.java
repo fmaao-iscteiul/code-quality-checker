@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,7 +36,6 @@ import org.eclipse.swt.widgets.Text;
 import pt.iscte.javardise.javaeditor.api.IClassWidget;
 import pt.iscte.javardise.javaeditor.api.IJavardiseService;
 import pt.iscte.paddle.linter.cases.base.QualityIssue;
-import pt.iscte.paddle.linter.examples.UselessAssignments;
 import pt.iscte.paddle.linter.linter.Linter;
 import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.javaparser.Java2Paddle;
@@ -55,8 +53,6 @@ public class LinterDemoGUI {
 		ServiceLoader<IJavardiseService> loader = ServiceLoader.load(IJavardiseService.class);
 		IJavardiseService serv = loader.findFirst().get();
 
-		UselessAssignments issue = new UselessAssignments();
-		issue.setup();
 
 		Display display = new Display();
 		shell = new Shell(display);
