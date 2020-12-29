@@ -26,8 +26,13 @@ import pt.iscte.paddle.model.roles.impl.FunctionClassifier;
 
 public class ProcedureCall extends CodeAnalyser implements BadCodeAnalyser {
 
+
 	private ArrayList<INode> calls;
 	private ArrayList<DuplicateProcedureCall> duplicates;
+
+	public ProcedureCall(IProcedure procedure) {
+		super(procedure);
+	}
 
 	class DuplicateProcedureCall {
 		private ArrayList<INode> occurences;
@@ -70,7 +75,7 @@ public class ProcedureCall extends CodeAnalyser implements BadCodeAnalyser {
 					&& !new FunctionClassifier((IProcedure) ((IProcedureCall) duplicateBranchGuard.occ.getElement()).getProcedure()).getClassification().equals(Status.PROCEDURE)) {
 				ArrayList<IProgramElement> occurrences = new ArrayList<IProgramElement>();
 				duplicateBranchGuard.realDuplicates.forEach(d -> occurrences.add(d.getElement()));
-				issues.add(new DuplicateMethodCall(occurrences));
+				issues.add(new DuplicateMethodCall(getProcedure(), occurrences));
 			}
 
 		}
@@ -105,7 +110,7 @@ public class ProcedureCall extends CodeAnalyser implements BadCodeAnalyser {
 				IProcedureCall call = (IProcedureCall) node.getElement();
 
 				if(!call.getProcedure().getReturnType().equals(IType.VOID)) {
-					QualityIssue fCall = new FaultyProcedureCall(call);
+					QualityIssue fCall = new FaultyProcedureCall(getProcedure(), call);
 					issues.add(fCall);
 				}
 

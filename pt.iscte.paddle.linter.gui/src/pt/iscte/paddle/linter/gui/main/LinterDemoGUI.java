@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.ServiceLoader;
+import java.util.stream.Collectors;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -48,15 +49,12 @@ public class LinterDemoGUI {
 
 	public static void main(String[] args)
 			throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException {
-		
-		
+
 		ServiceLoader<IJavardiseService> loader = ServiceLoader.load(IJavardiseService.class);
 		IJavardiseService serv = loader.findFirst().get();
 
-
 		Display display = new Display();
 		shell = new Shell(display);
-		shell.setText("Sprinter - Code Quality Checker");
 		shell.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
 
 		Font font = new Font(display, new FontData("Courier", 16, SWT.NORMAL));
@@ -69,13 +67,13 @@ public class LinterDemoGUI {
 		SashForm sash = new SashForm(shell, SWT.NONE);
 
 		Composite rightComp = new Composite(sash, SWT.NONE);
-		
+
 		FillLayout rightLayout = new FillLayout(SWT.VERTICAL);
 		rightLayout.marginHeight = 20;
 		rightLayout.marginWidth = 20;
 		rightLayout.spacing = 5;
 		rightComp.setLayout(rightLayout);
-		
+
 		ScrolledComposite scroll = new ScrolledComposite(sash, SWT.H_SCROLL | SWT.V_SCROLL);
 		scroll.setLayout(new GridLayout(1, false));
 		scroll.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -102,14 +100,12 @@ public class LinterDemoGUI {
 		});
 
 		area.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
-		
+
 		sash.setWeights(new int[] { 1, 3 });
-		
+
 		Label label = new Label(area, SWT.NONE);
 		label.setFont(font);
 		label.setText("Please select a file...");
-
-		
 
 		Text srcText = new Text(rightComp, SWT.MULTI | SWT.H_SCROLL);
 
@@ -119,14 +115,16 @@ public class LinterDemoGUI {
 
 		Map<String, IModule> map = new HashMap<>();
 		Map<String, File> mapFile = new HashMap<>();
+		Map<String, java.util.List<QualityIssue>> issueTable = new HashMap<>();
 
-		if(args.length == 0) {
+		if (args.length == 0) {
 			DirectoryDialog dialog = new DirectoryDialog(shell);
-		    //dialog.setFilterPath("c:\\"); // Windows specific
-			args = new String[] {dialog.open()};
-		    //System.out.println("RESULT=" + dialog.open());
+			// dialog.setFilterPath("c:\\"); // Windows specific
+			args = new String[] { dialog.open() };
+			// System.out.println("RESULT=" + dialog.open());
 		}
-		
+
+		shell.setText("Sprinter - " + args[0]);
 		
 		File src = new File(args[0]);
 		File[] files;
@@ -134,23 +132,32 @@ public class LinterDemoGUI {
 			files = new File[] { src };
 		else
 			files = src.listFiles(f -> f.getName().endsWith(".java") && !f.getName().equals("ImageUtil.java"));
-		
+
 		PrintWriter log = new PrintWriter(new File(files[0].getParentFile(), "log.txt"));
 		long time = System.currentTimeMillis();
-		
+
 		log.println("Start: " + new Date());
-		
-		for(File f : files)
+
+		for (File f : files)
 			log.println("File: " + f.getAbsolutePath());
 
+		Linter linter = new Linter();
+
+		IModule m = IModule.create(args[0]);
+		
+		Java2Paddle parser = new Java2Paddle(src, e->e.getName().equals("ImageUtil.java"), m);
+		parser.parse();
+		
+		java.util.List<QualityIssue> issues = linter.analyse(m);
 		for (File f : files) {
-			Java2Paddle parser = new Java2Paddle(f);
-			parser.parse();
-			//try {
-			IModule m = parser.parse();
-				moduleList.add(f.getName());
-				map.put(f.getName(), m);
-				mapFile.put(f.getName(), f);
+			
+			// try {
+//			parser.parse();
+			moduleList.add(f.getName());
+			map.put(f.getName(), m);
+			mapFile.put(f.getName(), f);
+			issueTable.put(f.getName(), issues.stream().filter(i -> i.getProcedure().getNamespace().equals(f.getName().substring(0, f.getName().indexOf('.')))).collect(Collectors.toList()));
+
 //			} catch (Exception e) {
 //				System.err.println(f.getName() + " not included");
 //			}
@@ -158,8 +165,6 @@ public class LinterDemoGUI {
 
 		final List caseList = new List(rightComp, SWT.BORDER | SWT.V_SCROLL);
 		ArrayList<QualityIssueHighlight> highlights = new ArrayList<QualityIssueHighlight>();
-
-		Linter linter = new Linter();
 
 		moduleList.addSelectionListener(new SelectionAdapter() {
 			int index = -1;
@@ -175,15 +180,16 @@ public class LinterDemoGUI {
 				highlights.forEach(i -> i.remove());
 				highlights.clear();
 				rightComp.setEnabled(false);
-				
+
 				String fileName = moduleList.getItem(moduleList.getSelectionIndex());
+				String namespace = fileName.substring(0, fileName.indexOf('.'));
 				IModule m = map.get(fileName);
-				IClassWidget widget = serv.createClassWidget(area, m);
+				IClassWidget widget = serv.createClassWidget(area, m, namespace);
 				widget.getControl().setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
 				widget.setReadOnly(true);
 
 				Display.getDefault().asyncExec(() -> {
-					java.util.List<QualityIssue> issues = linter.analyse(map.get(fileName));
+					java.util.List<QualityIssue> issues = issueTable.get(fileName);//linter.analyse(map.get(fileName));
 					String[] cases = new String[issues.size()];
 					int i = 0;
 					for (QualityIssue qIssue : issues) {
@@ -191,7 +197,7 @@ public class LinterDemoGUI {
 						highlights.add(new QualityIssueHighlight(widget, rightComp, qIssue));
 					}
 					caseList.setItems(cases);
-					
+
 					try {
 						Scanner scanner = new Scanner(mapFile.get(fileName));
 						String src = "";
@@ -216,7 +222,7 @@ public class LinterDemoGUI {
 
 		caseList.addSelectionListener(new SelectionAdapter() {
 			Link explanation;
-			
+
 			public void widgetSelected(SelectionEvent e) {
 				if (caseList.getSelectionIndex() == -1) {
 					return;
@@ -254,8 +260,6 @@ public class LinterDemoGUI {
 			}
 		});
 
-		
-		
 		// shell.setSize(1600, 1000);
 		shell.setMaximized(true);
 		shell.open();
@@ -264,11 +268,11 @@ public class LinterDemoGUI {
 				display.sleep();
 			}
 		}
-		
+
 		log.println("End: " + new Date());
-		log.println("Seconds: " + (System.currentTimeMillis() - time)/1000 );
+		log.println("Seconds: " + (System.currentTimeMillis() - time) / 1000);
 		log.close();
-		
+
 		display.dispose();
 //		Shell over = new Shell(display, SWT.APPLICATION_MODAL);
 //		over.setText("time");

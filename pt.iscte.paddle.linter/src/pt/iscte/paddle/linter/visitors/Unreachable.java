@@ -8,6 +8,7 @@ import pt.iscte.paddle.linter.cases.base.QualityIssue;
 import pt.iscte.paddle.linter.issues.UnreachableCode;
 import pt.iscte.paddle.linter.linter.Linter;
 import pt.iscte.paddle.linter.misc.BadCodeAnalyser;
+import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IProgramElement;
 import pt.iscte.paddle.model.IReturn;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
@@ -15,6 +16,10 @@ import pt.iscte.paddle.model.cfg.INode;
 
 public class Unreachable extends CodeAnalyser implements BadCodeAnalyser {
 	
+	public Unreachable(IProcedure procedure) {
+		super(procedure);
+	}
+
 	@Override
 	public void analyse(IControlFlowGraph cfg) {
 		List<INode> deadNodes = cfg.deadNodes();
@@ -30,7 +35,7 @@ public class Unreachable extends CodeAnalyser implements BadCodeAnalyser {
 		if(!cfg.deadNodes().isEmpty()) {
 			ArrayList<IProgramElement> occurrences = new ArrayList<IProgramElement>();
 			deadNodes.forEach(d -> occurrences.add(d.getElement()));
-			issues.add(new UnreachableCode(occurrences));
+			issues.add(new UnreachableCode(getProcedure(), occurrences));
 		}
 	}
 

@@ -15,6 +15,7 @@ import pt.iscte.paddle.model.IBinaryOperator;
 import pt.iscte.paddle.model.IControlStructure;
 import pt.iscte.paddle.model.IExpression;
 import pt.iscte.paddle.model.IOperator.OperationType;
+import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IProgramElement;
 import pt.iscte.paddle.model.IType;
 import pt.iscte.paddle.model.IVariableAssignment;
@@ -24,6 +25,10 @@ import pt.iscte.paddle.model.cfg.IControlFlowGraph.Path;
 import pt.iscte.paddle.model.cfg.INode;
 
 public class DuplicateBranchGuard extends CodeAnalyser implements BadCodeAnalyser {
+
+	public DuplicateBranchGuard(IProcedure procedure) {
+		super(procedure);
+	}
 
 	private class Guard {
 		private ArrayList<INode> occurences;
@@ -72,7 +77,7 @@ public class DuplicateBranchGuard extends CodeAnalyser implements BadCodeAnalyse
 				List<IProgramElement> elements = new ArrayList<IProgramElement>();
 				elements.add(d.getStart().getElement());
 				elements.add(d.getEnd().getElement());
-				issues.add(new DuplicateGuard(elements));
+				issues.add(new DuplicateGuard(getProcedure(), elements));
 			});
 		}
 

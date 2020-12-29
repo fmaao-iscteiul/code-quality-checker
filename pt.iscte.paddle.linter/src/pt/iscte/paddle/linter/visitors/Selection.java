@@ -11,10 +11,15 @@ import pt.iscte.paddle.model.IBinaryExpression;
 import pt.iscte.paddle.model.IBinaryOperator;
 import pt.iscte.paddle.model.IBlock.IVisitor;
 import pt.iscte.paddle.model.IOperator.OperationType;
+import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.ISelection;
 import pt.iscte.paddle.model.IType;
 
 public class Selection extends CodeAnalyser implements IVisitor {
+
+	public Selection(IProcedure procedure) {
+		super(procedure);
+	}
 
 	@Override
 	public boolean visit(IBinaryExpression exp) {
@@ -24,7 +29,7 @@ public class Selection extends CodeAnalyser implements IVisitor {
 				&& exp.getRightOperand().getType().isBoolean()
 				&& ((exp.getRightOperand().isSame(IType.BOOLEAN.literal(false)) || exp.getRightOperand().isSame(IType.BOOLEAN.literal(true)))
 						||  (exp.getLeftOperand().isSame(IType.BOOLEAN.literal(false)) || exp.getLeftOperand().isSame(IType.BOOLEAN.literal(true))))) {
-			issues.add(new BooleanCheck(Explanations.FAULTY_BOOLEAN_CHECK, exp));
+			issues.add(new BooleanCheck(Explanations.FAULTY_BOOLEAN_CHECK, getProcedure(), exp));
 		}
 
 		return true;
@@ -33,10 +38,10 @@ public class Selection extends CodeAnalyser implements IVisitor {
 	@Override
 	public boolean visit(ISelection selection) {
 		if(selection.isEmpty()) {
-			issues.add(new EmptySelection(Explanations.EMPTY_SELECTION, selection));
+			issues.add(new EmptySelection(Explanations.EMPTY_SELECTION, getProcedure(), selection));
 
 			if(selection.hasAlternativeBlock() && !selection.getAlternativeBlock().isEmpty()) {
-				issues.add(new SelectionMisconception(Explanations.SELECTION_MISCONCEPTION, selection));
+				issues.add(new SelectionMisconception(Explanations.SELECTION_MISCONCEPTION, getProcedure(), selection));
 			}
 		}
 		return true;
@@ -45,7 +50,7 @@ public class Selection extends CodeAnalyser implements IVisitor {
 	@Override
 	public boolean visitAlternative(ISelection selection) {
 		if(selection.getAlternativeBlock().isEmpty()) {
-			issues.add(new EmptySelection(Explanations.EMPTY_SELECTION, selection.getAlternativeBlock()));
+			issues.add(new EmptySelection(Explanations.EMPTY_SELECTION, getProcedure(), selection.getAlternativeBlock()));
 		}
 
 		return true;

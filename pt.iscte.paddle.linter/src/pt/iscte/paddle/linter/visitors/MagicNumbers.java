@@ -9,6 +9,7 @@ import pt.iscte.paddle.linter.linter.Linter;
 import pt.iscte.paddle.linter.misc.Explanations;
 import pt.iscte.paddle.model.IArrayElementAssignment;
 import pt.iscte.paddle.model.ILiteral;
+import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IType;
 import pt.iscte.paddle.model.IVariableAssignment;
 import pt.iscte.paddle.model.IBlock.IVisitor;
@@ -16,6 +17,11 @@ import pt.iscte.paddle.model.IBlock.IVisitor;
 public class MagicNumbers extends CodeAnalyser implements IVisitor{
 
 	private ArrayList<MagicNumber> mNumbers = new ArrayList<MagicNumber>();
+
+	public MagicNumbers(IProcedure procedure) {
+		super(procedure);
+	}
+
 
 	@Override
 	public void visit(ILiteral exp) {
@@ -31,7 +37,7 @@ public class MagicNumbers extends CodeAnalyser implements IVisitor{
 				}
 
 			if(!exists) {
-				MagicNumber mNumb = new MagicNumber(Explanations.MAGIC_NUMBER, exp);
+				MagicNumber mNumb = new MagicNumber(Explanations.MAGIC_NUMBER, getProcedure(), exp);
 				mNumbers.add(mNumb);
 				issues.add(mNumb);
 			}

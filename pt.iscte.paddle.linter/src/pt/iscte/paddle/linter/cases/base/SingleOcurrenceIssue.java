@@ -2,14 +2,15 @@ package pt.iscte.paddle.linter.cases.base;
 
 import pt.iscte.paddle.linter.misc.Classification;
 import pt.iscte.paddle.linter.misc.IssueType;
+import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IProgramElement;
 
 public class SingleOcurrenceIssue extends QualityIssue {
 	
 	protected IProgramElement occurrence;
 
-	protected SingleOcurrenceIssue(IssueType category, Classification classification, IProgramElement occ) {
-		super(category, classification);
+	protected SingleOcurrenceIssue(IssueType category, Classification classification, IProcedure procedure, IProgramElement occ) {
+		super(category, classification, procedure);
 		this.occurrence = occ;
 	}
 	

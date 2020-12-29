@@ -2,6 +2,7 @@ package pt.iscte.paddle.linter.visitors;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import pt.iscte.paddle.linter.cases.base.CodeAnalyser;
 import pt.iscte.paddle.linter.cases.base.QualityIssue;
 import pt.iscte.paddle.linter.issues.Contradiction;
@@ -16,6 +17,7 @@ import pt.iscte.paddle.model.IControlStructure;
 import pt.iscte.paddle.model.IExpression;
 import pt.iscte.paddle.model.IOperator;
 import pt.iscte.paddle.model.IOperator.OperationType;
+import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IProgramElement;
 import pt.iscte.paddle.model.IStatement;
 import pt.iscte.paddle.model.IType;
@@ -28,11 +30,15 @@ import pt.iscte.paddle.model.cfg.INode;
 
 public class UselessAssignment extends CodeAnalyser implements BadCodeAnalyser {
 
+	public UselessAssignment(IProcedure procedure) {
+		super(procedure);
+	}
+
 	private List<Statement> assignmentStatements = new ArrayList<Statement>();
 
 	public class Statement {
 		private IVariableDeclaration var;
-		private IStatement assignment;
+		private IVariableAssignment assignment;
 		private INode node;
 
 		public Statement(INode node, IVariableAssignment ass) {
@@ -65,7 +71,7 @@ public class UselessAssignment extends CodeAnalyser implements BadCodeAnalyser {
 				for (Statement ass : assignmentStatements) {
 					if(ass.assignment.getParent().isSame(assignment.getParent()) && ass.var.equals(assignment.getTarget())) {
 						if(!cfg.usedOrChangedBetween(ass.node, node, ass.var)) {
-							issues.add(new UselessVariableAssignment(ass.assignment));
+							issues.add(new UselessVariableAssignment(getProcedure(), ass.assignment));
 						}
 						ass.assignment = assignment;
 						ass.node = node;
@@ -75,7 +81,7 @@ public class UselessAssignment extends CodeAnalyser implements BadCodeAnalyser {
 				if(!exists) assignmentStatements.add(new Statement(node, assignment));
 
 				if(assignment.getTarget().toString().equals(assignment.getExpression().toString())) {
-					issues.add(new UselessSelfAssignment(assignment));
+					issues.add(new UselessSelfAssignment(getProcedure(), assignment));
 				}
 					
 
@@ -96,11 +102,11 @@ public class UselessAssignment extends CodeAnalyser implements BadCodeAnalyser {
 			for (IExpression part : guard.getParts()) 
 				guardPartsDeepSearch(cfg, node, part); 
 		else if(guard.isSame(IType.BOOLEAN.literal(true))) {
-			issues.add(new Tautology(Explanations.TAUTOLOGY, guard));
+			issues.add(new Tautology(Explanations.TAUTOLOGY, getProcedure(), guard));
 			return;
 		}
 		else if(guard.isSame(IType.BOOLEAN.literal(false))) {
-			issues.add(new Contradiction(Explanations.CONTRADICTION, guard));
+			issues.add(new Contradiction(Explanations.CONTRADICTION, getProcedure(), guard));
 			return;
 		}
 		else {
@@ -108,11 +114,11 @@ public class UselessAssignment extends CodeAnalyser implements BadCodeAnalyser {
 				if(statement.var.expression().isSame(guard.expression()) 
 						&& !cfg.usedOrChangedBetween(statement.node, node, statement.var)) {
 					if(((IVariableAssignment) statement.node.getElement()).getExpression().isSame(IType.BOOLEAN.literal(true))) {
-						issues.add(new Tautology(Explanations.TAUTOLOGY, guard));
+						issues.add(new Tautology(Explanations.TAUTOLOGY, getProcedure(), guard));
 						return;
 					}
 					else if(((IVariableAssignment) statement.node.getElement()).getExpression().isSame(IType.BOOLEAN.literal(false))) {
-						issues.add(new Contradiction(Explanations.CONTRADICTION, guard));
+						issues.add(new Contradiction(Explanations.CONTRADICTION, getProcedure(), guard));
 						return;
 					}
 				}

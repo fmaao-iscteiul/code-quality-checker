@@ -56,7 +56,7 @@ public class Linter {
 			visitors.forEach(visitor -> {
 				CodeAnalyser analyser;
 				try {
-					analyser = visitor.getConstructor().newInstance();
+					analyser = visitor.getConstructor(IProcedure.class).newInstance(proc);
 					if(IVisitor.class.isAssignableFrom(visitor)) 
 						proc.accept((IVisitor) analyser);
 					else

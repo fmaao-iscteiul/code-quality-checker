@@ -9,11 +9,16 @@ import pt.iscte.paddle.linter.cases.base.QualityIssue;
 import pt.iscte.paddle.linter.issues.Duplicate;
 import pt.iscte.paddle.linter.linter.Linter;
 import pt.iscte.paddle.linter.misc.BadCodeAnalyser;
+import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IProgramElement;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
 import pt.iscte.paddle.model.cfg.INode;
 
 public class DuplicateStatement extends CodeAnalyser implements BadCodeAnalyser {
+
+	public DuplicateStatement(IProcedure procedure) {
+		super(procedure);
+	}
 
 	@Override
 	public void analyse(IControlFlowGraph cfg) {
@@ -26,7 +31,7 @@ public class DuplicateStatement extends CodeAnalyser implements BadCodeAnalyser 
 			if(duplicates.size() > 1) {
 				ArrayList<IProgramElement> occurrences = new ArrayList<IProgramElement>();
 				duplicates.forEach(d -> occurrences.add(d.getElement()));
-				issues.add(new Duplicate(occurrences));
+				issues.add(new Duplicate(getProcedure(), occurrences));
 			}
 		};
 	}

@@ -18,15 +18,19 @@ import pt.iscte.paddle.model.ISelection;
 
 public class Loop extends CodeAnalyser implements IVisitor{
 
+	public Loop(IProcedure procedure) {
+		super(procedure);
+	}
+
 	@Override
 	public boolean visit(ILoop loop) {
 		if(!loop.getGuard().isNull() && loop.getGuard().isSame(BOOLEAN.literal(false))) {
-			issues.add(new Contradiction(Explanations.CONTRADICTION, loop.getGuard()));
+			issues.add(new Contradiction(Explanations.CONTRADICTION, getProcedure(), loop.getGuard()));
 		}
 
 
 		if(loop.isEmpty()) {
-			issues.add(new EmptyLoop(IssueType.EMPTY_LOOP, Explanations.EMPTY_LOOP, loop));	
+			issues.add(new EmptyLoop(IssueType.EMPTY_LOOP, Explanations.EMPTY_LOOP, getProcedure(), loop));	
 		}
 
 
