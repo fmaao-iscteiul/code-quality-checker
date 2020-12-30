@@ -275,10 +275,10 @@ public class QualityIssueHighlight {
 	}
 
 	public void generateHighlight() {
-//		if(issue instanceof SingleOcurrenceIssue)
-//			System.out.println("EL: " + ((SingleOcurrenceIssue) issue).getOccurrence());
-//		else
-//			System.out.println("ELs: " + ((MultipleOccurrencesIssue) issue).getOccurences());
+		if(issue instanceof SingleOcurrenceIssue)
+			System.out.println("EL: " + ((SingleOcurrenceIssue) issue).getOccurrence());
+		else
+			System.out.println("ELs: " + ((MultipleOccurrencesIssue) issue).getOccurences());
 		IWidget w = (issue instanceof SingleOcurrenceIssue) 
 				? serv.getWidget(((SingleOcurrenceIssue) issue).getOccurrence()) 
 						: serv.getWidget(((MultipleOccurrencesIssue) issue).getOccurences().get(0));
