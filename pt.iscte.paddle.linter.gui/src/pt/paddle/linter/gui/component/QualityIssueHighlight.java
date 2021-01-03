@@ -37,6 +37,7 @@ import pt.iscte.paddle.linter.issues.MagicNumber;
 import pt.iscte.paddle.linter.issues.SelectionMisconception;
 import pt.iscte.paddle.linter.issues.Tautology;
 import pt.iscte.paddle.linter.issues.UnreachableCode;
+import pt.iscte.paddle.linter.issues.UselessReturn;
 import pt.iscte.paddle.linter.issues.UselessSelfAssignment;
 import pt.iscte.paddle.linter.issues.UselessVariableAssignment;
 import pt.iscte.paddle.model.IControlStructure;
@@ -263,6 +264,11 @@ public class QualityIssueHighlight {
 					.words("\n - The value was not used before the second assignment, which means that is as no impact. ")
 					.words("\n - Unused values are useless to the program.")
 					.words("\n\n Suggestion: \n\n- Remove this useless assignment because its value isn't used.")
+					.create(comp, SWT.WRAP | SWT.V_SCROLL);
+		}
+		else if(issue instanceof UselessReturn) {
+			link = new HyperlinkedText(null)
+					.words("The marked return statement is considered to be useless.")
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 		}
 

@@ -26,7 +26,10 @@ public class DuplicateStatement extends CodeAnalyser implements BadCodeAnalyser 
 			Set<INode> duplicates = new HashSet<INode>();
 			for(INode incoming: node.getIncomming()) 
 				for(INode n: node.getIncomming()) 
-					if(n != null && incoming != null && !node.isExit() && !n.equals(incoming) && n.getElement().isSame(incoming.getElement())) 
+					if(n != null && incoming != null && node != null 
+					&& !node.isExit() && !n.equals(incoming) 
+					&& n.getElement() != null && incoming.getElement() != null 
+					&& n.getElement().isSame(incoming.getElement())) 
 						duplicates.add(n);
 			if(duplicates.size() > 1) {
 				ArrayList<IProgramElement> occurrences = new ArrayList<IProgramElement>();
