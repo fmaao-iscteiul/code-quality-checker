@@ -1,4 +1,4 @@
 /bin/
 /lib/
 /out/
-/log.txt
+./log.txt

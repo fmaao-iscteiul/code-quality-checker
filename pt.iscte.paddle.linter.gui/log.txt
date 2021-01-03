@@ -1,0 +1,8 @@
+Start: Wed Dec 30 17:03:10 WET 2020
+File: /Users/andresantos/Desktop/Projectos/98839DiogoMuchelas/Parte_1.java
+File: /Users/andresantos/Desktop/Projectos/98839DiogoMuchelas/Poster.java
+File: /Users/andresantos/Desktop/Projectos/98839DiogoMuchelas/ColorImage.java
+File: /Users/andresantos/Desktop/Projectos/98839DiogoMuchelas/Layer.java
+File: /Users/andresantos/Desktop/Projectos/98839DiogoMuchelas/Color.java
+End: Wed Dec 30 17:05:37 WET 2020
+Seconds: 146
