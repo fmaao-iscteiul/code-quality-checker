@@ -286,7 +286,7 @@ public class QualityIssueHighlight {
 		}
 
 		if(link != null) {
-			link.setFont(new Font(Display.getDefault(), "Arial", 16, SWT.NORMAL));
+			link.setFont(new Font(Display.getDefault(), "Arial", 12, SWT.NORMAL));
 			link.requestLayout();
 		}
 
@@ -327,15 +327,15 @@ public class QualityIssueHighlight {
 					decorations.add(d2);
 				}
 				else if(issue instanceof BooleanReturnCheck) {
-					ICodeDecoration<Text> t = w.addNote("Shouldn't you \n return the variable?", ICodeDecoration.Location.RIGHT);
+					ICodeDecoration<Text> t = w.addNote("Shouldn't you\n return the variable?", ICodeDecoration.Location.RIGHT);
 					decorations.add(t);
 				} 
 				else if(issue instanceof Contradiction) {
-					ICodeDecoration<Text> d2 = w.addNote("This condition will \n always be false!", ICodeDecoration.Location.RIGHT);
+					ICodeDecoration<Text> d2 = w.addNote("This condition will\n always be false!", ICodeDecoration.Location.RIGHT);
 					decorations.add(d2);
 				}
 				else if(issue instanceof Duplicate) {
-					ICodeDecoration<Text> t = w.addNote("Couldn't this be \n anywhere else?", ICodeDecoration.Location.RIGHT);
+					ICodeDecoration<Text> t = w.addNote("Couldn't this be\n anywhere else?", ICodeDecoration.Location.RIGHT);
 					decorations.add(t);
 				}
 				else if(issue instanceof DuplicateGuard) {
@@ -351,7 +351,7 @@ public class QualityIssueHighlight {
 					decorations.add(d2);
 				}
 				else if(issue instanceof FaultyProcedureCall) {
-					ICodeDecoration<Text> t = w.addNote("Doesn't this return \n something?", ICodeDecoration.Location.RIGHT);
+					ICodeDecoration<Text> t = w.addNote("Doesn't this function\ncall return something?", ICodeDecoration.Location.RIGHT);
 					decorations.add(t);
 				}
 				else if(issue instanceof MagicNumber) {

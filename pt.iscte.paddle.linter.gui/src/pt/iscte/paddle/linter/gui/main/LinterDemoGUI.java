@@ -33,6 +33,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.mozilla.universalchardet.UniversalDetector;
@@ -49,6 +50,7 @@ public class LinterDemoGUI {
 
 	private static Shell shell;
 	private static QualityIssueHighlight activeQualityIssue;
+	private static Link explanation;
 
 	public static void main(String[] args)
 			throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException {
@@ -60,24 +62,35 @@ public class LinterDemoGUI {
 		shell = new Shell(display);
 		shell.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
 
-		Font font = new Font(display, new FontData("Courier", 16, SWT.NORMAL));
+		Font font = new Font(display, new FontData("Arial", 12, SWT.NORMAL));
 
 		FillLayout layout = new FillLayout();
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		shell.setLayout(layout);
 
-		SashForm sash = new SashForm(shell, SWT.NONE);
+		SashForm sash = new SashForm(shell, SWT.VERTICAL);
 
-		Composite rightComp = new Composite(sash, SWT.NONE);
+		SashForm topComp = new SashForm(sash, SWT.NONE);
 
 		RowLayout rightLayout = new RowLayout(SWT.VERTICAL);
 		rightLayout.marginHeight = 20;
 		rightLayout.marginWidth = 20;
 		rightLayout.spacing = 5;
-		rightComp.setLayout(new GridLayout(1, false));
+		topComp.setLayout(new GridLayout(3, false));
 
-		ScrolledComposite scroll = new ScrolledComposite(sash, SWT.H_SCROLL | SWT.V_SCROLL);
+//		new Label(topComp, SWT.NONE).setText("Files:");
+//		new Label(topComp, SWT.NONE).setText("Issues:");
+//		new Label(topComp, SWT.NONE).setText("Explanation (select Issue):");
+		
+		
+		SashForm sashTemp = new SashForm(sash, SWT.NONE);
+		
+
+		Text srcText = new Text(sashTemp, SWT.MULTI | SWT.H_SCROLL);
+		srcText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		
+		ScrolledComposite scroll = new ScrolledComposite(sashTemp, SWT.H_SCROLL | SWT.V_SCROLL);
 		scroll.setLayout(new GridLayout(1, false));
 		scroll.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
@@ -88,13 +101,14 @@ public class LinterDemoGUI {
 		scroll.setMinSize(100, 100);
 		scroll.setExpandHorizontal(true);
 		scroll.setExpandVertical(true);
+		scroll.setAlwaysShowScrollBars(true);
 //		scroll.setShowFocusedControl(true);
 
 		area.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent e) {
 				Point size = area.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-				size.x += 100;
-				size.y += 100;
+//				size.x += 100;
+//				size.y += 100;
 				scroll.setMinSize(size);
 				scroll.requestLayout();
 				if (activeQualityIssue != null)
@@ -102,23 +116,22 @@ public class LinterDemoGUI {
 			}
 		});
 
-		area.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
+		area.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
+		area.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
 
-		sash.setWeights(new int[] { 1, 3 });
+		sash.setWeights(new int[] { 1, 5 });
 
 		Label label = new Label(area, SWT.NONE);
 		label.setFont(font);
 		label.setText("Please select a file...");
 
-		Text srcText = new Text(rightComp, SWT.MULTI | SWT.H_SCROLL);
-		srcText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 //		srcText.setEnabled(false);
-		
+
 //		Text paddleText = new Text(rightComp, SWT.MULTI | SWT.H_SCROLL);
 //		paddleText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
 		
-		new Label(rightComp, SWT.NONE).setText("Files:");
-		final List moduleList = new List(rightComp, SWT.BORDER | SWT.V_SCROLL);
+		final List moduleList = new List(topComp, SWT.BORDER | SWT.V_SCROLL);
 		moduleList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
 		Map<String, IModule> map = new HashMap<>();
@@ -127,13 +140,12 @@ public class LinterDemoGUI {
 
 		if (args.length == 0) {
 			DirectoryDialog dialog = new DirectoryDialog(shell);
-			// dialog.setFilterPath("c:\\"); // Windows specific
 			args = new String[] { dialog.open() };
 			// System.out.println("RESULT=" + dialog.open());
 		}
 
 		shell.setText("Sprinter - " + args[0]);
-		
+
 		File src = new File(args[0]);
 		File[] files;
 		if (src.isFile())
@@ -141,7 +153,7 @@ public class LinterDemoGUI {
 		else
 			files = src.listFiles(f -> f.getName().endsWith(".java") && !f.getName().equals("ImageUtil.java"));
 
-		PrintWriter log = new PrintWriter(new File("log.txt"));
+		PrintWriter log = new PrintWriter(new File(src.getParentFile(), "log.txt"));
 		long time = System.currentTimeMillis();
 
 		log.println("Start: " + new Date());
@@ -152,32 +164,44 @@ public class LinterDemoGUI {
 		Linter linter = new Linter();
 
 		IModule m = IModule.create(args[0]);
-		
-		Java2Paddle parser = new Java2Paddle(src, e->e.getName().equals("ImageUtil.java"), m);
+
+		Java2Paddle parser = new Java2Paddle(src, e -> e.getName().equals("ImageUtil.java"), m);
 		parser.parse();
-		
+
 		java.util.List<QualityIssue> issues = linter.analyse(m);
 		for (File f : files) {
-			
+
 			// try {
 //			parser.parse();
-			java.util.List<QualityIssue> list = issues.stream().filter(i -> i.getProcedure().getNamespace().equals(f.getName().substring(0, f.getName().indexOf('.')))).collect(Collectors.toList());
-			if(!list.isEmpty()) {
-			moduleList.add(f.getName());
-			map.put(f.getName(), m);
-			mapFile.put(f.getName(), f);
-			issueTable.put(f.getName(), list);
+			java.util.List<QualityIssue> list = issues.stream().filter(
+					i -> i.getProcedure().getNamespace().equals(f.getName().substring(0, f.getName().indexOf('.'))))
+					.collect(Collectors.toList());
+			if (!list.isEmpty()) {
+				moduleList.add(f.getName());
+				map.put(f.getName(), m);
+				mapFile.put(f.getName(), f);
+				issueTable.put(f.getName(), list);
 			}
 //			} catch (Exception e) {
 //				System.err.println(f.getName() + " not included");
 //			}
 		}
-		new Label(rightComp, SWT.NONE).setText("Issues:");
-		final List caseList = new List(rightComp, SWT.BORDER | SWT.V_SCROLL);
+		final List caseList = new List(topComp, SWT.BORDER | SWT.V_SCROLL);
 		caseList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+
+		ScrolledComposite scrollExp = new ScrolledComposite(topComp, SWT.H_SCROLL | SWT.V_SCROLL);
+		FillLayout l = new FillLayout();
+		l.marginHeight = 20;
+		l.marginWidth = 20;
 		
-		new Label(rightComp, SWT.NONE).setText("Explanation (select Issue):");
+		scrollExp.setLayout(l);
+		scrollExp.setMinSize(100, 100);
+		scrollExp.setExpandHorizontal(true);
+		scrollExp.setExpandVertical(true);
+		explanation = new Link(scrollExp, SWT.NONE);
 		
+		
+
 		ArrayList<QualityIssueHighlight> highlights = new ArrayList<QualityIssueHighlight>();
 
 		moduleList.addSelectionListener(new SelectionAdapter() {
@@ -190,87 +214,98 @@ public class LinterDemoGUI {
 
 				activeQualityIssue = null;
 				index = moduleList.getSelectionIndex();
+				explanation.setText("");
 				caseList.removeAll();
 				highlights.forEach(i -> i.remove());
 				highlights.clear();
-//				rightComp.setEnabled(false);
-
+				topComp.setEnabled(false);
+				area.getChildren()[0].dispose();
+				
 				String fileName = moduleList.getItem(moduleList.getSelectionIndex());
 				String namespace = fileName.substring(0, fileName.indexOf('.'));
 				IModule m = map.get(fileName);
 				IClassWidget widget = serv.createClassWidget(area, m, namespace);
-				widget.getControl().setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
+//				widget.getControl().setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+//				widget.getControl().setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
 				widget.setReadOnly(true);
 
-//				Display.getDefault().asyncExec(() -> {
-					java.util.List<QualityIssue> issues = issueTable.get(fileName);//linter.analyse(map.get(fileName));
-					String[] cases = new String[issues.size()];
-					int i = 0;
-					for (QualityIssue qIssue : issues) {
-						cases[i++] = qIssue.getIssueTitle(); // CaseNames.getCaseName(qIssue.getIssueType());
-						highlights.add(new QualityIssueHighlight(widget, rightComp, qIssue));
-					}
-					caseList.setItems(cases);
+				java.util.List<QualityIssue> issues = issueTable.get(fileName);// linter.analyse(map.get(fileName));
+				String[] cases = new String[issues.size()];
+				int i = 0;
+				for (QualityIssue qIssue : issues) {
+					cases[i++] = qIssue.getIssueTitle(); // CaseNames.getCaseName(qIssue.getIssueType());
+					highlights.add(new QualityIssueHighlight(widget, scrollExp, qIssue));
+				}
+				caseList.setItems(cases);
 
-					try {
-						File file = mapFile.get(fileName);
-						String charset = UniversalDetector.detectCharset(file);
-						if(charset == null || !Charset.isSupported(charset))
-							charset = "UTF-8";
-						Scanner scanner = new Scanner(file, charset);
-						String src = "";
-						while (scanner.hasNextLine())
-							src += scanner.nextLine() + "\n";
-						scanner.close();
-						srcText.setText(src);
-						srcText.requestLayout();
+				try {
+					File file = mapFile.get(fileName);
+					String charset = UniversalDetector.detectCharset(file);
+					if (charset == null || !Charset.isSupported(charset))
+						charset = "UTF-8";
+					Scanner scanner = new Scanner(file, charset);
+					String src = "";
+					while (scanner.hasNextLine())
+						src += scanner.nextLine() + "\n";
+					scanner.close();
+					srcText.setText(src);
+					srcText.requestLayout();
 //						paddleText.setText(m.toString());
-					} catch (FileNotFoundException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
+				} catch (FileNotFoundException e1) {
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
 
-					area.getChildren()[0].dispose();
-					area.requestLayout();
-					caseList.pack();
-					caseList.requestLayout();
-//					rightComp.setEnabled(true);
+				
+				area.requestLayout();
+				caseList.requestLayout();
+				topComp.setEnabled(true);
 
-//				});
-
+				Point size = area.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+//				size.x += 100;
+//				size.y += 100;
+				scroll.setMinSize(size);
+				scroll.requestLayout();
+				scroll.setOrigin(0, 0);
 			}
 		});
 
 		caseList.addSelectionListener(new SelectionAdapter() {
-			Link explanation;
-
+			
 			public void widgetSelected(SelectionEvent e) {
+				explanation.dispose();
+				
 				if (caseList.getSelectionIndex() == -1) {
 					return;
 				}
-				if (explanation != null)
-					explanation.dispose();
 
 				if (activeQualityIssue != null)
 					activeQualityIssue.remove();
-
+				
 				activeQualityIssue = highlights.get(caseList.getSelectionIndex());
 
-//				highlights.forEach(i -> i.hide());	
 				explanation = activeQualityIssue.generateExplanation();
+				scrollExp.setContent(explanation);
+				Point size = explanation.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+				scrollExp.setMinSize(size);
+				scrollExp.requestLayout();
+				
 				activeQualityIssue.generateDecorations();
-				System.out.println("LOC " + activeQualityIssue.getYLocation());
-				int h = scroll.getClientArea().height;
-				System.out.println(scroll.getOrigin() + " " + activeQualityIssue.getYLocation());
-				if (activeQualityIssue.getYLocation() < scroll.getOrigin().y + h
-						|| activeQualityIssue.getYLocation() > scroll.getOrigin().y + h)
-					scroll.setOrigin(0, activeQualityIssue.getYLocation() - 100);
+				int decY = activeQualityIssue.getYLocation();
+				int sY = scroll.toDisplay(0,0).y;
+				int sYmax = scroll.toDisplay(0,scroll.getClientArea().height).y;
+				
+				if( decY < sY)
+					scroll.setOrigin(0, Math.max(0, scroll.getOrigin().y - Math.abs(scroll.getOrigin().y - decY)) - 50);
+				else if(decY > sYmax)
+					scroll.setOrigin(0, scroll.getOrigin().y + Math.abs(scroll.getOrigin().y - decY));
+				
 				activeQualityIssue.show();
 			}
 		});
+		
+		topComp.setWeights(new int[] { 1, 2, 5 });
 
 		scroll.getVerticalBar().addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -297,7 +332,7 @@ public class LinterDemoGUI {
 		log.println("End: " + new Date());
 		log.println("Seconds: " + (System.currentTimeMillis() - time) / 1000);
 		log.close();
-
+		
 		display.dispose();
 //		Shell over = new Shell(display, SWT.APPLICATION_MODAL);
 //		over.setText("time");
