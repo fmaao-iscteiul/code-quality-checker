@@ -11,7 +11,7 @@ import pt.iscte.paddle.model.IProgramElement;
 public class DuplicateGuard extends MultipleOccurrencesIssue {
 	
 	public DuplicateGuard(IProcedure procedure, List<IProgramElement> occurrence) {
-		super(IssueType.DUPLICATE_SELECTION_GUARD, Classification.AVERAGE, procedure, occurrence);
+		super(IssueType.REDUNDANT_GUARD, Classification.AVERAGE, procedure, occurrence);
 	}
 
 }

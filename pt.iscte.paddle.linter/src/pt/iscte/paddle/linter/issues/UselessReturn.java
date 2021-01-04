@@ -5,11 +5,11 @@ import pt.iscte.paddle.linter.misc.Classification;
 import pt.iscte.paddle.linter.misc.IssueType;
 import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IProgramElement;
+import pt.iscte.paddle.model.IReturn;
 
 public class UselessReturn extends SingleOcurrenceIssue{
 
-	public UselessReturn(IProcedure procedure,
-			IProgramElement occ) {
+	public UselessReturn(IProcedure procedure, IReturn occ) {
 		super(IssueType.USELESS_RETURN, Classification.LIGHT, procedure, occ);
 	}
 

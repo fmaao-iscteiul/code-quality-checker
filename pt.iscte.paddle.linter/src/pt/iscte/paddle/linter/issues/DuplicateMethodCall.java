@@ -11,7 +11,7 @@ public class DuplicateMethodCall extends MultipleOccurrencesIssue {
 	
 
 	public DuplicateMethodCall(IProcedure procedure, List<IProgramElement> duplicatesList) {	
-		super(IssueType.DUPLICATE_SELECTION_GUARD, Classification.SERIOUS, procedure, duplicatesList);
+		super(IssueType.REDUNDANT_CALL, Classification.SERIOUS, procedure, duplicatesList);
 	}
 
 }

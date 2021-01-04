@@ -9,7 +9,7 @@ import pt.iscte.paddle.model.IProcedureCall;
 public class FaultyProcedureCall extends SingleOcurrenceIssue {
 
 	public FaultyProcedureCall(IProcedure procedure, IProcedureCall element) {
-		super(IssueType.FAULTY_METHOD_CALL, Classification.AVERAGE, procedure, element);
+		super(IssueType.USELESS_CALL, Classification.AVERAGE, procedure, element);
 	}
 	
 	@Override

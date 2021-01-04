@@ -4,31 +4,25 @@ public class CaseNames {
 
 	public static String getCaseName(IssueType category) {
 		switch (category) {
-		case DUPLICATE_CODE:
+		case REDUNDANT_BRANCHES:
 			return "Duplicated statement";
-		case DUPLICATE_PROCEDURE_CALL:
+		case REDUNDANT_CALL:
 			return "Duplicated method call";
-		case DUPLICATE_SELECTION_GUARD:
+		case REDUNDANT_GUARD:
 			return "Duplicated condition";
-		case EMPTY_ALTERNATIVE:
-			return "Empty else block";
-		case EMPTY_LOOP:
-			return "Empty loop block";
-		case EMPTY_SELECTION:
+		case EMPTY_BLOCK:
 			return "Empty if block";
-		case FAULTY_ASSIGNMENT:
+		case USELESS_SELFASSIGN:
 			return "Useless code";
-		case FAULTY_BOOLEAN_CHECK:
+		case USELESS_COMPARISON:
 			return "Boolean condition verbose";
-		case FAULTY_METHOD_CALL:
+		case USELESS_CALL:
 			return "Method call issue";
-		case FAULTY_RETURN_BOOLEAN_CHECK:
+		case USELESS_BOOLEAN_MAP:
 			return "Unnecessary boolean condition";
 		case MAGIC_NUMBER:
 			return "Magic number";
-		case NESTED_CODE:
-			return "Nested code";
-		case SELECTION_MISCONCEPTION:
+		case USELESS_BRANCH:
 			return "If condition misconception";
 		case UNREACHABLE_CODE:
 			return "Unreachable code";
@@ -36,7 +30,7 @@ public class CaseNames {
 			return "Tautology";
 		case CONTRADICTION:
 			return "Dead Code";
-		case USELESS_CODE:
+		case USELESS_ASSIGN:
 			return "Unused assignment value";
 		default:
 			return category.toString();

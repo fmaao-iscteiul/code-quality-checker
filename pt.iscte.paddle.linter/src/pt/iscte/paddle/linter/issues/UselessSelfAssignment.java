@@ -9,7 +9,7 @@ import pt.iscte.paddle.model.IProgramElement;
 public class UselessSelfAssignment extends SingleOcurrenceIssue {
 
 	public UselessSelfAssignment(IProcedure procedure, IProgramElement occurrence) {
-		super(IssueType.FAULTY_ASSIGNMENT, Classification.AVERAGE, procedure, occurrence);
+		super(IssueType.USELESS_SELFASSIGN, Classification.AVERAGE, procedure, occurrence);
 	}
 
 }

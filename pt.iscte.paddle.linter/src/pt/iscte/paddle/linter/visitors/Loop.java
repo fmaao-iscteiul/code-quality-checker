@@ -2,12 +2,9 @@ package pt.iscte.paddle.linter.visitors;
 import static pt.iscte.paddle.model.IType.BOOLEAN;
 
 import pt.iscte.paddle.linter.cases.base.CodeAnalyser;
-import pt.iscte.paddle.linter.cases.base.QualityIssue;
 import pt.iscte.paddle.linter.issues.Contradiction;
-import pt.iscte.paddle.linter.issues.EmptyLoop;
-import pt.iscte.paddle.linter.linter.Linter;
+import pt.iscte.paddle.linter.issues.EmptyBlock;
 import pt.iscte.paddle.linter.misc.Explanations;
-import pt.iscte.paddle.linter.misc.IssueType;
 import pt.iscte.paddle.model.IBlock.IVisitor;
 import pt.iscte.paddle.model.IBlockElement;
 import pt.iscte.paddle.model.IExpression;
@@ -30,7 +27,7 @@ public class Loop extends CodeAnalyser implements IVisitor{
 
 
 		if(loop.isEmpty()) {
-			issues.add(new EmptyLoop(IssueType.EMPTY_LOOP, Explanations.EMPTY_LOOP, getProcedure(), loop));	
+			issues.add(new EmptyBlock(Explanations.EMPTY_LOOP, getProcedure(), loop.getBlock()));	
 		}
 
 

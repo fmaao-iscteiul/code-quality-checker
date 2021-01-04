@@ -6,9 +6,10 @@ import pt.iscte.paddle.linter.misc.IssueType;
 import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IProgramElement;
 
-public class EmptySelection extends SingleOcurrenceIssue {
+public class IfEmptyElse extends SingleOcurrenceIssue {
 
-	public EmptySelection(String explanation, IProcedure procedure, IProgramElement branch) {
-		super(IssueType.EMPTY_SELECTION, Classification.SERIOUS, procedure, branch);
+	public IfEmptyElse(String explanation, IProcedure procedure, IProgramElement element) {
+		super(IssueType.USELESS_BRANCH, Classification.AVERAGE, procedure, element);
 	}
+
 }

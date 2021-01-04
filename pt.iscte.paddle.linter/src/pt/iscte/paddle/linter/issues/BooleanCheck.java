@@ -10,7 +10,7 @@ public class BooleanCheck extends SingleOcurrenceIssue {
 
 
 	public BooleanCheck(IProcedure procedure, IExpression selectionGuard) {
-		super(IssueType.FAULTY_BOOLEAN_CHECK, Classification.LIGHT, procedure, selectionGuard);
+		super(IssueType.USELESS_COMPARISON, Classification.LIGHT, procedure, selectionGuard);
 	}
 
 }

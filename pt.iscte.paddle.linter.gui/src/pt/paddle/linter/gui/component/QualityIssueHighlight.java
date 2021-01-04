@@ -30,20 +30,18 @@ import pt.iscte.paddle.linter.issues.Contradiction;
 import pt.iscte.paddle.linter.issues.Duplicate;
 import pt.iscte.paddle.linter.issues.DuplicateGuard;
 import pt.iscte.paddle.linter.issues.DuplicateMethodCall;
-import pt.iscte.paddle.linter.issues.EmptyLoop;
-import pt.iscte.paddle.linter.issues.EmptySelection;
+import pt.iscte.paddle.linter.issues.EmptyBlock;
 import pt.iscte.paddle.linter.issues.FaultyProcedureCall;
+import pt.iscte.paddle.linter.issues.IfEmptyElse;
 import pt.iscte.paddle.linter.issues.MagicNumber;
 import pt.iscte.paddle.linter.issues.NegativeBooleanCheck;
 import pt.iscte.paddle.linter.issues.PositiveBooleanCheck;
-import pt.iscte.paddle.linter.issues.SelectionMisconception;
 import pt.iscte.paddle.linter.issues.Tautology;
 import pt.iscte.paddle.linter.issues.UnreachableCode;
 import pt.iscte.paddle.linter.issues.UselessReturn;
 import pt.iscte.paddle.linter.issues.UselessSelfAssignment;
 import pt.iscte.paddle.linter.issues.UselessVariableAssignment;
 import pt.iscte.paddle.model.IControlStructure;
-import pt.iscte.paddle.model.ILoop;
 import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IProcedureCall;
 import pt.iscte.paddle.model.IProgramElement;
@@ -159,18 +157,18 @@ public class QualityIssueHighlight {
 					.words("\n\nSuggestion: \n\nSince both calls result in the same, you should remove one of them.")
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 		}
-		else if(issue instanceof EmptyLoop) {
+//		else if(issue instanceof EmptyLoop) {
+//			link = new HyperlinkedText(null)
+//					.words("The highlighted loop block has no actions inside. \n ")
+//					.words("\n - If the condition ").link(((ILoop) ((SingleOcurrenceIssue) issue).getOccurrence()).getGuard().toString(), ()->{})
+//					.words(" is true, nothing but empty iterations will happen.")
+//					.words("\n - Empty code blocks don't add actions to the program execution.")
+//					.words("\n\nSuggestion: \n\n You should avoid empty blocks by adding some logic, or removing them.")
+//					.create(comp, SWT.WRAP | SWT.V_SCROLL);
+//		}
+		else if(issue instanceof EmptyBlock) {
 			link = new HyperlinkedText(null)
-					.words("The highlighted loop block has no actions inside. \n ")
-					.words("\n - If the condition ").link(((ILoop) ((SingleOcurrenceIssue) issue).getOccurrence()).getGuard().toString(), ()->{})
-					.words(" is true, nothing but empty iterations will happen.")
-					.words("\n - Empty code blocks don't add actions to the program execution.")
-					.words("\n\nSuggestion: \n\n You should avoid empty blocks by adding some logic, or removing them.")
-					.create(comp, SWT.WRAP | SWT.V_SCROLL);
-		}
-		else if(issue instanceof EmptySelection) {
-			link = new HyperlinkedText(null)
-					.words("The highlighted if block has no actions inside. \n ")
+					.words("The highlighted block has no actions inside. \n ")
 					.words("\n - If the condition ").link(((ISelection) ((SingleOcurrenceIssue) issue).getOccurrence()).getGuard().toString(), ()->{})
 					.words(" is true, nothing will happen.")
 					.words("\n - Empty code blocks don't add actions to the program execution.")
@@ -216,7 +214,7 @@ public class QualityIssueHighlight {
 					.line("\t- Try replacing this the number " + ((MagicNumber) issue).getOccurences().get(0) + " with a well named variable.")
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 		}
-		else if(issue instanceof SelectionMisconception) {
+		else if(issue instanceof IfEmptyElse) {
 			link = new HyperlinkedText(null)
 					.words("The code was written in the else block and the if section was left empty.")
 					.words("\n\n - This means that only the else block contains code that may be executed.")
@@ -342,11 +340,11 @@ public class QualityIssueHighlight {
 					ICodeDecoration<Text> d2 = w.addNote("Unnecessary double-check?", ICodeDecoration.Location.RIGHT);
 					decorations.add(d2);
 				}
-				else if(issue instanceof EmptyLoop) {
-					ICodeDecoration<Text> d2 = w.addNote("Why is this loop empty?", ICodeDecoration.Location.RIGHT);
-					decorations.add(d2);
-				}
-				else if(issue instanceof EmptySelection) {
+//				else if(issue instanceof EmptyLoop) {
+//					ICodeDecoration<Text> d2 = w.addNote("Why is this loop empty?", ICodeDecoration.Location.RIGHT);
+//					decorations.add(d2);
+//				}
+				else if(issue instanceof EmptyBlock) {
 					ICodeDecoration<Text> d2 = w.addNote("Why is it empty?", ICodeDecoration.Location.RIGHT);
 					decorations.add(d2);
 				}
@@ -364,7 +362,7 @@ public class QualityIssueHighlight {
 						}
 					}
 				}
-				else if(issue instanceof SelectionMisconception) {
+				else if(issue instanceof IfEmptyElse) {
 					ICodeDecoration<Text> d2 = w.addNote("Couln't you use \n the '!' operator?", ICodeDecoration.Location.RIGHT);
 					decorations.add(d2);
 				}

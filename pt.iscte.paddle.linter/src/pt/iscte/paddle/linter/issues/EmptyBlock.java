@@ -6,10 +6,9 @@ import pt.iscte.paddle.linter.misc.IssueType;
 import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IProgramElement;
 
-public class SelectionMisconception extends SingleOcurrenceIssue {
+public class EmptyBlock extends SingleOcurrenceIssue {
 
-	public SelectionMisconception(String explanation, IProcedure procedure, IProgramElement element) {
-		super(IssueType.SELECTION_MISCONCEPTION, Classification.AVERAGE, procedure, element);
+	public EmptyBlock(String explanation, IProcedure procedure, IProgramElement branch) {
+		super(IssueType.EMPTY_BLOCK, Classification.SERIOUS, procedure, branch);
 	}
-
 }

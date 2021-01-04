@@ -9,6 +9,6 @@ import pt.iscte.paddle.model.IProgramElement;
 public class BooleanReturnCheck extends SingleOcurrenceIssue {
 
 	public BooleanReturnCheck(IProcedure procedure, IProgramElement selection) {
-		super(IssueType.FAULTY_RETURN_BOOLEAN_CHECK, Classification.AVERAGE, procedure, selection);
+		super(IssueType.USELESS_BOOLEAN_MAP, Classification.AVERAGE, procedure, selection);
 	}
 }

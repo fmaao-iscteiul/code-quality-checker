@@ -42,6 +42,7 @@ import pt.iscte.javardise.javaeditor.api.IClassWidget;
 import pt.iscte.javardise.javaeditor.api.IJavardiseService;
 import pt.iscte.paddle.linter.cases.base.QualityIssue;
 import pt.iscte.paddle.linter.linter.Linter;
+import pt.iscte.paddle.linter.misc.IssueType;
 import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.javaparser.Java2Paddle;
 import pt.paddle.linter.gui.component.QualityIssueHighlight;
@@ -79,10 +80,6 @@ public class LinterDemoGUI {
 		rightLayout.spacing = 5;
 		topComp.setLayout(new GridLayout(3, false));
 
-//		new Label(topComp, SWT.NONE).setText("Files:");
-//		new Label(topComp, SWT.NONE).setText("Issues:");
-//		new Label(topComp, SWT.NONE).setText("Explanation (select Issue):");
-		
 		
 		SashForm sashTemp = new SashForm(sash, SWT.NONE);
 		
@@ -102,7 +99,6 @@ public class LinterDemoGUI {
 		scroll.setExpandHorizontal(true);
 		scroll.setExpandVertical(true);
 		scroll.setAlwaysShowScrollBars(true);
-//		scroll.setShowFocusedControl(true);
 
 		area.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent e) {
@@ -125,7 +121,6 @@ public class LinterDemoGUI {
 		label.setFont(font);
 		label.setText("Please select a file...");
 
-//		srcText.setEnabled(false);
 
 //		Text paddleText = new Text(rightComp, SWT.MULTI | SWT.H_SCROLL);
 //		paddleText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -141,10 +136,9 @@ public class LinterDemoGUI {
 		if (args.length == 0) {
 			DirectoryDialog dialog = new DirectoryDialog(shell);
 			args = new String[] { dialog.open() };
-			// System.out.println("RESULT=" + dialog.open());
 		}
 
-		shell.setText("Sprinter - " + args[0]);
+		
 
 		File src = new File(args[0]);
 		File[] files;
@@ -169,6 +163,17 @@ public class LinterDemoGUI {
 		parser.parse();
 
 		java.util.List<QualityIssue> issues = linter.analyse(m);
+		
+		// martelo para excluir metodos static void teste() 
+		issues.removeIf(q -> 
+				!q.getProcedure().is("INSTANCE") && 
+				q.getProcedure().getReturnType().isVoid() &&
+				q.getProcedure().getParameters().isEmpty());
+//				q.getIssueType() == IssueType.USELESS_RETURN &&
+//				!q.getProcedure().is("INSTANCE") && 
+//				q.getProcedure().getParameters().isEmpty());
+
+		shell.setText("Sprinter - " + args[0] + " " + issues.size());
 		for (File f : files) {
 
 			// try {
@@ -274,7 +279,7 @@ public class LinterDemoGUI {
 		caseList.addSelectionListener(new SelectionAdapter() {
 			
 			public void widgetSelected(SelectionEvent e) {
-				explanation.dispose();
+				explanation.setText("");
 				
 				if (caseList.getSelectionIndex() == -1) {
 					return;
@@ -285,6 +290,7 @@ public class LinterDemoGUI {
 				
 				activeQualityIssue = highlights.get(caseList.getSelectionIndex());
 
+				explanation.dispose();
 				explanation = activeQualityIssue.generateExplanation();
 				scrollExp.setContent(explanation);
 				Point size = explanation.computeSize(SWT.DEFAULT, SWT.DEFAULT);

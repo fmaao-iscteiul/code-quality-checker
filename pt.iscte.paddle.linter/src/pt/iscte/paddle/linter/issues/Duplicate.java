@@ -10,7 +10,7 @@ import pt.iscte.paddle.model.IProgramElement;
 public class Duplicate extends MultipleOccurrencesIssue {
 
 	public Duplicate(IProcedure procedure, List<IProgramElement> occurrences) {
-		super(IssueType.DUPLICATE_CODE, Classification.SERIOUS, procedure, occurrences);
+		super(IssueType.REDUNDANT_BRANCHES, Classification.SERIOUS, procedure, occurrences);
 	}
 
 	public List<IProgramElement> getDuplicates() {

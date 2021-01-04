@@ -9,7 +9,7 @@ import pt.iscte.paddle.model.IVariableAssignment;
 public class UselessVariableAssignment extends SingleOcurrenceIssue {
 
 	public UselessVariableAssignment(IProcedure procedure, IVariableAssignment occurrence) {
-		super(IssueType.USELESS_CODE, Classification.SERIOUS, procedure, occurrence);
+		super(IssueType.USELESS_ASSIGN, Classification.SERIOUS, procedure, occurrence);
 	}
 
 }
