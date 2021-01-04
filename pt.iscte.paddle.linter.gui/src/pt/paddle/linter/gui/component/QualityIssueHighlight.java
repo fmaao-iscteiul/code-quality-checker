@@ -34,6 +34,8 @@ import pt.iscte.paddle.linter.issues.EmptyLoop;
 import pt.iscte.paddle.linter.issues.EmptySelection;
 import pt.iscte.paddle.linter.issues.FaultyProcedureCall;
 import pt.iscte.paddle.linter.issues.MagicNumber;
+import pt.iscte.paddle.linter.issues.NegativeBooleanCheck;
+import pt.iscte.paddle.linter.issues.PositiveBooleanCheck;
 import pt.iscte.paddle.linter.issues.SelectionMisconception;
 import pt.iscte.paddle.linter.issues.Tautology;
 import pt.iscte.paddle.linter.issues.UnreachableCode;
@@ -57,8 +59,8 @@ public class QualityIssueHighlight {
 	private QualityIssue issue;
 
 	IJavardiseService serv = ServiceLoader.load(IJavardiseService.class).findFirst().get();
-	
-	
+
+
 	public QualityIssueHighlight(IClassWidget widget, Composite comp, QualityIssue issue) {
 		this.widget = widget;
 		this.comp = comp;
@@ -81,18 +83,29 @@ public class QualityIssueHighlight {
 	}
 
 	public Link generateExplanation() {
-		
+
 		Link link = null;
-		if(issue instanceof BooleanCheck) {
+		if(issue instanceof NegativeBooleanCheck) {
 			link = new HyperlinkedText(null)
 					.words("The condition ")
-					.link(((BooleanCheck) issue).getOccurrence().toString(), () -> {}) 
+					.link(((NegativeBooleanCheck) issue).getOccurrence().toString(), () -> {}) 
 					.words(" could make use of the '!' operator. \n")
 					.words("\n - It represents the comparision between a boolean variable and one of it's binary possible values (true or false).")
 					.words("\n - It is more of a styling mather, but this can negatively affect the code readibility, due to the condition's length.")
 					.words("\n\nSuggestion:\nTry using the negation (!) operator in order to improve readibility.")
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
-		} else if(issue instanceof BooleanReturnCheck) {
+		}
+		if(issue instanceof PositiveBooleanCheck) {
+			link = new HyperlinkedText(null)
+					.words("The condition ")
+					.link(((PositiveBooleanCheck) issue).getOccurrence().toString(), () -> {}) 
+					.words(" could be written in a shorter way. \n")
+					.words("\n - It represents the comparision between a boolean variable and one of it's binary possible values (true or false).")
+					.words("\n - It is more of a styling mather, but this can negatively affect the code readibility, due to the condition's length.")
+					.words("\n\nSuggestion:\nTry removing a part of this condition in order to improve readibility.")
+					.create(comp, SWT.WRAP | SWT.V_SCROLL);
+		}
+		else if(issue instanceof BooleanReturnCheck) {
 			link = new HyperlinkedText(null)
 					.words("The ").link("if( "+((ISelection) ((BooleanReturnCheck) issue).getOccurrence()).getGuard().toString() + " )", ()->{}).words(" condition is unnecessary!\n ")
 					.words("\n - There is no need to check the value of a boolean variable before returning true or false.")
@@ -276,7 +289,7 @@ public class QualityIssueHighlight {
 			link.setFont(new Font(Display.getDefault(), "Arial", 12, SWT.NORMAL));
 			link.requestLayout();
 		}
-		
+
 		return link;
 	}
 
@@ -290,20 +303,27 @@ public class QualityIssueHighlight {
 						: serv.getWidget(((MultipleOccurrencesIssue) issue).getOccurences().get(0));
 
 				if(w == null) return;
-				if(issue instanceof MultipleOccurrencesIssue) {
+				if(issue instanceof MagicNumber) {
+					IProgramElement occ = (IProgramElement) ((MultipleOccurrencesIssue) issue).getOccurences().get(0);
+					w = serv.getWidget(occ);
+					ICodeDecoration<Canvas> d = w.addMark(getColor());
+					decorations.add(d);
+				}
+				else if(issue instanceof MultipleOccurrencesIssue) {
 					for (IProgramElement occ : ((MultipleOccurrencesIssue) issue).getOccurences()) {
 
 						w = serv.getWidget(occ);
 						ICodeDecoration<Canvas> d = w.addMark(getColor());
 						decorations.add(d);
 					}
-				} else {
+				}
+				else {
 					ICodeDecoration<Canvas> d = w.addMark(getColor());
 					decorations.add(d);
 				}
 
 				if(issue instanceof BooleanCheck) {
-					ICodeDecoration<Text> d2 = w.addNote("Maybe use\n the ! operator?", ICodeDecoration.Location.RIGHT);
+					ICodeDecoration<Text> d2 = w.addNote("Isn't this too lengthy?", ICodeDecoration.Location.RIGHT);
 					decorations.add(d2);
 				}
 				else if(issue instanceof BooleanReturnCheck) {
@@ -335,13 +355,12 @@ public class QualityIssueHighlight {
 					decorations.add(t);
 				}
 				else if(issue instanceof MagicNumber) {
-					for (IProgramElement el : ((MagicNumber) issue).getOccurrences()) {
-						w = serv.getWidget(el);
-						if(w != null) {
-							if(((MagicNumber) issue).getOccurrences().indexOf(el) == 0) {
-								ICodeDecoration<Text> d2 = w.addNote("What does this number \n represent?", ICodeDecoration.Location.RIGHT);
-								decorations.add(d2);
-							}
+					IProgramElement el = ((MagicNumber) issue).getOccurrences().get(0);
+					w = serv.getWidget(el);
+					if(w != null) {
+						if(((MagicNumber) issue).getOccurrences().indexOf(el) == 0) {
+							ICodeDecoration<Text> d2 = w.addNote("What does this number \n represent?", ICodeDecoration.Location.RIGHT);
+							decorations.add(d2);
 						}
 					}
 				}
@@ -384,10 +403,10 @@ public class QualityIssueHighlight {
 
 	public void generateDecorations() {
 		decorations.clear();
-//		generateExplanation();
+		//		generateExplanation();
 		generateHighlight();
 	}
-	
+
 	public void show() {
 		decorations.forEach(mark -> {
 			mark.show();
@@ -417,5 +436,5 @@ public class QualityIssueHighlight {
 		});
 	}
 
-	
+
 }

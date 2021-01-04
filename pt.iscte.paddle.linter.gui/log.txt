@@ -1,8 +1,8 @@
-Start: Wed Dec 30 17:03:10 WET 2020
-File: /Users/andresantos/Desktop/Projectos/98839DiogoMuchelas/Parte_1.java
-File: /Users/andresantos/Desktop/Projectos/98839DiogoMuchelas/Poster.java
-File: /Users/andresantos/Desktop/Projectos/98839DiogoMuchelas/ColorImage.java
-File: /Users/andresantos/Desktop/Projectos/98839DiogoMuchelas/Layer.java
-File: /Users/andresantos/Desktop/Projectos/98839DiogoMuchelas/Color.java
-End: Wed Dec 30 17:05:37 WET 2020
-Seconds: 146
+Start: Mon Jan 04 11:10:53 WET 2021
+File: /Users/franciscoalfredo/Desktop/Projectos_final/98951HugoAfricano/Poster.java
+File: /Users/franciscoalfredo/Desktop/Projectos_final/98951HugoAfricano/ColorImage.java
+File: /Users/franciscoalfredo/Desktop/Projectos_final/98951HugoAfricano/Layer.java
+File: /Users/franciscoalfredo/Desktop/Projectos_final/98951HugoAfricano/Color.java
+File: /Users/franciscoalfredo/Desktop/Projectos_final/98951HugoAfricano/First.java
+End: Mon Jan 04 11:11:09 WET 2021
+Seconds: 15

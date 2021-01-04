@@ -8,7 +8,7 @@ import pt.iscte.paddle.model.IProcedure;
 public abstract class CodeAnalyser {
 
 	protected ArrayList<QualityIssue> issues = new ArrayList<QualityIssue>();
-	private final IProcedure procedure;
+	private IProcedure procedure;
 	
 	public CodeAnalyser(IProcedure procedure) {
 		this.procedure = procedure;
@@ -20,5 +20,9 @@ public abstract class CodeAnalyser {
 	
 	public IProcedure getProcedure() {
 		return procedure;
+	}
+	
+	public void setProcedure(IProcedure procedure) {
+		this.procedure = procedure;
 	}
 }

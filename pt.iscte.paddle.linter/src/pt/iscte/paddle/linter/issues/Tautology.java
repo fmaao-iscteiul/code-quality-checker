@@ -9,7 +9,7 @@ import pt.iscte.paddle.model.IProgramElement;
 public class Tautology extends SingleOcurrenceIssue {
 
 	public Tautology(String explanation, IProcedure procedure, IProgramElement occurrence) {
-		super(IssueType.TALTOLOGY, Classification.SERIOUS, procedure, occurrence);
+		super(IssueType.TAUTOLOGY, Classification.SERIOUS, procedure, occurrence);
 	}
 	
 }

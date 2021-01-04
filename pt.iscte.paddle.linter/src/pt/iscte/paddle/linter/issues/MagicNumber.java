@@ -12,7 +12,7 @@ import pt.iscte.paddle.model.IProgramElement;
 public class MagicNumber extends MultipleOccurrencesIssue {
 
 
-	public MagicNumber(String explanation, IProcedure procedure, IProgramElement magicNumber) {
+	public MagicNumber(IProcedure procedure, IProgramElement magicNumber) {
 		super(IssueType.MAGIC_NUMBER, Classification.AVERAGE, procedure);
 		this.occurrences.add(magicNumber);
 	}
