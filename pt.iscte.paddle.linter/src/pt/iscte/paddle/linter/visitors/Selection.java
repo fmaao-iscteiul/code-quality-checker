@@ -1,11 +1,10 @@
 package pt.iscte.paddle.linter.visitors;
 
 import pt.iscte.paddle.linter.cases.base.CodeAnalyser;
-import pt.iscte.paddle.linter.cases.base.QualityIssue;
-import pt.iscte.paddle.linter.issues.BooleanCheck;
 import pt.iscte.paddle.linter.issues.EmptySelection;
+import pt.iscte.paddle.linter.issues.NegativeBooleanCheck;
+import pt.iscte.paddle.linter.issues.PositiveBooleanCheck;
 import pt.iscte.paddle.linter.issues.SelectionMisconception;
-import pt.iscte.paddle.linter.linter.Linter;
 import pt.iscte.paddle.linter.misc.Explanations;
 import pt.iscte.paddle.model.IBinaryExpression;
 import pt.iscte.paddle.model.IBinaryOperator;
@@ -26,10 +25,22 @@ public class Selection extends CodeAnalyser implements IVisitor {
 		if(exp.getOperationType().equals(OperationType.RELATIONAL) 
 				&& (exp.getOperator().equals(IBinaryOperator.EQUAL) || exp.getOperator().equals(IBinaryOperator.DIFFERENT))
 				&& exp.getLeftOperand().getType().isBoolean() 
-				&& exp.getRightOperand().getType().isBoolean()
-				&& ((exp.getRightOperand().isSame(IType.BOOLEAN.literal(false)) || exp.getRightOperand().isSame(IType.BOOLEAN.literal(true)))
-						||  (exp.getLeftOperand().isSame(IType.BOOLEAN.literal(false)) || exp.getLeftOperand().isSame(IType.BOOLEAN.literal(true))))) {
-			issues.add(new BooleanCheck(Explanations.FAULTY_BOOLEAN_CHECK, getProcedure(), exp));
+				&& exp.getRightOperand().getType().isBoolean()) {
+
+
+			if (exp.getRightOperand().isSame(IType.BOOLEAN.literal(false))
+					||  exp.getLeftOperand().isSame(IType.BOOLEAN.literal(false)) ) {
+				System.out.println("aqui amigo: " + exp);
+				issues.add(new NegativeBooleanCheck(getProcedure(), exp));	
+			}
+
+			if(exp.getRightOperand().isSame(IType.BOOLEAN.literal(true)) 
+					|| exp.getLeftOperand().isSame(IType.BOOLEAN.literal(true)) ) {
+
+				issues.add(new PositiveBooleanCheck(getProcedure(), exp));
+			}
+
+
 		}
 
 		return true;

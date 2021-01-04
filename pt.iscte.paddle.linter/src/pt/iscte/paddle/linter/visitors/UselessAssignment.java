@@ -83,10 +83,19 @@ public class UselessAssignment extends CodeAnalyser implements BadCodeAnalyser {
 				if(assignment.getTarget().toString().equals(assignment.getExpression().toString())) {
 					issues.add(new UselessSelfAssignment(getProcedure(), assignment));
 				}
-					
+
 
 			} else if(node instanceof IBranchNode) {
 				IControlStructure selection = element.getProperty(IControlStructure.class);
+				if(selection.getGuard().isSame(IType.BOOLEAN.literal(true))) {
+					issues.add(new Tautology(Explanations.TAUTOLOGY, getProcedure(), selection.getGuard()));
+					continue;
+				}
+				else if(selection.getGuard().isSame(IType.BOOLEAN.literal(false))) {
+					issues.add(new Contradiction(Explanations.CONTRADICTION, getProcedure(), selection.getGuard()));
+					continue;
+				}
+
 				guardPartsDeepSearch(cfg, node, selection.getGuard());
 			}
 		}	
@@ -101,14 +110,6 @@ public class UselessAssignment extends CodeAnalyser implements BadCodeAnalyser {
 		if(!guard.getParts().isEmpty())
 			for (IExpression part : guard.getParts()) 
 				guardPartsDeepSearch(cfg, node, part); 
-		else if(guard.isSame(IType.BOOLEAN.literal(true))) {
-			issues.add(new Tautology(Explanations.TAUTOLOGY, getProcedure(), guard));
-			return;
-		}
-		else if(guard.isSame(IType.BOOLEAN.literal(false))) {
-			issues.add(new Contradiction(Explanations.CONTRADICTION, getProcedure(), guard));
-			return;
-		}
 		else {
 			for (Statement statement : assignmentStatements) {
 				if(statement.var.expression().isSame(guard.expression()) 

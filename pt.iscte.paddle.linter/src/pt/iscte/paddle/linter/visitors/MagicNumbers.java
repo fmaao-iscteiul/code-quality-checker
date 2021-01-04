@@ -14,7 +14,7 @@ import pt.iscte.paddle.model.IType;
 import pt.iscte.paddle.model.IVariableAssignment;
 import pt.iscte.paddle.model.IBlock.IVisitor;
 
-public class MagicNumbers extends CodeAnalyser implements IVisitor{
+public class MagicNumbers extends CodeAnalyser implements IVisitor {
 
 	private ArrayList<MagicNumber> mNumbers = new ArrayList<MagicNumber>();
 
@@ -29,17 +29,19 @@ public class MagicNumbers extends CodeAnalyser implements IVisitor{
 		if(exp.getType().isNumber() 
 				&& !exp.isSame(IType.INT.literal(1)) && !exp.isSame(IType.INT.literal(0))
 				&& !exp.isSame(IType.DOUBLE.literal(1.0)) && !exp.isSame(IType.DOUBLE.literal(0.0))) {
-			for (MagicNumber magicNumber : mNumbers) 
 
+			for (MagicNumber magicNumber : mNumbers) {
 				if(magicNumber.getOccurences().get(0).isSame(exp)) {
 					exists = true;
-					magicNumber.addAssignment(exp);						
+					magicNumber.addAssignment(exp);
+
+					if(!issues.contains(magicNumber)) issues.add(magicNumber);
 				}
+			}
 
 			if(!exists) {
-				MagicNumber mNumb = new MagicNumber(Explanations.MAGIC_NUMBER, getProcedure(), exp);
+				MagicNumber mNumb = new MagicNumber(getProcedure(), exp);
 				mNumbers.add(mNumb);
-				issues.add(mNumb);
 			}
 		}
 	}

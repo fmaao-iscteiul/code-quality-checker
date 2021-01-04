@@ -10,7 +10,7 @@ public class UselessReturn extends SingleOcurrenceIssue{
 
 	public UselessReturn(IProcedure procedure,
 			IProgramElement occ) {
-		super(IssueType.USELESS_CODE, Classification.LIGHT, procedure, occ);
+		super(IssueType.USELESS_RETURN, Classification.LIGHT, procedure, occ);
 	}
 
 }

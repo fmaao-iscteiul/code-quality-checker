@@ -25,11 +25,11 @@ import pt.iscte.paddle.model.cfg.IControlFlowGraph;
 public class Linter {
 
 	private ArrayList<Class<? extends CodeAnalyser>> visitors = new ArrayList<>();
-	
+
 	public Linter() {
 		loadAllVisitors();
 	}
-	 
+
 	public Linter(Class<? extends CodeAnalyser>... issueAnalyser) {
 		for (Class<? extends CodeAnalyser> class1 : issueAnalyser) {
 			this.visitors.add(class1);
@@ -39,7 +39,7 @@ public class Linter {
 	private void loadAllVisitors() {
 		this.visitors.add(Selection.class);
 		this.visitors.add(Loop.class);
-		this.visitors.add(MagicNumbers.class);
+		//		this.visitors.add(MagicNumbers.class);
 		this.visitors.add(UselessAssignment.class);
 		this.visitors.add(Unreachable.class);
 		this.visitors.add(DuplicateBranchGuard.class);
@@ -50,9 +50,13 @@ public class Linter {
 
 	public List<QualityIssue> analyse(IModule module) {
 		ArrayList<QualityIssue> caughtIssues = new ArrayList<>();
+		MagicNumbers mNumbers = new MagicNumbers(null);
+
 		module.getProcedures().forEach(proc -> {
 			IControlFlowGraph cfg = proc.generateCFG();
 
+			mNumbers.setProcedure(proc);
+			proc.accept(mNumbers);
 			visitors.forEach(visitor -> {
 				CodeAnalyser analyser;
 				try {
@@ -69,26 +73,29 @@ public class Linter {
 
 			});
 		});
+		System.out.println("Added magicNumbers: " + mNumbers.getQualityIssues());
+		caughtIssues.addAll(mNumbers.getQualityIssues());
+
 		return caughtIssues;
 	}
 
-//	public void register(QualityIssue catchedCase) {
-//		// TODO add classification sorting.
-//		this.caughtIssues.add(catchedCase);
-//		this.caughtIssues.sort(new Comparator<QualityIssue>() {
-//			@Override
-//			public int compare(QualityIssue o1, QualityIssue o2) {
-//				if(o1.getClassification().equals(o2.getClassification()) ) return 0;
-//				else if(o1.getClassification().equals(Classification.SERIOUS) && o2.getClassification().equals(Classification.LIGHT)) return -1;
-//				else if(o1.getClassification().equals(Classification.LIGHT) && o2.getClassification().equals(Classification.SERIOUS)) return 1;
-//				else if(o1.getClassification().equals(Classification.SERIOUS) && o2.getClassification().equals(Classification.AVERAGE)) return -1;
-//				else if(o1.getClassification().equals(Classification.AVERAGE) && o2.getClassification().equals(Classification.SERIOUS)) return 1;
-//				else if(o1.getClassification().equals(Classification.AVERAGE) && o2.getClassification().equals(Classification.LIGHT)) return -1;
-//				else if(o1.getClassification().equals(Classification.LIGHT) && o2.getClassification().equals(Classification.AVERAGE)) return 1;
-//				else return 0;
-//			}
-//		});
-//	}
+	//	public void register(QualityIssue catchedCase) {
+	//		// TODO add classification sorting.
+	//		this.caughtIssues.add(catchedCase);
+	//		this.caughtIssues.sort(new Comparator<QualityIssue>() {
+	//			@Override
+	//			public int compare(QualityIssue o1, QualityIssue o2) {
+	//				if(o1.getClassification().equals(o2.getClassification()) ) return 0;
+	//				else if(o1.getClassification().equals(Classification.SERIOUS) && o2.getClassification().equals(Classification.LIGHT)) return -1;
+	//				else if(o1.getClassification().equals(Classification.LIGHT) && o2.getClassification().equals(Classification.SERIOUS)) return 1;
+	//				else if(o1.getClassification().equals(Classification.SERIOUS) && o2.getClassification().equals(Classification.AVERAGE)) return -1;
+	//				else if(o1.getClassification().equals(Classification.AVERAGE) && o2.getClassification().equals(Classification.SERIOUS)) return 1;
+	//				else if(o1.getClassification().equals(Classification.AVERAGE) && o2.getClassification().equals(Classification.LIGHT)) return -1;
+	//				else if(o1.getClassification().equals(Classification.LIGHT) && o2.getClassification().equals(Classification.AVERAGE)) return 1;
+	//				else return 0;
+	//			}
+	//		});
+	//	}
 }
 
 

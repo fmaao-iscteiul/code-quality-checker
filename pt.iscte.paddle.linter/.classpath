@@ -10,47 +10,42 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/pt.iscte.paddle.linter.gui/lib/antlr-v4-runtime.jar">
+	<classpathentry kind="lib" path="/Users/franciscoalfredo/Desktop/lib/antlr-v4-runtime.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/pt.iscte.paddle.linter.gui/lib/org-mozilla-universalchardet.jar">
+	<classpathentry kind="lib" path="/Users/franciscoalfredo/Desktop/lib/javaeditor.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/pt.iscte.paddle.linter.gui/lib/paddle-roles.jar">
+	<classpathentry kind="lib" path="/Users/franciscoalfredo/Desktop/lib/javardise.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/pt.iscte.paddle.linter.gui/lib/pt-iscte-paddle-model.jar">
+	<classpathentry kind="lib" path="/Users/franciscoalfredo/Desktop/lib/kotlin-stdlib-module.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/pt.iscte.paddle.linter.gui/lib/javaeditor.jar">
+	<classpathentry kind="lib" path="/Users/franciscoalfredo/Desktop/lib/org-mozilla-universalchardet.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/pt.iscte.paddle.linter.gui/lib/javardise.jar">
+	<classpathentry kind="lib" path="/Users/franciscoalfredo/Desktop/lib/paddle-roles.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/pt.iscte.paddle.linter.gui/lib/kotlin-stdlib-module.jar">
+	<classpathentry combineaccessrules="false" kind="src" path="/pt.iscte.paddle.model">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/pt.iscte.paddle.linter.gui/lib/swt-module.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/pt.iscte.paddle.linter.gui/lib/pt-iscte-paddle-model-java.jar">
+	<classpathentry combineaccessrules="false" kind="src" path="/pt.iscte.paddle.model.javaparser">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>

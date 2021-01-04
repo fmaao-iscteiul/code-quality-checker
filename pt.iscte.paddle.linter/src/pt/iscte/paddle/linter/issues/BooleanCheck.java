@@ -9,7 +9,7 @@ import pt.iscte.paddle.model.IProcedure;
 public class BooleanCheck extends SingleOcurrenceIssue {
 
 
-	public BooleanCheck(String explanation, IProcedure procedure, IExpression selectionGuard) {
+	public BooleanCheck(IProcedure procedure, IExpression selectionGuard) {
 		super(IssueType.FAULTY_BOOLEAN_CHECK, Classification.LIGHT, procedure, selectionGuard);
 	}
 

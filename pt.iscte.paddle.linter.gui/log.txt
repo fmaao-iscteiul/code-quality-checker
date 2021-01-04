@@ -1,0 +1,8 @@
+Start: Mon Jan 04 11:10:53 WET 2021
+File: /Users/franciscoalfredo/Desktop/Projectos_final/98951HugoAfricano/Poster.java
+File: /Users/franciscoalfredo/Desktop/Projectos_final/98951HugoAfricano/ColorImage.java
+File: /Users/franciscoalfredo/Desktop/Projectos_final/98951HugoAfricano/Layer.java
+File: /Users/franciscoalfredo/Desktop/Projectos_final/98951HugoAfricano/Color.java
+File: /Users/franciscoalfredo/Desktop/Projectos_final/98951HugoAfricano/First.java
+End: Mon Jan 04 11:11:09 WET 2021
+Seconds: 15

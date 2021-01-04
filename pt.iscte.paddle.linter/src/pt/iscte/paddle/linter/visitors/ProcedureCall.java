@@ -10,6 +10,7 @@ import pt.iscte.paddle.linter.cases.base.QualityIssue;
 import pt.iscte.paddle.linter.issues.DuplicateMethodCall;
 import pt.iscte.paddle.linter.issues.FaultyProcedureCall;
 import pt.iscte.paddle.linter.misc.BadCodeAnalyser;
+import pt.iscte.paddle.model.IControlStructure;
 import pt.iscte.paddle.model.IExpression;
 import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IProcedureCall;
@@ -110,8 +111,13 @@ public class ProcedureCall extends CodeAnalyser implements BadCodeAnalyser {
 				IProcedureCall call = (IProcedureCall) node.getElement();
 
 				if(!call.getProcedure().getReturnType().equals(IType.VOID)) {
-					QualityIssue fCall = new FaultyProcedureCall(getProcedure(), call);
-					issues.add(fCall);
+					IControlStructure cS = (IControlStructure) node.getElement().getProperty(IControlStructure.class);
+
+					if(cS == null || cS != null && !cS.getGuard().isSame(call)) {
+						QualityIssue fCall = new FaultyProcedureCall(getProcedure(), call);
+						issues.add(fCall);
+					}
+
 				}
 
 				for (IVariableDeclaration var : call.getProcedure().getParameters()) {
