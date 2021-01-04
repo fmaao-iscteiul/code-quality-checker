@@ -107,8 +107,8 @@ public class LinterDemoGUI {
 		area.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent e) {
 				Point size = area.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-				size.x += 100;
-				size.y += 100;
+//				size.x += 100;
+//				size.y += 100;
 				scroll.setMinSize(size);
 				scroll.requestLayout();
 				if (activeQualityIssue != null)
@@ -263,8 +263,8 @@ public class LinterDemoGUI {
 				topComp.setEnabled(true);
 
 				Point size = area.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-				size.x += 100;
-				size.y += 100;
+//				size.x += 100;
+//				size.y += 100;
 				scroll.setMinSize(size);
 				scroll.requestLayout();
 				scroll.setOrigin(0, 0);
@@ -279,29 +279,28 @@ public class LinterDemoGUI {
 				if (caseList.getSelectionIndex() == -1) {
 					return;
 				}
-				
 
 				if (activeQualityIssue != null)
 					activeQualityIssue.remove();
-
 				
 				activeQualityIssue = highlights.get(caseList.getSelectionIndex());
 
 				explanation = activeQualityIssue.generateExplanation();
 				scrollExp.setContent(explanation);
 				Point size = explanation.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-				size.x += 100;
-				size.y += 100;
 				scrollExp.setMinSize(size);
 				scrollExp.requestLayout();
 				
 				activeQualityIssue.generateDecorations();
-				System.out.println("LOC " + activeQualityIssue.getYLocation());
-				int h = scroll.getClientArea().height;
-				System.out.println(scroll.getOrigin() + " " + activeQualityIssue.getYLocation());
-				if (activeQualityIssue.getYLocation() < scroll.getOrigin().y + h
-						|| activeQualityIssue.getYLocation() > scroll.getOrigin().y + h)
-					scroll.setOrigin(0, activeQualityIssue.getYLocation() - 100);
+				int decY = activeQualityIssue.getYLocation();
+				int sY = scroll.toDisplay(0,0).y;
+				int sYmax = scroll.toDisplay(0,scroll.getClientArea().height).y;
+				
+				if( decY < sY)
+					scroll.setOrigin(0, Math.max(0, scroll.getOrigin().y - Math.abs(scroll.getOrigin().y - decY)) - 50);
+				else if(decY > sYmax)
+					scroll.setOrigin(0, scroll.getOrigin().y + Math.abs(scroll.getOrigin().y - decY));
+				
 				activeQualityIssue.show();
 			}
 		});
