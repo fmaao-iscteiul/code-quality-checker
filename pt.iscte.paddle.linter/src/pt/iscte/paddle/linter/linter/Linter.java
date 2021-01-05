@@ -18,6 +18,7 @@ import pt.iscte.paddle.linter.visitors.Return;
 import pt.iscte.paddle.linter.visitors.Selection;
 import pt.iscte.paddle.linter.visitors.Unreachable;
 import pt.iscte.paddle.linter.visitors.UselessAssignment;
+import pt.iscte.paddle.linter.visitors.UselessCall;
 import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
@@ -46,6 +47,8 @@ public class Linter {
 		this.visitors.add(DuplicateStatement.class);
 		this.visitors.add(ProcedureCall.class);
 		this.visitors.add(Return.class);
+		
+		this.visitors.add(UselessCall.class);
 	}
 
 	public List<QualityIssue> analyse(IModule module) {

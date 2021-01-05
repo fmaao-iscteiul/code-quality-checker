@@ -36,6 +36,7 @@ public class UselessAssignment extends CodeAnalyser implements BadCodeAnalyser {
 
 	private List<Statement> assignmentStatements = new ArrayList<Statement>();
 
+	
 	public class Statement {
 		private IVariableDeclaration var;
 		private IVariableAssignment assignment;

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -156,6 +157,7 @@ public class LinterDemoGUI {
 			log.println("File: " + f.getAbsolutePath());
 
 		Linter linter = new Linter();
+		
 
 		IModule m = IModule.create(args[0]);
 
@@ -163,7 +165,7 @@ public class LinterDemoGUI {
 		parser.parse();
 
 		java.util.List<QualityIssue> issues = linter.analyse(m);
-		
+	
 		// martelo para excluir metodos static void teste() 
 		issues.removeIf(q -> 
 				!q.getProcedure().is("INSTANCE") && 
@@ -173,6 +175,12 @@ public class LinterDemoGUI {
 //				!q.getProcedure().is("INSTANCE") && 
 //				q.getProcedure().getParameters().isEmpty());
 
+		java.util.List<IssueType> issueTypes = java.util.List.of(Arrays.copyOfRange(IssueType.values(), 5, 15));
+				
+		issues.removeIf(q -> !issueTypes.contains(q.getIssueType()));
+		
+//		System.out.println(issues.size() + ":\n" + issues);
+		
 		shell.setText("Sprinter - " + args[0] + " " + issues.size());
 		for (File f : files) {
 

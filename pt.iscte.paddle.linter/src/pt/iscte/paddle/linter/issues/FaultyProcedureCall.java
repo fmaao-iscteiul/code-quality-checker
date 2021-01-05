@@ -5,6 +5,7 @@ import pt.iscte.paddle.linter.misc.Classification;
 import pt.iscte.paddle.linter.misc.IssueType;
 import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IProcedureCall;
+import pt.iscte.paddle.model.roles.impl.FunctionClassifier;
 
 public class FaultyProcedureCall extends SingleOcurrenceIssue {
 
@@ -14,7 +15,7 @@ public class FaultyProcedureCall extends SingleOcurrenceIssue {
 	
 	@Override
 	public String getIssueTitle() {
-		return super.getIssueTitle() + " " + occurrence;
+		return super.getIssueTitle() + " " + new FunctionClassifier((IProcedure) ((IProcedureCall) occurrence).getProcedure()).getClassification();
 	}
 	
 }

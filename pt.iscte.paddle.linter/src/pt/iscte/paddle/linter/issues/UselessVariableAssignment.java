@@ -12,4 +12,8 @@ public class UselessVariableAssignment extends SingleOcurrenceIssue {
 		super(IssueType.USELESS_ASSIGN, Classification.SERIOUS, procedure, occurrence);
 	}
 
+	@Override
+	public String getIssueTitle() {
+		return "Useless Assignment: " + ((IVariableAssignment) occurrence).toString();
+	}
 }

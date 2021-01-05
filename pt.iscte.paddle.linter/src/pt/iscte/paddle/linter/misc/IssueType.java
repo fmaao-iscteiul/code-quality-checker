@@ -15,6 +15,9 @@ public enum IssueType {
 	
 	
 	
+	// ----- para o paper
+	
+	
 	/*
 	 if(bool == true)
 	 */

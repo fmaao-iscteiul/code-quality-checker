@@ -110,15 +110,15 @@ public class ProcedureCall extends CodeAnalyser implements BadCodeAnalyser {
 			if(node.getElement() != null && node.getElement() instanceof IProcedureCall) {
 				IProcedureCall call = (IProcedureCall) node.getElement();
 
-				if(!call.getProcedure().getReturnType().equals(IType.VOID)) {
-					IControlStructure cS = (IControlStructure) node.getElement().getProperty(IControlStructure.class);
-
-					if(cS == null || cS != null && !cS.getGuard().isSame(call)) {
-						QualityIssue fCall = new FaultyProcedureCall(getProcedure(), call);
-						issues.add(fCall);
-					}
-
-				}
+//				if(!call.getProcedure().getReturnType().equals(IType.VOID)) {
+//					IControlStructure cS = (IControlStructure) node.getElement().getProperty(IControlStructure.class);
+//
+//					if(cS == null || cS != null && !cS.getGuard().isSame(call)) {
+//						QualityIssue fCall = new FaultyProcedureCall(getProcedure(), call);
+//						issues.add(fCall);
+//					}
+//
+//				}
 
 				for (IVariableDeclaration var : call.getProcedure().getParameters()) {
 					if(new FunctionClassifier((IProcedure) call.getProcedure()).getClassification().equals(Status.PROCEDURE) 
