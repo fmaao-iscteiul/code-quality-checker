@@ -29,7 +29,7 @@ public class MultipleOccurrencesIssue extends QualityIssue {
 		occurrences.add(occurrence);
 	}
 
-	public List<IProgramElement> getOccurences() {
+	public List<IProgramElement> getOccurrences() {
 		return occurrences;
 	}
 

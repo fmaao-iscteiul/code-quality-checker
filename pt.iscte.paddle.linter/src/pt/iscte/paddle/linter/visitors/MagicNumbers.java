@@ -31,7 +31,8 @@ public class MagicNumbers extends CodeAnalyser implements IVisitor {
 				&& !exp.isSame(IType.DOUBLE.literal(1.0)) && !exp.isSame(IType.DOUBLE.literal(0.0))) {
 
 			for (MagicNumber magicNumber : mNumbers) {
-				if(magicNumber.getOccurences().get(0).isSame(exp)) {
+				if(magicNumber.getOccurrences().get(0).isSame(exp) && 
+						(getProcedure() == magicNumber.getProcedure() || magicNumber.getOccurrences().size() > 1)) {
 					exists = true;
 					magicNumber.addAssignment(exp);
 

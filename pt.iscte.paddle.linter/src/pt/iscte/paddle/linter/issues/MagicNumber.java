@@ -17,10 +17,6 @@ public class MagicNumber extends MultipleOccurrencesIssue {
 		this.occurrences.add(magicNumber);
 	}
 
-	public List<IProgramElement> getOccurrences() {
-		return occurrences;
-	}
-
 	public void addAssignment(IProgramElement statement) {
 		this.occurrences.add(statement);
 	}
