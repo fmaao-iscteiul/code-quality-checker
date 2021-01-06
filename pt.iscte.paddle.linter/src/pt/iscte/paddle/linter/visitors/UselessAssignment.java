@@ -36,7 +36,7 @@ public class UselessAssignment extends CodeAnalyser implements BadCodeAnalyser {
 
 	private List<Statement> assignmentStatements = new ArrayList<Statement>();
 
-	
+
 	public class Statement {
 		private IVariableDeclaration var;
 		private IVariableAssignment assignment;
@@ -102,7 +102,6 @@ public class UselessAssignment extends CodeAnalyser implements BadCodeAnalyser {
 		}	
 	}
 
-	// TODO refactor the shit out of this mess.
 	void guardPartsDeepSearch(IControlFlowGraph cfg, INode node, IExpression guard) {
 		if(guard instanceof IBinaryExpression) {
 			IBinaryExpression condition = (IBinaryExpression) guard;
@@ -113,13 +112,17 @@ public class UselessAssignment extends CodeAnalyser implements BadCodeAnalyser {
 				guardPartsDeepSearch(cfg, node, part); 
 		else {
 			for (Statement statement : assignmentStatements) {
-				if(statement.var.expression().isSame(guard.expression()) 
+				IControlStructure selection = guard.expression().getProperty(IControlStructure.class);
+				IVariableAssignment assignmentStatement = ((IVariableAssignment) statement.node.getElement());
+
+				if(selection != null && selection.getParent().isSame(assignmentStatement.getParent())
+						&& statement.var.expression().isSame(guard.expression()) 
 						&& !cfg.usedOrChangedBetween(statement.node, node, statement.var)) {
-					if(((IVariableAssignment) statement.node.getElement()).getExpression().isSame(IType.BOOLEAN.literal(true))) {
+					if(assignmentStatement.getExpression().isSame(IType.BOOLEAN.literal(true))) {
 						issues.add(new Tautology(Explanations.TAUTOLOGY, getProcedure(), guard));
 						return;
 					}
-					else if(((IVariableAssignment) statement.node.getElement()).getExpression().isSame(IType.BOOLEAN.literal(false))) {
+					else if(assignmentStatement.getExpression().isSame(IType.BOOLEAN.literal(false))) {
 						issues.add(new Contradiction(Explanations.CONTRADICTION, getProcedure(), guard));
 						return;
 					}
