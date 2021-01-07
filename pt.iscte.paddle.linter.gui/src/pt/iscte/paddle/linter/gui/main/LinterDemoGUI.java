@@ -38,7 +38,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.mozilla.universalchardet.UniversalDetector;
-
+import pt.iscte.javardise.api.Editor;
 import pt.iscte.javardise.javaeditor.api.IClassWidget;
 import pt.iscte.javardise.javaeditor.api.IJavardiseService;
 import pt.iscte.paddle.linter.cases.base.QualityIssue;
@@ -180,6 +180,7 @@ public class LinterDemoGUI {
 		issues.removeIf(q -> !issueTypes.contains(q.getIssueType()));
 		
 //		System.out.println(issues.size() + ":\n" + issues);
+		Editor.INSTANCE.setReadOnly(true);
 		
 		shell.setText("Sprinter - " + args[0] + " " + issues.size());
 		for (File f : files) {

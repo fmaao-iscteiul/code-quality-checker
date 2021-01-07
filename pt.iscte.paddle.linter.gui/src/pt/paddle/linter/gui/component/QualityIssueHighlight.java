@@ -124,7 +124,7 @@ public class QualityIssueHighlight {
 		else if(issue instanceof Duplicate) {
 			link = new HyperlinkedText(null)
 					.words("The statement ")
-					.link(((Duplicate) issue).getOccurences().get(0).toString(), () -> {
+					.link(((Duplicate) issue).getOccurrences().get(0).toString(), () -> {
 
 					})
 					.words(" was found in a condition and it's alternatives (elses).")
@@ -134,7 +134,7 @@ public class QualityIssueHighlight {
 		}
 		else if(issue instanceof DuplicateGuard) {
 			link = new HyperlinkedText(null)
-					.words("The condition ").link(((DuplicateGuard) issue).getOccurences().get(0).toString(), () -> {})
+					.words("The condition ").link(((DuplicateGuard) issue).getOccurrences().get(0).toString(), () -> {})
 					.words(" was found duplicated inside the code block.")
 					.words("\n\n - Neither of the variables used in the conditions had their values changed in between.")
 					.words("\n - Double checking a condition which parts don't change in between checks, will have the same result.")
@@ -145,15 +145,15 @@ public class QualityIssueHighlight {
 		else if(issue instanceof DuplicateMethodCall) {
 			link = new HyperlinkedText(null)
 					.words("The function ")
-					.link(((DuplicateMethodCall) issue).getOccurences().get(0).toString(), () -> {
-						ICodeDecoration<Canvas> d = serv.getWidget(((IProcedureCall) ((DuplicateMethodCall) issue).getOccurences().get(0)).getProcedure()).addMark(getColor());
+					.link(((DuplicateMethodCall) issue).getOccurrences().get(0).toString(), () -> {
+						ICodeDecoration<Canvas> d = serv.getWidget(((IProcedureCall) ((DuplicateMethodCall) issue).getOccurrences().get(0)).getProcedure()).addMark(getColor());
 						d.show();
 						decorations.add(d);
 					})
 					.words(" was called more than once. \n\n - Its arguments values aren't changed between calls.")
 					.words("\n - The method doesn't change any variable that affects the program execution flow.")
 					.words("\n - This means that both calls will result in the same.")
-					.words("\n - There is no point on having two " + ((DuplicateMethodCall) issue).getOccurences().get(0) + " calls that return the exact same result.")
+					.words("\n - There is no point on having two " + ((DuplicateMethodCall) issue).getOccurrences().get(0) + " calls that return the exact same result.")
 					.words("\n\nSuggestion: \n\nSince both calls result in the same, you should remove one of them.")
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 		}
@@ -204,14 +204,14 @@ public class QualityIssueHighlight {
 		}
 		else if(issue instanceof MagicNumber) {
 			link = new HyperlinkedText(null)
-					.words("The highlighted number " ).link(((MagicNumber) issue).getOccurences().get(0).toString(), () -> {
+					.words("The highlighted number " ).link(((MagicNumber) issue).getOccurrences().get(0).toString(), () -> {
 					})
 					.words(" doesn't really tell what it stands for.").newline()
-					.line("\n\n - It can be hard for another programmer to look at the number " + ((MagicNumber) issue).getOccurences().get(0)  + " and figure out what it represents.")
+					.line("\n\n - It can be hard for another programmer to look at the number " + ((MagicNumber) issue).getOccurrences().get(0)  + " and figure out what it represents.")
 					.line("\n - It can also lead to bugs because it's more difficult to change it in every place that it is used.")
 					.newline()
 					.line("Suggestion:")
-					.line("\t- Try replacing this the number " + ((MagicNumber) issue).getOccurences().get(0) + " with a well named variable.")
+					.line("\t- Try replacing this the number " + ((MagicNumber) issue).getOccurrences().get(0) + " with a well named variable.")
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 		}
 		else if(issue instanceof IfEmptyElse) {
@@ -234,7 +234,7 @@ public class QualityIssueHighlight {
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 		}
 		else if(issue instanceof UnreachableCode) {
-			IWidget a = serv.getWidget(((UnreachableCode) issue).getOccurences().get(0));
+			IWidget a = serv.getWidget(((UnreachableCode) issue).getOccurrences().get(0));
 			link = new HyperlinkedText(null)
 					.words("There is a")
 					.link(" return statement ", () -> {
@@ -250,11 +250,11 @@ public class QualityIssueHighlight {
 						decorations.add(d1);
 					})
 					.words("that causes the function execution to end.\n")
-					.words("\n - The function ends after the ").link(((UnreachableCode) issue).getOccurences().get(0).toString(), ()->{}).words(" statement.")
+					.words("\n - The function ends after the ").link(((UnreachableCode) issue).getOccurrences().get(0).toString(), ()->{}).words(" statement.")
 					.words("\n - This means that code after that won't be executed.")
 					.words("\n - The unreachable lines become useless because they will never run.")
 					.words("\n\nSuggestion:")
-					.words("\n\nChange the place of the "+((UnreachableCode) issue).getOccurences().get(0).toString()+" statement or add a proper condition before calling it, in order to avoid chunks of unreachable code.")
+					.words("\n\nChange the place of the "+((UnreachableCode) issue).getOccurrences().get(0).toString()+" statement or add a proper condition before calling it, in order to avoid chunks of unreachable code.")
 					.create(comp, SWT.WRAP | SWT.V_SCROLL);
 		}
 		else if(issue instanceof UselessSelfAssignment) {
@@ -298,17 +298,17 @@ public class QualityIssueHighlight {
 //			System.out.println("ELs: " + ((MultipleOccurrencesIssue) issue).getOccurences());
 		IWidget w = (issue instanceof SingleOcurrenceIssue) 
 				? serv.getWidget(((SingleOcurrenceIssue) issue).getOccurrence()) 
-						: serv.getWidget(((MultipleOccurrencesIssue) issue).getOccurences().get(0));
+						: serv.getWidget(((MultipleOccurrencesIssue) issue).getOccurrences().get(0));
 
 				if(w == null) return;
 				if(issue instanceof MagicNumber) {
-					IProgramElement occ = (IProgramElement) ((MultipleOccurrencesIssue) issue).getOccurences().get(0);
+					IProgramElement occ = (IProgramElement) ((MultipleOccurrencesIssue) issue).getOccurrences().get(0);
 					w = serv.getWidget(occ);
 					ICodeDecoration<Canvas> d = w.addMark(getColor());
 					decorations.add(d);
 				}
 				else if(issue instanceof MultipleOccurrencesIssue) {
-					for (IProgramElement occ : ((MultipleOccurrencesIssue) issue).getOccurences()) {
+					for (IProgramElement occ : ((MultipleOccurrencesIssue) issue).getOccurrences()) {
 
 						w = serv.getWidget(occ);
 						ICodeDecoration<Canvas> d = w.addMark(getColor());
@@ -371,17 +371,17 @@ public class QualityIssueHighlight {
 					decorations.add(d2);
 				}
 				else if(issue instanceof UnreachableCode) {
-					if(((UnreachableCode) issue).getOccurences().get(0) instanceof IReturn) {
-						w = serv.getWidget(((UnreachableCode) issue).getOccurences().get(1));
+					if(((UnreachableCode) issue).getOccurrences().get(0) instanceof IReturn) {
+						w = serv.getWidget(((UnreachableCode) issue).getOccurrences().get(1));
 					}
-					else w = serv.getWidget(((UnreachableCode) issue).getOccurences().get(0));
+					else w = serv.getWidget(((UnreachableCode) issue).getOccurrences().get(0));
 
-					IWidget[] elements = new IWidget[((UnreachableCode) issue).getOccurences().size()];
+					IWidget[] elements = new IWidget[((UnreachableCode) issue).getOccurrences().size()];
 
 					for (int i = 0; i < elements.length; i++) {
-						IControlStructure s = ((UnreachableCode) issue).getOccurences().get(i).getProperty(IControlStructure.class);
+						IControlStructure s = ((UnreachableCode) issue).getOccurrences().get(i).getProperty(IControlStructure.class);
 						if(s != null) elements[i] = serv.getWidget(s);
-						else elements[i] = serv.getWidget(((UnreachableCode) issue).getOccurences().get(i));
+						else elements[i] = serv.getWidget(((UnreachableCode) issue).getOccurrences().get(i));
 					}
 
 					ICodeDecoration<Canvas> dec = w.addRegionMark(getColor(), elements);
