@@ -22,15 +22,22 @@ public class DuplicateStatement extends CodeAnalyser implements BadCodeAnalyser 
 
 	@Override
 	public void analyse(IControlFlowGraph cfg) {
-		for(INode node : cfg.getNodes()) {
+		for(INode graphNode : cfg.getNodes()) {
 			Set<INode> duplicates = new HashSet<INode>();
-			for(INode incoming: node.getIncomming()) 
-				for(INode n: node.getIncomming()) 
-					if(n != null && incoming != null && node != null 
-					&& !node.isExit() && !n.equals(incoming) 
-					&& n.getElement() != null && incoming.getElement() != null 
-					&& n.getElement().isSame(incoming.getElement())) 
-						duplicates.add(n);
+
+			for(INode incomingNode: graphNode.getIncomming()) {
+				
+				dance:
+				for(INode anotherIncoming: graphNode.getIncomming()) {
+					if(anotherIncoming != null && incomingNode != null && graphNode != null && anotherIncoming.getElement() != null && incomingNode.getElement() != null 
+							&& !graphNode.isExit() && !anotherIncoming.equals(incomingNode)
+
+							&& anotherIncoming.getElement().isSame(incomingNode.getElement()))
+						duplicates.add(anotherIncoming);
+					else break dance;
+				}
+			}
+
 			if(duplicates.size() > 1) {
 				ArrayList<IProgramElement> occurrences = new ArrayList<IProgramElement>();
 				duplicates.forEach(d -> occurrences.add(d.getElement()));

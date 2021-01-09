@@ -115,6 +115,7 @@ public class UselessAssignment extends CodeAnalyser implements BadCodeAnalyser {
 				IControlStructure selection = guard.expression().getProperty(IControlStructure.class);
 				IVariableAssignment assignmentStatement = ((IVariableAssignment) statement.node.getElement());
 
+				// [TODO] Add multi-layer detection.
 				if(selection != null && selection.getParent().isSame(assignmentStatement.getParent())
 						&& statement.var.expression().isSame(guard.expression()) 
 						&& !cfg.usedOrChangedBetween(statement.node, node, statement.var)) {
