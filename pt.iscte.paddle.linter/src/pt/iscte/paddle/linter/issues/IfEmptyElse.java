@@ -12,4 +12,8 @@ public class IfEmptyElse extends SingleOcurrenceIssue {
 		super(IssueType.USELESS_BRANCH, Classification.AVERAGE, procedure, element);
 	}
 
+	@Override
+	public String getIssueTitle() {
+		return "Empty block: " + getOccurrence().toString();
+	}
 }

@@ -74,9 +74,9 @@ public class DuplicateBranchGuard extends CodeAnalyser implements BadCodeAnalyse
 
 		if(!pairs.isEmpty()) {
 			pairs.forEach(d -> {
-				List<IProgramElement> elements = new ArrayList<IProgramElement>();
-				elements.add(d.getStart().getElement());
-				elements.add(d.getEnd().getElement());
+				List<IExpression> elements = new ArrayList<>();
+				elements.add((IExpression) d.getStart().getElement());
+				elements.add((IExpression) d.getEnd().getElement());
 				issues.add(new DuplicateGuard(getProcedure(), elements));
 			});
 		}

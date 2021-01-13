@@ -50,7 +50,7 @@ public class Return extends CodeAnalyser implements BadCodeAnalyser {
 							//							|| (altRet.getExpression() != null && altRet.getExpression().isSame(IType.BOOLEAN.literal(false))
 							//							&& nextRet.getExpression() != null && nextRet.getExpression().isSame(IType.BOOLEAN.literal(true)))
 							) {
-						issues.add(new BooleanReturnCheck(getProcedure(), s));
+						issues.add(new BooleanReturnCheck(getProcedure(), (ISelection) s));
 					}
 				}
 			}

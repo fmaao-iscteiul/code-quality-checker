@@ -28,7 +28,8 @@ public class MagicNumbers extends CodeAnalyser implements IVisitor {
 		boolean exists = false;
 		if(exp.getType().isNumber() 
 				&& !exp.isSame(IType.INT.literal(1)) && !exp.isSame(IType.INT.literal(0))
-				&& !exp.isSame(IType.DOUBLE.literal(1.0)) && !exp.isSame(IType.DOUBLE.literal(0.0))) {
+				&& !exp.isSame(IType.DOUBLE.literal(1.0)) && !exp.isSame(IType.DOUBLE.literal(0.0))
+				&& !exp.isSame(IType.INT.literal(2)) && !exp.isSame(IType.DOUBLE.literal(2.0))) {
 
 			for (MagicNumber magicNumber : mNumbers) {
 				if(magicNumber.getOccurrences().get(0).isSame(exp) && 

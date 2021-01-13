@@ -5,16 +5,6 @@
 			<attribute name="test" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/pt.iscte.paddle.model">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/pt.iscte.paddle.model.javaparser">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>
@@ -40,11 +30,6 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/pt.iscte.paddle.linter.gui/lib/paddle-roles.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="/pt.iscte.paddle.linter.gui/lib/pt-iscte-paddle-model-java.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
@@ -56,6 +41,21 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="/pt.iscte.paddle.linter.gui/lib/antlr-v4-runtime.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/pt.iscte.paddle.model.javaparser">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/pt.iscte.paddle.model">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/pt.iscte.paddle.model.roles">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>

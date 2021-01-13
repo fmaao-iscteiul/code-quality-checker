@@ -53,13 +53,12 @@ public class Linter {
 
 	public List<QualityIssue> analyse(IModule module) {
 		ArrayList<QualityIssue> caughtIssues = new ArrayList<>();
-		MagicNumbers mNumbers = new MagicNumbers(null);
-
+		
 		module.getProcedures().forEach(proc -> {
 			IControlFlowGraph cfg = proc.generateCFG();
-
-			mNumbers.setProcedure(proc);
+			MagicNumbers mNumbers = new MagicNumbers(proc);
 			proc.accept(mNumbers);
+			caughtIssues.addAll(mNumbers.getQualityIssues());
 			visitors.forEach(visitor -> {
 				CodeAnalyser analyser;
 				try {
@@ -76,9 +75,6 @@ public class Linter {
 
 			});
 		});
-		System.out.println("Added magicNumbers: " + mNumbers.getQualityIssues());
-		caughtIssues.addAll(mNumbers.getQualityIssues());
-
 		return caughtIssues;
 	}
 

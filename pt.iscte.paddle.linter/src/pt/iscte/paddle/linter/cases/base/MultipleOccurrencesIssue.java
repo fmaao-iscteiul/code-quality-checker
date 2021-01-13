@@ -18,7 +18,7 @@ public class MultipleOccurrencesIssue extends QualityIssue {
 		}
 	}
 	
-	protected MultipleOccurrencesIssue(IssueType category, Classification classification, IProcedure procedure, List<IProgramElement> occ) {
+	protected MultipleOccurrencesIssue(IssueType category, Classification classification, IProcedure procedure, List<? extends IProgramElement> occ) {
 		super(category, classification, procedure);
 		for (IProgramElement occurence : occ) {
 			this.occurrences.add(occurence);

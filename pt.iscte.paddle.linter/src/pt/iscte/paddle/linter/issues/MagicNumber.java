@@ -6,6 +6,7 @@ import java.util.List;
 import pt.iscte.paddle.linter.cases.base.MultipleOccurrencesIssue;
 import pt.iscte.paddle.linter.misc.Classification;
 import pt.iscte.paddle.linter.misc.IssueType;
+import pt.iscte.paddle.model.ILiteral;
 import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IProgramElement;
 
@@ -19,10 +20,15 @@ public class MagicNumber extends MultipleOccurrencesIssue {
 
 	public void addAssignment(IProgramElement statement) {
 		this.occurrences.add(statement);
+		
 	}
 
 	@Override
 	public String getIssueTitle() {
-		return super.getIssueTitle() + " " + occurrences.get(0).toString();
+		return "Magic Number: " + getMagicNumber();
+	}
+	
+	public ILiteral getMagicNumber() {
+		return (ILiteral) occurrences.get(0);
 	}
 }

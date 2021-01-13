@@ -1,16 +1,13 @@
 package pt.iscte.paddle.linter.gui.main;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.ServiceLoader;
 import java.util.stream.Collectors;
 
@@ -28,16 +25,15 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
-import org.mozilla.universalchardet.UniversalDetector;
+
 import pt.iscte.javardise.api.Editor;
 import pt.iscte.javardise.javaeditor.api.IClassWidget;
 import pt.iscte.javardise.javaeditor.api.IJavardiseService;
@@ -52,7 +48,7 @@ public class LinterDemoGUI {
 
 	private static Shell shell;
 	private static QualityIssueHighlight activeQualityIssue;
-	private static Link explanation;
+	private static Control explanation;
 
 	public static void main(String[] args)
 			throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException {
@@ -85,8 +81,8 @@ public class LinterDemoGUI {
 		SashForm sashTemp = new SashForm(sash, SWT.NONE);
 		
 
-		Text srcText = new Text(sashTemp, SWT.MULTI | SWT.H_SCROLL);
-		srcText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+//		Text srcText = new Text(sashTemp, SWT.MULTI | SWT.H_SCROLL);
+//		srcText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		
 		ScrolledComposite scroll = new ScrolledComposite(sashTemp, SWT.H_SCROLL | SWT.V_SCROLL);
 		scroll.setLayout(new GridLayout(1, false));
@@ -139,7 +135,6 @@ public class LinterDemoGUI {
 			args = new String[] { dialog.open() };
 		}
 
-		
 
 		File src = new File(args[0]);
 		File[] files;
@@ -148,16 +143,12 @@ public class LinterDemoGUI {
 		else
 			files = src.listFiles(f -> f.getName().endsWith(".java") && !f.getName().equals("ImageUtil.java"));
 
-		PrintWriter log = new PrintWriter(new File(src.getParentFile(), "log.txt"));
+		PrintWriter log = new PrintWriter(new File(src, "log.txt"));
 		long time = System.currentTimeMillis();
 
 		log.println("Start: " + new Date());
 
-		for (File f : files)
-			log.println("File: " + f.getAbsolutePath());
-
 		Linter linter = new Linter();
-		
 
 		IModule m = IModule.create(args[0]);
 
@@ -169,7 +160,7 @@ public class LinterDemoGUI {
 		// martelo para excluir metodos static void teste() 
 		issues.removeIf(q -> 
 				!q.getProcedure().is("INSTANCE") && 
-				q.getProcedure().getReturnType().isVoid() &&
+//				q.getProcedure().getReturnType().isVoid() &&
 				q.getProcedure().getParameters().isEmpty());
 //				q.getIssueType() == IssueType.USELESS_RETURN &&
 //				!q.getProcedure().is("INSTANCE") && 
@@ -184,7 +175,7 @@ public class LinterDemoGUI {
 		
 		shell.setText("Sprinter - " + args[0] + " " + issues.size());
 		for (File f : files) {
-
+//			log.println("File: " + f.getAbsolutePath());
 			// try {
 //			parser.parse();
 			java.util.List<QualityIssue> list = issues.stream().filter(
@@ -200,35 +191,62 @@ public class LinterDemoGUI {
 //				System.err.println(f.getName() + " not included");
 //			}
 		}
+		ArrayList<QualityIssueHighlight> highlights = new ArrayList<QualityIssueHighlight>();
+		
 		final List caseList = new List(topComp, SWT.BORDER | SWT.V_SCROLL);
 		caseList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
 		ScrolledComposite scrollExp = new ScrolledComposite(topComp, SWT.H_SCROLL | SWT.V_SCROLL);
-		FillLayout l = new FillLayout();
-		l.marginHeight = 20;
-		l.marginWidth = 20;
-		
-		scrollExp.setLayout(l);
 		scrollExp.setMinSize(100, 100);
 		scrollExp.setExpandHorizontal(true);
 		scrollExp.setExpandVertical(true);
-		explanation = new Link(scrollExp, SWT.NONE);
+		scrollExp.setLayout(new FillLayout());
 		
+		Composite buttons = new Composite(topComp, SWT.BORDER);
+		buttons.setLayout(new RowLayout(SWT.VERTICAL));
+		Button disagree = new Button(buttons, SWT.PUSH);
+		disagree.setText("I think this is not a problem");
+		disagree.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if(moduleList.getSelectionIndex() != -1 && caseList.getSelectionIndex() != -1) {
+					log.println("NOPROB " + highlights.get(caseList.getSelectionIndex() ).getIssue().getIssueType() + ": " + moduleList.getSelection()[0] + ", " + caseList.getSelection()[0]);
+				}
+			}
+		});
+		
+		Button understand = new Button(buttons, SWT.PUSH);
+		understand.setText("I don't understand");
+		understand.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if(moduleList.getSelectionIndex() != -1 && caseList.getSelectionIndex() != -1) {
+					log.println("NOUND " + highlights.get(caseList.getSelectionIndex() ).getIssue().getIssueType() + ": " + moduleList.getSelection()[0] + ", " + caseList.getSelection()[0]);
+				}
+			}
+		});
+		
+		explanation = new Label(scrollExp, SWT.NONE);
+		((Label) explanation).setText("");
+		scrollExp.setContent(explanation);
 		
 
-		ArrayList<QualityIssueHighlight> highlights = new ArrayList<QualityIssueHighlight>();
+		
 
 		moduleList.addSelectionListener(new SelectionAdapter() {
 			int index = -1;
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				if (activeQualityIssue != null)
+					activeQualityIssue.remove();
+				explanation.dispose();
+				
 				if (moduleList.getSelectionIndex() == -1 || moduleList.getSelectionIndex() == index)
 					return;
 
-				activeQualityIssue = null;
 				index = moduleList.getSelectionIndex();
-				explanation.setText("");
+//				explanation.setText("");
 				caseList.removeAll();
 				highlights.forEach(i -> i.remove());
 				highlights.clear();
@@ -248,28 +266,28 @@ public class LinterDemoGUI {
 				int i = 0;
 				for (QualityIssue qIssue : issues) {
 					cases[i++] = qIssue.getIssueTitle(); // CaseNames.getCaseName(qIssue.getIssueType());
-					highlights.add(new QualityIssueHighlight(widget, scrollExp, qIssue));
+					highlights.add(new QualityIssueHighlight(widget, qIssue));
 				}
 				caseList.setItems(cases);
 
-				try {
-					File file = mapFile.get(fileName);
-					String charset = UniversalDetector.detectCharset(file);
-					if (charset == null || !Charset.isSupported(charset))
-						charset = "UTF-8";
-					Scanner scanner = new Scanner(file, charset);
-					String src = "";
-					while (scanner.hasNextLine())
-						src += scanner.nextLine() + "\n";
-					scanner.close();
-					srcText.setText(src);
-					srcText.requestLayout();
-//						paddleText.setText(m.toString());
-				} catch (FileNotFoundException e1) {
-					e1.printStackTrace();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
+//				try {
+//					File file = mapFile.get(fileName);
+//					String charset = UniversalDetector.detectCharset(file);
+//					if (charset == null || !Charset.isSupported(charset))
+//						charset = "UTF-8";
+//					Scanner scanner = new Scanner(file, charset);
+//					String src = "";
+//					while (scanner.hasNextLine())
+//						src += scanner.nextLine() + "\n";
+//					scanner.close();
+//					srcText.setText(src);
+//					srcText.requestLayout();
+////						paddleText.setText(m.toString());
+//				} catch (FileNotFoundException e1) {
+//					e1.printStackTrace();
+//				} catch (IOException e1) {
+//					e1.printStackTrace();
+//				}
 
 				
 				area.requestLayout();
@@ -286,25 +304,29 @@ public class LinterDemoGUI {
 		});
 
 		caseList.addSelectionListener(new SelectionAdapter() {
-			
+			long time;
 			public void widgetSelected(SelectionEvent e) {
-				explanation.setText("");
+//				explanation.setText("");
+				
+				if (activeQualityIssue != null) {
+					activeQualityIssue.remove();
+					long secs = (System.currentTimeMillis() - time)/1000;
+					log.println(activeQualityIssue.getIssue().getIssueType() + ": " + secs);
+				}
 				
 				if (caseList.getSelectionIndex() == -1) {
 					return;
 				}
-
-				if (activeQualityIssue != null)
-					activeQualityIssue.remove();
+				
 				
 				activeQualityIssue = highlights.get(caseList.getSelectionIndex());
-
+				
 				explanation.dispose();
-				explanation = activeQualityIssue.generateExplanation();
+				explanation = activeQualityIssue.generateExplanation(scrollExp);
 				scrollExp.setContent(explanation);
 				Point size = explanation.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 				scrollExp.setMinSize(size);
-				scrollExp.requestLayout();
+				explanation.requestLayout();
 				
 				activeQualityIssue.generateDecorations();
 				int decY = activeQualityIssue.getYLocation();
@@ -317,10 +339,11 @@ public class LinterDemoGUI {
 					scroll.setOrigin(0, scroll.getOrigin().y + Math.abs(scroll.getOrigin().y - decY));
 				
 				activeQualityIssue.show();
+				time = System.currentTimeMillis();
 			}
 		});
 		
-		topComp.setWeights(new int[] { 1, 2, 5 });
+		topComp.setWeights(new int[] { 1, 2, 5, 1 });
 
 		scroll.getVerticalBar().addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -349,16 +372,6 @@ public class LinterDemoGUI {
 		log.close();
 		
 		display.dispose();
-//		Shell over = new Shell(display, SWT.APPLICATION_MODAL);
-//		over.setText("time");
-//		over.setLayout(new FillLayout());
-//		new Label(over, SWT.NONE).setText("Time: " + (System.currentTimeMillis() - time)/1000 + " seconds." );
-//		over.open();
-//		while (!over.isDisposed()) {
-//			if (!display.readAndDispatch()) {
-//				display.sleep();
-//			}
-//		}
 	}
 
 }

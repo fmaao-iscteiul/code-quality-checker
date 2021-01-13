@@ -9,6 +9,7 @@ import pt.iscte.paddle.linter.misc.Explanations;
 import pt.iscte.paddle.model.IBinaryExpression;
 import pt.iscte.paddle.model.IBinaryOperator;
 import pt.iscte.paddle.model.IBlock.IVisitor;
+import pt.iscte.paddle.model.IExpression;
 import pt.iscte.paddle.model.IOperator.OperationType;
 import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.ISelection;
@@ -22,25 +23,26 @@ public class Selection extends CodeAnalyser implements IVisitor {
 
 	@Override
 	public boolean visit(IBinaryExpression exp) {
-		if((exp.getOperator().equals(IBinaryOperator.EQUAL) || exp.getOperator().equals(IBinaryOperator.DIFFERENT))
-				&& exp.getLeftOperand().getType().isBoolean() 
-				&& exp.getRightOperand().getType().isBoolean()) {
+		IExpression left = exp.getLeftOperand();
+		IExpression right = exp.getRightOperand();
+		if(left.getType().isBoolean() && right.getType().isBoolean()) {
+			
+			if((exp.getOperator().equals(IBinaryOperator.EQUAL))) {
 
+				if (left.isSame(IType.BOOLEAN.literal(false)) || right.isSame(IType.BOOLEAN.literal(false)) )
+					issues.add(new NegativeBooleanCheck(getProcedure(), exp));	
 
-			if (exp.getRightOperand().isSame(IType.BOOLEAN.literal(false))
-					||  exp.getLeftOperand().isSame(IType.BOOLEAN.literal(false)) ) {
-				issues.add(new NegativeBooleanCheck(getProcedure(), exp));	
+				if(left.isSame(IType.BOOLEAN.literal(true)) || right.isSame(IType.BOOLEAN.literal(true)) )
+					issues.add(new PositiveBooleanCheck(getProcedure(), exp));
 			}
+			if((exp.getOperator().equals(IBinaryOperator.DIFFERENT))) {
+				if (left.isSame(IType.BOOLEAN.literal(false)) || right.isSame(IType.BOOLEAN.literal(false)) )
+					issues.add(new PositiveBooleanCheck(getProcedure(), exp));	
 
-			if(exp.getRightOperand().isSame(IType.BOOLEAN.literal(true)) 
-					|| exp.getLeftOperand().isSame(IType.BOOLEAN.literal(true)) ) {
-
-				issues.add(new PositiveBooleanCheck(getProcedure(), exp));
+				if(left.isSame(IType.BOOLEAN.literal(true)) || right.isSame(IType.BOOLEAN.literal(true)) )
+					issues.add(new NegativeBooleanCheck(getProcedure(), exp));
 			}
-
-
 		}
-
 		return true;
 	}
 
