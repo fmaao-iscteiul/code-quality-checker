@@ -65,8 +65,10 @@ public class Linter {
 					analyser = visitor.getConstructor(IProcedure.class).newInstance(proc);
 					if(IVisitor.class.isAssignableFrom(visitor)) 
 						proc.accept((IVisitor) analyser);
-					else
+					
+					if(BadCodeAnalyser.class.isAssignableFrom(visitor))
 						((BadCodeAnalyser) analyser).analyse(cfg);
+					
 					caughtIssues.addAll(analyser.getQualityIssues());
 				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 						| InvocationTargetException | NoSuchMethodException | SecurityException e1) {

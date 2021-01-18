@@ -1,9 +1,11 @@
 package pt.iscte.paddle.linter.visitors;
 
 import pt.iscte.paddle.linter.cases.base.CodeAnalyser;
+import pt.iscte.paddle.linter.issues.Contradiction;
 import pt.iscte.paddle.linter.issues.EmptyBlock;
 import pt.iscte.paddle.linter.issues.NegativeBooleanCheck;
 import pt.iscte.paddle.linter.issues.PositiveBooleanCheck;
+import pt.iscte.paddle.linter.issues.Tautology;
 import pt.iscte.paddle.linter.issues.IfEmptyElse;
 import pt.iscte.paddle.linter.misc.Explanations;
 import pt.iscte.paddle.model.IBinaryExpression;
@@ -57,6 +59,9 @@ public class Selection extends CodeAnalyser implements IVisitor {
 		else if(selection.hasAlternativeBlock() && selection.getAlternativeBlock().isEmpty()) {
 			issues.add(new EmptyBlock(Explanations.EMPTY_SELECTION, getProcedure(), selection.getAlternativeBlock()));
 		}
+		
+		
+		
 		return true;
 	}
 

@@ -118,11 +118,6 @@ public class LinterDemoGUI {
 		label.setFont(font);
 		label.setText("Please select a file...");
 
-
-//		Text paddleText = new Text(rightComp, SWT.MULTI | SWT.H_SCROLL);
-//		paddleText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-
-		
 		final List moduleList = new List(topComp, SWT.BORDER | SWT.V_SCROLL);
 		moduleList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
@@ -133,6 +128,8 @@ public class LinterDemoGUI {
 		if (args.length == 0) {
 			DirectoryDialog dialog = new DirectoryDialog(shell);
 			args = new String[] { dialog.open() };
+			if(args[0] == null)
+				return;
 		}
 
 
@@ -143,7 +140,14 @@ public class LinterDemoGUI {
 		else
 			files = src.listFiles(f -> f.getName().endsWith(".java") && !f.getName().equals("ImageUtil.java"));
 
-		PrintWriter log = new PrintWriter(new File(src, "log.txt"));
+		File file = new File(src, "log.txt");
+		int l = 1;
+		while(file.exists()) {
+			file = new File(src, "log" + l + ".txt");
+			l++;
+		}
+		
+		PrintWriter log = new PrintWriter(file);
 		long time = System.currentTimeMillis();
 
 		log.println("Start: " + new Date());
@@ -193,7 +197,7 @@ public class LinterDemoGUI {
 		}
 		ArrayList<QualityIssueHighlight> highlights = new ArrayList<QualityIssueHighlight>();
 		
-		final List caseList = new List(topComp, SWT.BORDER | SWT.V_SCROLL);
+		final List caseList = new List(topComp, SWT.BORDER);
 		caseList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
 		ScrolledComposite scrollExp = new ScrolledComposite(topComp, SWT.H_SCROLL | SWT.V_SCROLL);

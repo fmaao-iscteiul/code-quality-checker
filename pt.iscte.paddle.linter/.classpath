@@ -30,16 +30,6 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/pt.iscte.paddle.linter.gui/lib/pt-iscte-paddle-model-java.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/pt.iscte.paddle.linter.gui/lib/pt-iscte-paddle-model.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="/pt.iscte.paddle.linter.gui/lib/antlr-v4-runtime.jar">
 		<attributes>
 			<attribute name="module" value="true"/>

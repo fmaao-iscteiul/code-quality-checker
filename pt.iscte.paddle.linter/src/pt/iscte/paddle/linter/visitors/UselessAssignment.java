@@ -12,13 +12,17 @@ import pt.iscte.paddle.linter.issues.UselessVariableAssignment;
 import pt.iscte.paddle.linter.linter.Linter;
 import pt.iscte.paddle.linter.misc.BadCodeAnalyser;
 import pt.iscte.paddle.linter.misc.Explanations;
+import pt.iscte.paddle.model.IArrayElementAssignment;
 import pt.iscte.paddle.model.IBinaryExpression;
 import pt.iscte.paddle.model.IControlStructure;
 import pt.iscte.paddle.model.IExpression;
+import pt.iscte.paddle.model.ILoop;
 import pt.iscte.paddle.model.IOperator;
 import pt.iscte.paddle.model.IOperator.OperationType;
 import pt.iscte.paddle.model.IProcedure;
+import pt.iscte.paddle.model.IProcedureCall;
 import pt.iscte.paddle.model.IProgramElement;
+import pt.iscte.paddle.model.ISelection;
 import pt.iscte.paddle.model.IStatement;
 import pt.iscte.paddle.model.IType;
 import pt.iscte.paddle.model.IVariableAssignment;
@@ -26,6 +30,7 @@ import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.model.cfg.IBranchNode;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
 import pt.iscte.paddle.model.cfg.INode;
+import pt.iscte.paddle.model.cfg.IControlFlowGraph.Path;
 
 
 public class UselessAssignment extends CodeAnalyser implements BadCodeAnalyser {
@@ -71,7 +76,7 @@ public class UselessAssignment extends CodeAnalyser implements BadCodeAnalyser {
 				boolean exists = false;
 				for (Statement ass : assignmentStatements) {
 					if(ass.assignment.getParent().isSame(assignment.getParent()) && ass.var.equals(assignment.getTarget())) {
-						if(!cfg.usedOrChangedBetween(ass.node, node, ass.var)) {
+						if(!usedOrChangedBetween(cfg, ass.node, node, ass.var)) {
 							issues.add(new UselessVariableAssignment(getProcedure(), ass.assignment));
 						}
 						ass.assignment = assignment;
@@ -118,7 +123,9 @@ public class UselessAssignment extends CodeAnalyser implements BadCodeAnalyser {
 				// [TODO] Add multi-layer detection.
 				if(selection != null && selection.getParent().isSame(assignmentStatement.getParent())
 						&& statement.var.expression().isSame(guard.expression()) 
-						&& !cfg.usedOrChangedBetween(statement.node, node, statement.var)) {
+						&& !usedOrChangedBetween(cfg, statement.node, node, statement.var)) {
+					
+					
 					if(assignmentStatement.getExpression().isSame(IType.BOOLEAN.literal(true))) {
 						issues.add(new Tautology(Explanations.TAUTOLOGY, getProcedure(), guard));
 						return;
@@ -130,6 +137,41 @@ public class UselessAssignment extends CodeAnalyser implements BadCodeAnalyser {
 				}
 			}
 		}
+	}
+	
+	private boolean usedOrChangedBetween(IControlFlowGraph cfg, INode source, INode destiny, IVariableDeclaration variable) {
+		List<Path> paths = cfg.pathsBetweenNodes(source, destiny);
+		if(paths.isEmpty()) return true; //?
+		for (Path path : paths) {
+			path.getNodes().remove(0); // remove the beginning node.
+			INode end = path.getNodes().remove(path.getNodes().size() - 1);
+			for (INode node : path.getNodes()) {
+				
+				if(node.getElement() instanceof IArrayElementAssignment 
+						&& (((IArrayElementAssignment) node.getElement()).getArrayAccess().getTarget().isSame(variable.expression()) 
+								|| ((IArrayElementAssignment) node.getElement()).getExpression().includes(variable))) 
+					return true;
+				else if(node.getElement() instanceof IVariableAssignment && 
+						( ((IVariableAssignment) node.getElement()).getTarget() == variable
+						  || ((IVariableAssignment) node.getElement()).getExpression().includes(variable) )
+						)
+					return true;
+				else if(node.getElement() instanceof IProcedureCall)
+					for (IExpression argument : ((IProcedureCall) node.getElement()).getArguments()) 
+						if(argument.includes(variable)) return true;
+						else if((node.getElement() instanceof ISelection || node.getElement() instanceof ILoop) 
+								&& ((IControlStructure) node.getElement()).getGuard().includes(variable)) {
+							return true;
+						}
+
+			}
+			if(end.getElement() instanceof IVariableAssignment
+					&& ( (((IVariableAssignment) end.getElement()).getTarget().isSame(variable) 
+						|| //((IVariableAssignment) end.getElement()).getTarget().isSame(variable.expression())) 
+							((IVariableAssignment) end.getElement()).getExpression().includes(variable))))
+				return true;
+		}
+		return false;
 	}
 
 }

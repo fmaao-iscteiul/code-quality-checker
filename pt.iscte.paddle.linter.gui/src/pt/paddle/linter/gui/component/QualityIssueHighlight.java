@@ -121,10 +121,11 @@ public class QualityIssueHighlight {
 			ILiteral lit = c.getLiteral();
 			IExpression exp = c.getExpression();
 			desc.words("The result of the expression ").link(exp.toString(), exp).words(" is a boolean value:")
-					.skipline().bullet().words("if true, comparing to ").link(lit.toString(), lit)
-					.words(" will always result in true;").skipline().bullet()
-					.words("if false, it will always result in false.").skipline()
-					.line("Problem: Unnecessarily extensive code may affect readability.").newline()
+					.skipline()
+					.bullet().words("if true, comparing to ").link(lit.toString(), lit)
+					.words(" will always result in true;").skipline()
+					.bullet().words("if false, it will always result in false.").skipline()
+					.bullet().line("Unnecessarily extensive code may affect readability.").newline()
 					.line("Suggestion: simplify the expression, making it shorter.");
 		} else if (getIssue() instanceof BooleanReturnCheck) {
 			IExpression guard = ((BooleanReturnCheck) getIssue()).getGuard();
@@ -140,10 +141,10 @@ public class QualityIssueHighlight {
 					.words("\n - The program will never execute the code inside this condition, which is useless.")
 					.words("\n\nSuggestion: Change this condition so that it isn't always true.");
 		} else if (getIssue() instanceof Duplicate) {
-			desc.words("The statement ").link(((Duplicate) getIssue()).getOccurrences().get(0).toString(), () -> {
-			}).words(" was found in a condition and it's alternatives (elses).").words(
-					"\n\n - This generates code duplication that should be avoided in order to maintain a good quality code.")
-					.words("\n - Try extrating the duplicates from the condition blocks, this will help preventing code duplication.");
+			desc.words("The statement ").link(((Duplicate) getIssue()).getInstance().toString(),((Duplicate) getIssue()).getOccurrences())
+			.line(" is unnecessarily duplicated, and could be written in a single place.").newline()
+			.bullet().line("Duplication makes code larger and harder to modify.").newline()
+			.words("Suggestion: extract the duplicated statement to a single location.");
 		} else if (getIssue() instanceof DuplicateGuard) {
 			DuplicateGuard d = (DuplicateGuard) getIssue();
 			desc.words("The expression ").link(d.getDuplicateExpression().toString(), d.getDuplicateExpression())
@@ -282,7 +283,7 @@ public class QualityIssueHighlight {
 		}
 
 		if (getIssue() instanceof PositiveBooleanCheck) {
-			ICodeDecoration<Text> d2 = w.addNote("This expression alone will determine\n if the whole expression is true.", ICodeDecoration.Location.BOTTOM);
+			ICodeDecoration<Text> d2 = w.addNote("This expression alone will determine\n if the comparison is true.", ICodeDecoration.Location.BOTTOM);
 			decorations.add(d2);
 		} else if (getIssue() instanceof NegativeBooleanCheck) {
 			ICodeDecoration<Text> d2 = w.addNote("Should you check instead if not true?",
@@ -299,8 +300,8 @@ public class QualityIssueHighlight {
 					ICodeDecoration.Location.RIGHT);
 			decorations.add(d2);
 		} else if (getIssue() instanceof Duplicate) {
-			ICodeDecoration<Text> t = w.addNote("Couldn't this be\n anywhere else?", ICodeDecoration.Location.RIGHT);
-			decorations.add(t);
+//			ICodeDecoration<Text> t = w.addNote("Couldn't this be\n anywhere else?", ICodeDecoration.Location.RIGHT);
+//			decorations.add(t);
 		} else if (getIssue() instanceof DuplicateGuard) {
 			ICodeDecoration<Text> d2 = w.addNote("Unnecessary double-check?", ICodeDecoration.Location.RIGHT);
 			decorations.add(d2);

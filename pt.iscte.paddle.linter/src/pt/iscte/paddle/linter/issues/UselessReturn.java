@@ -13,4 +13,8 @@ public class UselessReturn extends SingleOcurrenceIssue{
 		super(IssueType.USELESS_RETURN, Classification.LIGHT, procedure, occ);
 	}
 
+	@Override
+	public String getIssueTitle() {
+		return "Useless return";
+	}
 }
